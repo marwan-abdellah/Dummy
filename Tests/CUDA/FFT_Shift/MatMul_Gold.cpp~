@@ -1,0 +1,10 @@
+#include "Globals.h"
+#include "Utilities/Utils.h"
+#include "Utilities/MACROS.h"
+
+
+int main()
+{
+	printf("Test");	
+	return 0;
+}

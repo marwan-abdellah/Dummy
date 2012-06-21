@@ -1,0 +1,35 @@
+# Copyright (c) 2012 Marwan Abdellah <abdellah.marwan@gmail.com>
+
+#Locate libXL dependencies
+FIND_PACKAGE(CUDA)
+
+# Set XL root directory 
+set(XL_ROOT "/home/abdellah/NVIDIA_GPU_Computing_SDK")
+set(XL_INC_DIR "${XL_ROOT}/include_cpp")
+set(XL_LIB_DIR "${XL_ROOT}/lib")
+
+find_path(FFTW_INCLUDE_DIR "libxl.h" 
+  HINTS ${XL_INC_DIR}/include
+  /usr/include
+  /usr/local/include
+  /opt/local/include 
+)
+
+find_library(LIB_XL NAMES xl 
+  HINTS ${XL_LIB_DIR}
+  PATHS /usr/lib /usr/local/lib /opt/local/lib
+)
+
+# Include directories 
+INCLUDE_DIRECTORIES(${XL_INC_DIR})   
+
+# Link cCUDA libraries to the application 
+LINK_LIBRARIES(${LIB_XL})
+
+if(LIBXL_FOUND)
+  message(STATUS "Found LibXL in 
+	${XL_INC_DIR} 
+	${LIB_XL} ")
+endif(LIBXL_FOUND)
+
+

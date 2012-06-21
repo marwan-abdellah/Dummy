@@ -1,0 +1,40 @@
+# Copyright (c) 2012 Marwan Abdellah <abdellah.marwan@gmail.com>
+
+# Set Boost root directory 
+#set(BOOST_ROOT ${CMAKE_SOURCE_DIR}/LibXL)
+#set(BOOST_INC_DIR "${XL_ROOT}/include_cpp")
+#set(BOOST_LIB_DIR "${XL_ROOT}/lib64")
+
+#find_path(LIBXL_INC_DIR "libxl.h" 
+ # HINTS ${XL_INC_DIR}
+ # /usr/include
+ # /usr/local/include
+ # /opt/local/include 
+#)
+
+#find_library(LIBXL_LIB NAMES xl 
+#  HINTS ${XL_LIB_DIR}
+#  PATHS /usr/lib /usr/local/lib /opt/local/lib
+#)
+
+FIND_PACKAGE(Boost REQUIRED)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(BOOST DEFAULT_MSG Boost_INCLUDE_DIRS Boost_LIBRARIES)
+
+
+# Include directories 
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})   
+
+# Link LibXL libraries to the application 
+LINK_LIBRARIES(${Boost_LIBRARIES})
+
+message(${Boost_INCLUDE_DIRS})
+
+
+if(BOOST_FOUND)
+  message(STATUS "Found LibXL in 
+	${Boost_INCLUDE_DIRS} 
+	${Boost_LIBRARIES} ")
+endif(BOOST_FOUND)
+
+
