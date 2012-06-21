@@ -17,6 +17,48 @@
 #include "Utilities/MACROS.h"
 #include "Utilities/LoggingMACROS.h"
 
+void Array::zeroArray_2D_flat_float(float* arr, int size_X, int size_Y)
+{
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+		{
+			int index = (i + (size_X * j));
+			arr[index] = (float) 0;
+		}
+}
+
+void Array::zeroArray_2D_flat_double(double* arr, int size_X, int size_Y)
+{
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+		{
+			int index = (i + (size_X * j));
+			arr[index] = (double) 0;
+		}
+}
+
+void Array::zeroArray_3D_flat_float(float* arr, int size_X, int size_Y, int size_Z)
+{
+	int ctr = 0;
+
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+			for (int k = 0; k < size_Z; k++)
+				arr[ctr++] = (float) 0;
+
+}
+
+void Array::zeroArray_3D_flat_double(double* arr, int size_X, int size_Y, int size_Z)
+{
+	int ctr = 0;
+
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+			for (int k = 0; k < size_Z; k++)
+				arr[ctr++] = (double) 0;
+
+}
+
 void Array::fillArray_1D_float(float* arr, int size_X, bool Seq_Rnd)
 {
 
@@ -58,6 +100,45 @@ void Array::fillArray_3D_flat_float(float* arr, int size_X, int size_Y, int size
 				ctr++;
 			}
 }
+
+void Array::zeroArray_2D_float(float** arr, int size_X, int size_Y)
+{
+	int ctr = 0;
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+			arr[i][j] = (float) 0;
+
+}
+
+void Array::zeroArray_2D_double(double** arr, int size_X, int size_Y)
+{
+	int ctr = 0;
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+			arr[i][j] = (double) 0;
+
+}
+
+void Array::zeroArray_3D_float(float*** arr, int size_X, int size_Y, int size_Z)
+{
+	int ctr = 0;
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+			for (int k = 0; k < size_Z; k++)
+				arr[i][j][k] = (float) 0;
+
+}
+
+void Array::zeroArray_3D_double(double*** arr, int size_X, int size_Y, int size_Z)
+{
+	int ctr = 0;
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+			for (int k = 0; k < size_Z; k++)
+				arr[i][j][k] = (double) 0;
+
+}
+
 
 void Array::fillArray_2D_float(float** arr, int size_X, int size_Y, bool Seq_Rnd)
 {
@@ -151,4 +232,119 @@ void Array::fillArray_3D_double(double*** arr, int size_X, int size_Y, int size_
 				else
 					arr[i][j][k] = (double) Utils::rand_double();
 			}
+}
+
+void Array::flatArray_2D_char(char* flatArr, char** sqArr, int size_X, int size_Y)
+{
+	int ctr = 0;
+
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+				flatArr[ctr++] = sqArr[i][j];
+}
+
+void Array::flatArray_2D_float(float* flatArr, float** sqArr, int size_X, int size_Y)
+{
+	int ctr = 0;
+
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+				flatArr[ctr++] = sqArr[i][j];
+}
+
+void Array::flatArray_2D_double(double* flatArr, double** sqArr, int size_X, int size_Y)
+{
+	int ctr = 0;
+
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+				flatArr[ctr++] = sqArr[i][j];
+}
+
+void Array::flatArray_3D_char(char* flatArr, char*** sqArr, int size_X, int size_Y, int size_Z)
+{
+	int ctr = 0;
+
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+			for (int k = 0; k < size_Z; k++)
+				flatArr[ctr++] = sqArr[i][j][k];
+}
+
+void Array::flatArray_3D_float(float* flatArr, float*** sqArr, int size_X, int size_Y, int size_Z)
+{
+	int ctr = 0;
+
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+			for (int k = 0; k < size_Z; k++)
+				flatArr[ctr++] = sqArr[i][j][k];
+}
+
+void Array::flatArray_3D_double(double* flatArr, double*** sqArr, int size_X, int size_Y, int size_Z)
+{
+	int ctr = 0;
+
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+			for (int k = 0; k < size_Z; k++)
+				flatArr[ctr++] = sqArr[i][j][k];
+}
+
+
+void Array::squareArray_2D_char(char* flatArr, char** sqArr, int size_X, int size_Y)
+{
+	int ctr = 0;
+
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+				 sqArr[i][j] = flatArr[ctr++];
+}
+
+void Array::squareArray_2D_float(float* flatArr, float** sqArr, int size_X, int size_Y)
+{
+	int ctr = 0;
+
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+				 sqArr[i][j] = flatArr[ctr++];
+}
+
+void Array::squareArray_2D_double(double* flatArr, double** sqArr, int size_X, int size_Y)
+{
+	int ctr = 0;
+
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+				 sqArr[i][j] = flatArr[ctr++];
+}
+
+void Array::cubeArray_3D_char(char* flatArr, char*** sqArr, int size_X, int size_Y, int size_Z)
+{
+	int ctr = 0;
+
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+			for (int k = 0; k < size_Z; k++)
+				 sqArr[i][j][k] = flatArr[ctr++];
+}
+
+void Array::cubeArray_3D_float(float* flatArr, float*** sqArr, int size_X, int size_Y, int size_Z)
+{
+	int ctr = 0;
+
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+			for (int k = 0; k < size_Z; k++)
+				 sqArr[i][j][k] = flatArr[ctr++];
+}
+
+void Array::cubeArray_3D_double(double* flatArr, double*** sqArr, int size_X, int size_Y, int size_Z)
+{
+	int ctr = 0;
+
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+			for (int k = 0; k < size_Z; k++)
+				 sqArr[i][j][k] = flatArr[ctr++];
 }

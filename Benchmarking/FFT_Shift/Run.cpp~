@@ -1,0 +1,27 @@
+/*********************************************************************
+ * Copyrights (c) Marwan Abdellah. All rights reserved.
+ * This code is part of my Master's Thesis Project entitled "High
+ * Performance Fourier Volume Rendering on Graphics Processing Units
+ * (GPUs)" and submitted to the Systems & Biomedical Engineering
+ * Department, Faculty of Engineering, Cairo University.
+ * Please, don't use or distribute without authors' permission.
+
+ * File         : Volume
+ * Author(s)    : Marwan Abdellah <abdellah.marwan@gmail.com>
+ * Created      : April 2011
+ * Description  :
+ * Note(s)      :
+ *********************************************************************/
+
+#include "iB_FFTShift.h"
+
+int main()
+{
+	iB_FFTShift::FFTShift_2D_CPU(8, 8);
+	iB_FFTShift::FFTShift_2D_CUDA(8, 8);
+
+	iB_FFTShift::FFTShift_3D_CPU(4, 4, 4);
+	iB_FFTShift::FFTShift_3D_CUDA(4,4, 4);
+
+	return 0;
+}

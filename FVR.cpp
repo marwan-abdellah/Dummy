@@ -50,8 +50,6 @@ int main( int argc, char** argv )
 //    FVR::doItAllHere();
 
 
-
-    INFO(ITS(j));
     Utils::closeLogFile();
     return 0;
 }
