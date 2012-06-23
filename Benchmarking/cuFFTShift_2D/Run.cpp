@@ -14,7 +14,7 @@
  *********************************************************************/
 
 /* @ Maximum dimensions in 2D */
-#define N_2D_MAX 1024
+#define N_2D_MAX 256
 
 /* @ Maximum CUDA block dimensions */
 #define MAX_BLOCK_SIZE_X 512
@@ -39,7 +39,8 @@ int main()
 	dim3 cuGrid;
 
 	/* @ To terminate the loop if INVALID configuration */
-	bool cuFlag = 1;
+	int cuFlag = 1;
+	int blkFLag = 1;
 
 	/* @ Unified dimensions in X, Y, Z */
 	int N = 2;
@@ -67,11 +68,7 @@ int main()
 			cuBlock.y = 2;
 			cuBlock.z = 1;
 
-			/* @ Initial cuGrid with SINGLE configuration */
-			cuGrid.x = 1;
-			cuGrid.y = 1;
-			cuGrid.z = 1;
-
+			// Reset cuFlag
 			cuFlag = 1;
 
 			// Clearing the sizeString
@@ -84,26 +81,31 @@ int main()
 
 				cuGrid.x = i / cuBlock.x;
 				cuGrid.y = i / cuBlock.y;
+				cuGrid.z = 1;
 
-				if (cuBlock.x <= MAX_BLOCK_SIZE_X 	&&
+				if (!(cuBlock.x <= MAX_BLOCK_SIZE_X 	&&
 					cuBlock.y <= MAX_BLOCK_SIZE_Y 	&&
 					cuBlock.z <= MAX_BLOCK_SIZE_Z	&&
 					cuGrid.x > 0 					&&
 					cuGrid.y > 0 					&&
-					cuGrid.z > 0)
-					cuFlag = 1;
-				else
+					cuGrid.z > 0))
 					cuFlag = 0;
 
 				// Copy the size string with < Arr[]_Grid[] >
 				strcat(sizeString, "Arr");
 				snprintf(auxString, sizeof(auxString), "%d", i);
 				strcat(sizeString, auxString);
-				strcat(sizeString, "_Grid");
-				snprintf(auxString, sizeof(auxString), "%d", cuGrid.x);
+				strcat(sizeString, "_Blk");
+				snprintf(auxString, sizeof(auxString), "%d", cuBlock.x);
 				strcat(sizeString, auxString);
 
-				if(cuFlag)
+				// Reset the blkFlag
+				blkFLag = 1;
+				if (i >= 64)
+					if (cuGrid.x >= 32)
+						{}//blkFLag = 0;
+
+				if (blkFLag && cuFlag)
 				{
 					// Create the corresponding XL sheet
 					xlSheet = Utils::xl::addSheetToBook(sizeString, xlBook);
@@ -111,13 +113,13 @@ int main()
 					if (xlSheet)
 					{
 						// iB_cuFFTShift_2D::FFTShift_2D_Float(i, i, xlSheet, nLoop, cuGrid, cuBlock);
-						iB_cuFFTShift_2D::FFTShift_2D_Float_CUDA(i, i, xlSheet, nLoop, cuGrid, cuBlock);
+						iB_cuFFTShift_2D::FFTShift_2D_Float(i, i, xlSheet, nLoop, cuGrid, cuBlock);
 					}
-
-					/* Next block dimensions */
-					cuBlock.x *= 2;
-					cuBlock.y *= 2;
 				}
+				/* Next block dimensions */
+				cuBlock.x *= 2;
+				cuBlock.y *= 2;
+
 			}
 		}
 	}

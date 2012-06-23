@@ -19,6 +19,9 @@
 typedef boost::posix_time::ptime time_boost;
 typedef boost::posix_time::time_duration duration_boost;
 
+/* @ CUDA timer typedef */
+typedef uint timer_cuda;
+
 struct durationStruct
 {
 	long unit_NanoSec;

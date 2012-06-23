@@ -21,5 +21,4 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 
-
 #endif /* CUGLOBALS_H_ */

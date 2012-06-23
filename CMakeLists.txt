@@ -79,6 +79,7 @@ SET(SOURCES
 	Array/Complex/cuComplex.cpp
 	Array/Complex/fftwComplex.cpp
 	Timers/BoostTimers.cpp
+	Timers/CUDATimers.cpp
 	Utilities/Utils.cpp
 	Utilities/Logging.cpp
 	Utilities/Tracing.cpp
@@ -113,7 +114,7 @@ ADD_LIBRARY(CORE ${CUDA_SOURCES} ${SOURCES})
 
 # Tests 
 INCLUDE(${CMAKE_SOURCE_DIR}/Tests/CUDA/MatMul/CMakeLists.cmake)
-INCLUDE(${CMAKE_SOURCE_DIR}/Tests/CUDA/FFT_Shift/CMakeLists.cmake)
+#INCLUDE(${CMAKE_SOURCE_DIR}/Tests/CUDA/FFT_Shift/CMakeLists.cmake)
 INCLUDE(${CMAKE_SOURCE_DIR}/Tests/LibXL/CMakeLists.cmake)
 INCLUDE(${CMAKE_SOURCE_DIR}/Tests/Array/cufftComplex/CMakeLists.cmake)
 INCLUDE(${CMAKE_SOURCE_DIR}/Tests/Array/fftwComplex/CMakeLists.cmake)
@@ -121,5 +122,5 @@ INCLUDE(${CMAKE_SOURCE_DIR}/Tests/Array/Real/CMakeLists.cmake)
 INCLUDE(${CMAKE_SOURCE_DIR}/Tests/Timers/CMakeLists.cmake)
 
 # Benchmarking 
-INCLUDE(${CMAKE_SOURCE_DIR}/Benchmarking/FFT_Shift/CMakeLists.cmake)
+#INCLUDE(${CMAKE_SOURCE_DIR}/Benchmarking/FFT_Shift/CMakeLists.cmake)
 INCLUDE(${CMAKE_SOURCE_DIR}/Benchmarking/cuFFTShift_2D/CMakeLists.cmake)

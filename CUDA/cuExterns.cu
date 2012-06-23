@@ -19,10 +19,11 @@
 #include "cuGlobals.h"
 
 #include "cuCopyArray.cu"
-#include"FFT/Real/cuFFTShift_2D_Real.cu"
-#include"FFT/Real/cuFFTShift_3D_Real.cu"
-#include"FFT/Complex/cuFFTShift_2D_Complex.cu"
-#include"FFT/Complex/cuFFTShift_3D_Complex.cu"
+#include "FFT/Real/cuFFTShift_2D_Real.cu"
+#include "FFT/Real/cuFFTShift_3D_Real.cu"
+#include "FFT/Complex/cuFFTShift_2D_Complex.cu"
+#include "FFT/Complex/cuFFTShift_3D_Complex.cu"
+#include "Timers/BoostTimers.h"
 
 
 extern 
@@ -33,8 +34,19 @@ void cuCopyArray(dim3 cuBlock, dim3 cuGrid, float* devArrayOutput, float* devArr
 
 extern 
 void cuFFTShift_2D(dim3 cuBlock, dim3 cuGrid, float* devArrayOutput, float* devArrayInput, int nX)
-{
-    fftShift_2D_Kernel <<< cuBlock, cuGrid>>> (devArrayOutput, devArrayInput, nX); 
+{    
+    uint kernelTime;
+    cutCreateTimer(&kernelTime);
+    cutResetTimer(kernelTime);
+    cutStartTimer(kernelTime);
+     
+    fftShift_2D_Kernel <<< cuBlock, cuGrid>>> (devArrayOutput, devArrayInput, nX);
+    cudaThreadSynchronize(); 
+    cutStopTimer(kernelTime);
+    
+    std::cout << "Timer: " << cutGetTimerValue(kernelTime) << " milli-sec" << std::endl;
+    
+    
 }
 
 extern 

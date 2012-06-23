@@ -30,12 +30,7 @@
 
 #define SIZE 4
 
-
-
 #include <iostream>
-
-
-
 
 int main( int argc, char** argv )
 {
