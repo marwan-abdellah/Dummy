@@ -16,15 +16,9 @@
 #include "Globals.h"
 #include "Utilities/Utils.h"
 #include "Utilities/MACROS.h"
-#include "Array/Real/Array.h"
-#include "Utilities/XL.h"
-#include "FFT/FFTShift.h"
-#include "CUDA/Utilities/cuUtils.h"
-#include "CUDA/cuGlobals.h"
-#include "CUDA/cuExterns.h"
 
-namespace iB_cuFFTShift_2D
+namespace ex_Templates
 {
-	void FFTShift_2D_Float(int size_X, int size_Y, Sheet* xlSheet, int nLoop, dim3 cuGrid, dim3 cuBlock);
-	void FFTShift_2D_Double(int size_X, int size_Y, Sheet* xlSheet, int nLoop, dim3 cuGrid, dim3 cuBlock);
+	template <typename T>
+	extern void streamOut(const T val);
 }

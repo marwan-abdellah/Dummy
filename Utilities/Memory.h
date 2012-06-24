@@ -63,6 +63,32 @@ namespace Memory
 	void free_3D_fftwfComplex(fftwf_complex*** ptrData, const int size_X, const int size_Y, int size_Z);
 	void free_3D_fftwComplex(fftw_complex*** ptrData, const int size_X, const int size_Y, int size_Z);
 
+	template <typename T>
+	extern T* alloc_1D(const int size_X);
+
+	template <typename T>
+	extern T** alloc_2D(const int size_X, const int size_Y);
+
+	template <typename T>
+	extern T*** alloc_3D(const int size_X, const int size_Y, const int size_Z);
+
+	template <typename T>
+	void free_1D(T* ptrData);
+
+	template <typename T>
+	void free_2D(T** ptrData, const int size_X, const int size_Y);
+
+	template <typename T>
+	void free_3D(T*** ptrData, const int size_X, const int size_Y, const int size_Z);
+
+
+
+
+
+
+
+
+
 }
 
 #endif /* MEMORY_H_ */

@@ -117,7 +117,7 @@ void ex_FFTShift::FFTShift_2D_CUDA(int size_X, int size_Y)
 	dim3 cuGrid(size_X / cuBlock.x, size_Y / cuBlock.y, 1);
 
 	// FFT shift
-	cuCopyArray( cuBlock, cuGrid, dev_arr_2D_flat_float, dev_arr_2D_flat_float, size_X);
+	//cuFFTShift_2D( cuBlock, cuGrid, dev_arr_2D_flat_float, dev_arr_2D_flat_float, size_X);
 
 	// Downloading array
 	cuUtils::download_2D_float(arr_2D_flat_float, dev_arr_2D_flat_float, size_X, size_Y);
@@ -200,7 +200,7 @@ void ex_FFTShift::FFTShift_3D_CUDA(int size_X, int size_Y, int size_Z)
 	cudaMalloc((void**)(&dev_arr_3D_flat_float_temp), devMem);
 
 	// FFT shift
-	cuFFTShift_3D( cuBlock, cuGrid, dev_arr_3D_flat_float_output, dev_arr_3D_flat_float_input, size_X);
+	// cuFFTShift_3D( cuBlock, cuGrid, dev_arr_3D_flat_float_output, dev_arr_3D_flat_float_input, size_X);
 
 	// Downloading array
 	cuUtils::download_3D_float(arr_3D_flat_float, dev_arr_3D_flat_float_output, size_X, size_Y, size_Z);

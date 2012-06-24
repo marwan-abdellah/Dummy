@@ -19,32 +19,40 @@
 #include "cuGlobals.h"
 
 extern
-void cuCopyArray(dim3 cuBlock, dim3 cuGrid, float* devArrayOutput, float* devArrayInput, int nX);
+void cuCopyArray( dim3 cuBlock, dim3 cuGrid, float* devArrayOutput, float* devArrayInput,
+	 			  int nX, cudaProfile* cuProfile);
 
 extern
-void cuFFTShift_2D(dim3 cuBlock, dim3 cuGrid, float* devArrayOutput, float* devArrayInput, int nX, cudaProfile* cuProfile);
+void cuFFTShift_2D( dim3 cuBlock, dim3 cuGrid, float* devArrayOutput, float* devArrayInput,
+					int nX, cudaProfile* cuProfile);
 
 extern
-void cuFFTShift_2D_Double(dim3 cuBlock, dim3 cuGrid, double* devArrayOutput, double* devArrayInput, int nX);
+void cuFFTShift_2D_Double( dim3 cuBlock, dim3 cuGrid, double* devArrayOutput, double* devArrayInput,
+						   int nX, cudaProfile* cuProfile);
 
 extern
-void cuFFTShift_2D_Complex(dim3 cuBlock, dim3 cuGrid, cufftComplex* devArrayOutput, cufftComplex* devArrayInput, int nX);
+void cuFFTShift_2D_Complex( dim3 cuBlock, dim3 cuGrid, cufftComplex* devArrayOutput, cufftComplex* devArrayInput,
+							int nX, cudaProfile* cuProfile);
 
 extern
-void cuFFTShift_2D_Double_Complex(dim3 cuBlock, dim3 cuGrid, cufftDoubleComplex* devArrayOutput, cufftDoubleComplex* devArrayInput, int nX);
-
-
-extern
-void cuFFTShift_3D(dim3 cuBlock, dim3 cuGrid, float* devArrayOutput, float* devArrayInput, int nX);
+void cuFFTShift_2D_Double_Complex( dim3 cuBlock, dim3 cuGrid, cufftDoubleComplex* devArrayOutput, cufftDoubleComplex* devArrayInput,
+								   int nX, cudaProfile* cuProfile);
 
 extern
-void cuFFTShift_3D_Double(dim3 cuBlock, dim3 cuGrid, double* devArrayOutput, double* devArrayInput, int nX);
+void cuFFTShift_3D( dim3 cuBlock, dim3 cuGrid, float* devArrayOutput, float* devArrayInput,
+					int nX, cudaProfile* cuProfile);
 
 extern
-void cuFFTShift_3D_Complex(dim3 cuBlock, dim3 cuGrid, cufftComplex* devArrayOutput, cufftComplex* devArrayInput, int nX);
+void cuFFTShift_3D_Double( dim3 cuBlock, dim3 cuGrid, double* devArrayOutput, double* devArrayInput,
+						   int nX, cudaProfile* cuProfile);
 
 extern
-void cuFFTShift_3D_Double_Complex(dim3 cuBlock, dim3 cuGrid, cufftDoubleComplex* devArrayOutput, cufftDoubleComplex* devArrayInput, int nX);
+void cuFFTShift_3D_Complex( dim3 cuBlock, dim3 cuGrid, cufftComplex* devArrayOutput, cufftComplex* devArrayInput,
+						 	int nX, cudaProfile* cuProfile);
+
+extern
+void cuFFTShift_3D_Double_Complex( dim3 cuBlock, dim3 cuGrid, cufftDoubleComplex* devArrayOutput, cufftDoubleComplex* devArrayInput,
+								   int nX, cudaProfile* cuProfile);
 
 
 #endif /* CUEXTERNS_H_ */

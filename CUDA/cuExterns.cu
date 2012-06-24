@@ -29,13 +29,14 @@
 extern 
 void cuCopyArray(dim3 cuBlock, dim3 cuGrid, float* devArrayOutput, float* devArrayInput, int nX)
 {
-    copyArray_2D_float_kernel <<< cuGrid, cuBlock>>> ( devArrayOutput, devArrayInput,  nX);
-    printf("CUDA - Error %d \n", cudaPeekAtLastError());   
+    copyArray_2D_float_kernel <<< cuGrid, cuBlock>>> ( devArrayOutput, devArrayInput,  nX); 
 } 
 
 extern 
-void cuFFTShift_2D(dim3 cuBlock, dim3 cuGrid, 
-                    float* devArrayOutput, float* devArrayInput, int nX, cudaProfile* cuProfile)
+void cuFFTShift_2D( dim3 cuBlock, dim3 cuGrid,
+                    float* devArrayOutput, float* devArrayInput, 
+                    int nX, 
+                    cudaProfile* cuProfile)
 {   
     cutCreateTimer(&(cuProfile->kernelTime));
     cutResetTimer(cuProfile->kernelTime);
@@ -51,45 +52,134 @@ void cuFFTShift_2D(dim3 cuBlock, dim3 cuGrid,
 }
 
 extern 
-void cuFFTShift_2D_Double(dim3 cuBlock, dim3 cuGrid, double* devArrayOutput, double* devArrayInput, int nX)
+void cuFFTShift_2D_Double( dim3 cuBlock, dim3 cuGrid, 
+                           double* devArrayOutput, double* devArrayInput, 
+                           int nX, 
+                           cudaProfile* cuProfile)
 {
+    cutCreateTimer(&(cuProfile->kernelTime));
+    cutResetTimer(cuProfile->kernelTime);
+    cutStartTimer(cuProfile->kernelTime);
+    
     fftShift_2D_Double_Kernel <<< cuGrid, cuBlock>>> (devArrayOutput, devArrayInput, nX); 
+    cudaThreadSynchronize(); 
+
+    cutStopTimer(cuProfile->kernelTime);
+    
+    cuProfile->kernelDuration = cutGetTimerValue(cuProfile->kernelTime);
+    cuProfile->kernelExecErr = cudaPeekAtLastError();
 }
 
 extern 
-void cuFFTShift_2D_Complex(dim3 cuBlock, dim3 cuGrid, cufftComplex* devArrayOutput, cufftComplex* devArrayInput, int nX)
+void cuFFTShift_2D_Complex( dim3 cuBlock, dim3 cuGrid, 
+                            cufftComplex* devArrayOutput, cufftComplex* devArrayInput, 
+                            int nX,
+                            cudaProfile* cuProfile)
 {
-    fftShift_2D_Complex_Kernel <<< cuGrid, cuBlock>>> (devArrayOutput, devArrayInput, nX); 
+    cutCreateTimer(&(cuProfile->kernelTime));
+    cutResetTimer(cuProfile->kernelTime);
+    cutStartTimer(cuProfile->kernelTime);
+    
+    fftShift_2D_Complex_Kernel <<< cuGrid, cuBlock>>> (devArrayOutput, devArrayInput, nX);
+    cudaThreadSynchronize(); 
+
+    cutStopTimer(cuProfile->kernelTime);
+    
+    cuProfile->kernelDuration = cutGetTimerValue(cuProfile->kernelTime);
+    cuProfile->kernelExecErr = cudaPeekAtLastError(); 
 }
 
 extern 
-void cuFFTShift_2D_Double_Complex(dim3 cuBlock, dim3 cuGrid, cufftDoubleComplex* devArrayOutput, cufftDoubleComplex* devArrayInput, int nX)
+void cuFFTShift_2D_Double_Complex( dim3 cuBlock, dim3 cuGrid, 
+                                   cufftDoubleComplex* devArrayOutput, cufftDoubleComplex* devArrayInput, 
+                                   int nX,
+                                   cudaProfile* cuProfile)
 {
+    cutCreateTimer(&(cuProfile->kernelTime));
+    cutResetTimer(cuProfile->kernelTime);
+    cutStartTimer(cuProfile->kernelTime);
+    
     fftShift_2D_Double_Complex_Kernel <<< cuGrid, cuBlock>>> (devArrayOutput, devArrayInput, nX); 
+    cudaThreadSynchronize(); 
+
+    cutStopTimer(cuProfile->kernelTime);
+    
+    cuProfile->kernelDuration = cutGetTimerValue(cuProfile->kernelTime);
+    cuProfile->kernelExecErr = cudaPeekAtLastError(); 
 }
 
 extern 
-void cuFFTShift_3D(dim3 cuBlock, dim3 cuGrid, float* devArrayOutput, float* devArrayInput, int nX)
+void cuFFTShift_3D( dim3 cuBlock, dim3 cuGrid, 
+                    float* devArrayOutput, float* devArrayInput, 
+                    int nX, 
+                    cudaProfile* cuProfile)
 {
+    cutCreateTimer(&(cuProfile->kernelTime));
+    cutResetTimer(cuProfile->kernelTime);
+    cutStartTimer(cuProfile->kernelTime);
+    
     fftShift_3D_i(devArrayInput, devArrayOutput, nX, cuBlock, cuGrid); 
+    cudaThreadSynchronize(); 
+
+    cutStopTimer(cuProfile->kernelTime);
+    
+    cuProfile->kernelDuration = cutGetTimerValue(cuProfile->kernelTime);
+    cuProfile->kernelExecErr = cudaPeekAtLastError(); 
 }
 
 extern 
-void cuFFTShift_3D_Double(dim3 cuBlock, dim3 cuGrid, double* devArrayOutput, double* devArrayInput, int nX)
+void cuFFTShift_3D_Double( dim3 cuBlock, dim3 cuGrid, 
+                           double* devArrayOutput, double* devArrayInput, 
+                           int nX, 
+                           cudaProfile* cuProfile)
 {
-    fftShift_3D_Double_i(devArrayInput, devArrayOutput, nX, cuBlock, cuGrid); 
+    cutCreateTimer(&(cuProfile->kernelTime));
+    cutResetTimer(cuProfile->kernelTime);
+    cutStartTimer(cuProfile->kernelTime);
+    
+    fftShift_3D_Double_i(devArrayInput, devArrayOutput, nX, cuBlock, cuGrid);
+    cudaThreadSynchronize(); 
+
+    cutStopTimer(cuProfile->kernelTime);
+    
+    cuProfile->kernelDuration = cutGetTimerValue(cuProfile->kernelTime);
+    cuProfile->kernelExecErr = cudaPeekAtLastError();  
 }
 
 extern 
-void cuFFTShift_3D_Complex(dim3 cuBlock, dim3 cuGrid, cufftComplex* devArrayOutput, cufftComplex* devArrayInput, int nX)
+void cuFFTShift_3D_Complex( dim3 cuBlock, dim3 cuGrid, cufftComplex* devArrayOutput, cufftComplex* devArrayInput, 
+                            int nX, 
+                            cudaProfile* cuProfile)
 {
+    cutCreateTimer(&(cuProfile->kernelTime));
+    cutResetTimer(cuProfile->kernelTime);
+    cutStartTimer(cuProfile->kernelTime);
+    
     fftShift_3D_Complex_i(devArrayInput, devArrayOutput, nX, cuBlock, cuGrid); 
+    cudaThreadSynchronize(); 
+
+    cutStopTimer(cuProfile->kernelTime);
+    
+    cuProfile->kernelDuration = cutGetTimerValue(cuProfile->kernelTime);
+    cuProfile->kernelExecErr = cudaPeekAtLastError(); 
 }
 
 extern 
-void cuFFTShift_3D_Double_Complex(dim3 cuBlock, dim3 cuGrid, cufftDoubleComplex* devArrayOutput, cufftDoubleComplex* devArrayInput, int nX)
+void cuFFTShift_3D_Double_Complex( dim3 cuBlock, dim3 cuGrid, cufftDoubleComplex* devArrayOutput, cufftDoubleComplex* devArrayInput, 
+                                   int nX, 
+                                   cudaProfile* cuProfile)
 {
+    cutCreateTimer(&(cuProfile->kernelTime));
+    cutResetTimer(cuProfile->kernelTime);
+    cutStartTimer(cuProfile->kernelTime);
+    
     fftShift_3D_Double_Complex_i(devArrayInput, devArrayOutput, nX, cuBlock, cuGrid); 
+    cudaThreadSynchronize(); 
+
+    cutStopTimer(cuProfile->kernelTime);
+    
+    cuProfile->kernelDuration = cutGetTimerValue(cuProfile->kernelTime);
+    cuProfile->kernelExecErr = cudaPeekAtLastError(); 
 }
 
 #endif // CU_EXTERNS_CU_

@@ -11,10 +11,17 @@
  * Created      : April 2011
  * Description  :
  * Note(s)      : Maximum Block Size = [512][512][64] in 1D
+ * * cudaErrorInvalidConfiguration
+			 * This indicates that a kernel launch is requesting resources
+			 * that can never be satisfied by the current device.
+			 * Requesting more shared memory per block than the
+			 * device supports will trigger this error, as will
+			 * requesting too many threads or blocks. See cudaDeviceProp
+			 * for more device limitations.
  *********************************************************************/
 
 /* @ Maximum dimensions in 2D */
-#define N_2D_MAX 4 * 1024
+#define N_2D_MAX 4096
 
 /* @ Maximum CUDA block dimensions in 3D */
 #define MAX_BLOCK_SIZE_X 16
@@ -76,13 +83,7 @@ int main()
 			cuFlag = 1;
 
 			/****
-			 * cudaErrorInvalidConfiguration
-			 * This indicates that a kernel launch is requesting resources
-			 * that can never be satisfied by the current device.
-			 * Requesting more shared memory per block than the
-			 * device supports will trigger this error, as will
-			 * requesting too many threads or blocks. See cudaDeviceProp
-			 * for more device limitations.
+
 			 *
 			 */
 
@@ -134,7 +135,7 @@ int main()
 	}
 
 	// Writhe the Xl book to disk
-	Utils::xl::saveBook(xlBook, "iB_cuFFTShift_2D.xls");
+	Utils::xl::saveBook(xlBook, "iB_RealSingleFFTShift_2D.xls");
 	INFO("Saving xlBook to disk")
 
 	// Release the book to be able to OPEN it

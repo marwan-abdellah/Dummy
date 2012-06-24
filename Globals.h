@@ -17,8 +17,12 @@
  */
 #pragma GCC diagnostic ignored "-Wwrite-strings"
 
- // Just a workaround
+/* @ Max float for the rand() function */
 #define FLOAT_MAX 214748364
+
+/* @ Max GPU  Memory in MB */
+#define MAX_GPU_MEMORY_MB 256
+#define MAX_GPU_MEMORY MAX_GPU_MEMORY_MB * 1024 * 1024
 
 struct volumeDimensions
 {

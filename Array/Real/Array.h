@@ -52,6 +52,15 @@ namespace Array
 	void cubeArray_3D_char(char* flatArr, char*** sqArr, int size_X, int size_Y, int size_Z);
 	void cubeArray_3D_float(float* flatArr, float*** sqArr, int size_X, int size_Y, int size_Z);
 	void cubeArray_3D_double(double* flatArr, double*** sqArr, int size_X, int size_Y, int size_Z);
+
+
+
+
+
+
+
+
+
 }
 
 
