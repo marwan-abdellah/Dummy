@@ -61,7 +61,7 @@ void ex_FFTShift::FFTShift_2D_CPU(int size_X, int size_Y)
 			ctr++;
 		}
 
-	duration = MEM_ALLOC_1D(durationStruct, 1);
+	duration = MEM_ALLOC_1D_GENERIC(durationStruct, 1);
 
 	// FFT shift operation
 	arr_2D_float = FFT::FFT_Shift_2D_float(arr_2D_float, size_X, size_Y, duration);

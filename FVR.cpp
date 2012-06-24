@@ -42,7 +42,7 @@ int main( int argc, char** argv )
 
     Utils::Test_XL();
 
-//    FVR::doItAllHere();
+    FVR::doItAllHere();
 
 
     Utils::closeLogFile();

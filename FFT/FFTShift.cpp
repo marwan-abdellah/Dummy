@@ -23,7 +23,7 @@ float* FFT_Shift_1D_float(float* input, int nX)
 	const int N = nX;
 
 	float* output;
-	output = MEM_ALLOC_1D(float, N);
+	output = MEM_ALLOC_1D (float, N);
 
 	for(int i = 0; i < N/2; i++)
 	{

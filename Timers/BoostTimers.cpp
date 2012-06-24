@@ -29,7 +29,7 @@ durationStruct* Timers::BoostTimers::getDuration(time_boost startTime, time_boos
 {
 	duration_boost durationCalc = endTime - startTime;
 
-	durationStruct* duration = MEM_ALLOC_1D(durationStruct, 1);
+	durationStruct* duration = MEM_ALLOC_1D_GENERIC(durationStruct, 1);
 
 	duration->unit_NanoSec = (double) durationCalc.total_nanoseconds();
 	duration->unit_MicroSec = (double) durationCalc.total_microseconds();

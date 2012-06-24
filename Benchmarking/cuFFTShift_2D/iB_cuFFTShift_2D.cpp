@@ -96,7 +96,7 @@ void iB_cuFFTShift_2D::FFTShift_2D_Float
 				}
 
 			// Allocating CPU profiler
-			cpuProfile = MEM_ALLOC_1D(durationStruct, 1);
+			cpuProfile = MEM_ALLOC_1D_GENERIC(durationStruct, 1);
 
 			// FFT shift operation - CPU
 			arr_2D_float = FFT::FFT_Shift_2D_float(arr_2D_float, size_X, size_Y, cpuProfile);
@@ -131,7 +131,7 @@ void iB_cuFFTShift_2D::FFTShift_2D_Float
 			cuUtils::upload_2D_float(arr_2D_flat_float, in_dev_arr_2D_flat_float, size_X, size_Y);
 
 			// Profile strcutures
-			cuProfile = MEM_ALLOC_1D(cudaProfile, 1);
+			cuProfile = MEM_ALLOC_1D_GENERIC(cudaProfile, 1);
 
 			// FFT shift
 			cuFFTShift_2D(cuBlock, cuGrid, out_dev_arr_2D_flat_float, in_dev_arr_2D_flat_float, size_X, cuProfile);
@@ -228,7 +228,7 @@ void iB_cuFFTShift_2D::FFTShift_2D_Double
 				}
 
 			// Allocating CPU profiler
-			cpuProfile = MEM_ALLOC_1D(durationStruct, 1);
+			cpuProfile = MEM_ALLOC_1D_GENERIC(durationStruct, 1);
 
 			// FFT shift operation - CPU
 			arr_2D_double = FFT::FFT_Shift_2D_double(arr_2D_double, size_X, size_Y, cpuProfile);
@@ -263,7 +263,7 @@ void iB_cuFFTShift_2D::FFTShift_2D_Double
 			cuUtils::upload_2D_double(arr_2D_flat_double, in_dev_arr_2D_flat_double, size_X, size_Y);
 
 			// Profile strcutures
-			cuProfile = MEM_ALLOC_1D(cudaProfile, 1);
+			cuProfile = MEM_ALLOC_1D_GENERIC(cudaProfile, 1);
 
 			// FFT shift
 			cuFFTShift_2D_Double(cuBlock, cuGrid, out_dev_arr_2D_flat_double, in_dev_arr_2D_flat_double, size_X, cuProfile);

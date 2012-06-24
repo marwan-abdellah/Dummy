@@ -36,7 +36,7 @@ volumeDimensions_t Volume::openVolHeader(const char* volName, const char* volPat
 
 	// Allocate volume dimensions structure for retrieving volume dimensions
 	// from the header file
-	volumeDimensions_t volDim = MEM_ALLOC_1D(volumeDimensions, 1);
+	volumeDimensions_t volDim = MEM_ALLOC_1D_GENERIC(volumeDimensions, 1);
 
 	// Input stream for reading the header file
 	istream_t volHdrFileStream;
@@ -97,7 +97,7 @@ vol_char_t Volume::openVolumeFile(const char* volName, const char* volPath, volu
     	const int volSize = (volDim->size_X * volDim->size_Y * volDim->size_Z);
 
     	// Allocating volume image "char" array
-    	vol_char_t volImg = MEM_ALLOC_1D(vol_char, volSize);
+    	vol_char_t volImg = MEM_ALLOC_1D_GENERIC(vol_char, volSize);
 
     	// Reading the volume into the array
     	const size_t fileSize_Bytes = fread(volImg, 1, volSize, ptrVol);
@@ -112,13 +112,13 @@ volume_char_t Volume::loadVolume(const char* volName, const char* volPath)
 	LOG();
 
 	// Volume dimensions
-	volumeDimensions_t volDim = MEM_ALLOC_1D(volumeDimensions, 1);
+	volumeDimensions_t volDim = MEM_ALLOC_1D_GENERIC(volumeDimensions, 1);
 
 	// Opening header file to retrieve volume dimensions
 	volDim = openVolHeader(volName, volPath);
 
 	// Allocating volume structure
-	volume_char_t volData = MEM_ALLOC_1D(volume_char, 1);
+	volume_char_t volData = MEM_ALLOC_1D_GENERIC(volume_char, 1);
 
 	// Loading volume data
 	volData->volDim = volDim;
@@ -250,8 +250,8 @@ Volume::createComplexVolume_float(volume_float_t volReal)
 							 volReal->volDim->size_X);
 
 	//
-	volume_complex_float_t volComplex = MEM_ALLOC_1D(volume_complex_float, 1);
-	volComplex->volImg = MEM_ALLOC_1D(fftwf_complex, volSize_XYZ);
+	volume_complex_float_t volComplex = MEM_ALLOC_1D_GENERIC(volume_complex_float, 1);
+	volComplex->volImg = MEM_ALLOC_1D_GENERIC(fftwf_complex, volSize_XYZ);
 
 	for (int i = 0; i < volSize_XYZ; ++i)
 	{
@@ -273,8 +273,8 @@ Volume::createComplexVolume_double(volume_double_t volReal)
 							 volReal->volDim->size_X);
 
 	//
-	volume_complex_double_t volComplex = MEM_ALLOC_1D(volume_complex_double, 1);
-	volComplex->volImg = MEM_ALLOC_1D(fftw_complex, volSize_XYZ);
+	volume_complex_double_t volComplex = MEM_ALLOC_1D_GENERIC(volume_complex_double, 1);
+	volComplex->volImg = MEM_ALLOC_1D_GENERIC(fftw_complex, volSize_XYZ);
 
 	for (int i = 0; i < volSize_XYZ; ++i)
 	{
@@ -295,9 +295,9 @@ Volume::createComplexVolumeFromChar_float(volume_char_t volReal)
 							 volReal->volDim->size_X);
 
 	//
-	volume_complex_float_t volComplex = MEM_ALLOC_1D(volume_complex_float, 1);
-	volComplex->volImg = MEM_ALLOC_1D(fftwf_complex, volSize_XYZ);
-	volComplex->volDim = MEM_ALLOC_1D(volumeDimensions, 1);
+	volume_complex_float_t volComplex = MEM_ALLOC_1D_GENERIC(volume_complex_float, 1);
+	volComplex->volImg = MEM_ALLOC_1D_GENERIC(fftwf_complex, volSize_XYZ);
+	volComplex->volDim = MEM_ALLOC_1D_GENERIC(volumeDimensions, 1);
 
 	for (int i = 0; i < volSize_XYZ; ++i) {
 		volComplex->volImg[i][0] = static_cast<float> (volReal->volImg[0]);
@@ -319,8 +319,8 @@ Volume::createComplexVolumeFromChar_double(volume_char_t volReal)
 							 volReal->volDim->size_X);
 
 	//
-	volume_complex_double_t volComplex = MEM_ALLOC_1D(volume_complex_double, 1);
-	volComplex->volImg = MEM_ALLOC_1D(fftw_complex, volSize_XYZ);
+	volume_complex_double_t volComplex = MEM_ALLOC_1D_GENERIC(volume_complex_double, 1);
+	volComplex->volImg = MEM_ALLOC_1D_GENERIC(fftw_complex, volSize_XYZ);
 
 	for (int i = 0; i < volSize_XYZ; ++i)
 	{

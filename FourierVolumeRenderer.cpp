@@ -102,24 +102,24 @@ void FVR::doItAllHere()
 	strcpy(_volumeFileDir , "/home/abdellah/Software/DataSets/BONSAI");
 
 	//
-	_volDim = MEM_ALLOC_1D(volumeDimensions, 1);
+	_volDim = MEM_ALLOC_1D_GENERIC(volumeDimensions, 1);
 
 	// Loading the volume dimensions from the volume header file
 	_volDim =  Volume::openVolHeader(_volumeName, _volumeFileDir);
 	_volSize_XYZ = (_volDim->size_X * _volDim->size_Y * _volDim->size_Z);
 
 	//
-	_volImage = MEM_ALLOC_1D(vol_char, _volSize_XYZ);
+	_volImage = MEM_ALLOC_1D_GENERIC(vol_char, _volSize_XYZ);
 
 	// Loading the volume image
 	_volImage = Volume::openVolumeFile(_volumeName, _volumeFileDir, _volDim);
 
-	_volReal_char = MEM_ALLOC_1D(volume_char, 1);
+	_volReal_char = MEM_ALLOC_1D_GENERIC(volume_char, 1);
 	_volReal_char->volImg = _volImage;
 	_volReal_char->volDim = _volDim;
 
 	// Create fftw_complex array and deleting the char one
-	_volComplex = MEM_ALLOC_1D(volume_complex_float, 1);
+	_volComplex = MEM_ALLOC_1D_GENERIC(volume_complex_float, 1);
 
 	// Creae complex volume
 	_volComplex = Volume::createComplexVolumeFromChar_float(_volReal_char);

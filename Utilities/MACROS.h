@@ -56,12 +56,10 @@
     exit( 0 );
 
 /* @ Memory Allocation */
-#define MEM_ALLOC_1D( TYPE, SIZE ) 												\
-		( ( TYPE* ) malloc ( SIZE * sizeof( TYPE ) ) )
-#define MEM_ALLOC_2D( TYPE, SIZE ) 												\
-		( ( TYPE** ) malloc ( SIZE * sizeof(TYPE* ) ) )
-#define MEM_ALLOC_3D( TYPE, SIZE ) 												\
-		( ( TYPE*** ) malloc ( SIZE * sizeof( TYPE** ) ) )
+
+#define MEM_ALLOC_1D_GENERIC(TYPE, SIZE) 										\
+		((TYPE*)  malloc (SIZE * sizeof(TYPE)))
+
 #define MEM_ALLOC_1D_CHAR( SIZE_X ) 											\
 		( Memory::alloc_1D_char( SIZE_X ) )
 #define MEM_ALLOC_2D_CHAR( SIZE_X, SIZE_Y ) 									\
@@ -96,6 +94,27 @@
 		( Memory::alloc_2D_cufftDoubleComplex( SIZE_X, SIZE_Y ) )
 #define MEM_ALLOC_3D_CUFFTDOUBLECOMPLEX( SIZE_X, SIZE_Y, SIZE_Z ) 				\
 		(Memory::alloc_3D_cufftDoubleComplex( SIZE_X, SIZE_Y , SIZE_Z ) )
+
+
+
+
+
+#define MEM_ALLOC_1D(TYPE, SIZE_X) 							\
+		(Memory::alloc_1D <TYPE> (SIZE_X))
+#define MEM_ALLOC_2D( TYPE, SIZE_X, SIZE_Y ) 				\
+		(Memory::alloc_2D <TYPE> (SIZE_X, SIZE_Y))
+#define MEM_ALLOC_3D( TYPE, SIZE_X, SIZE_Y, SIZE_Z) 		\
+		(Memory::alloc_3D <TYPE> (SIZE_X, SIZE_Y , SIZE_Z))
+
+
+
+
+
+
+
+
+
+
 
 /* @ Memory Dellocation */
 #define FREE_MEM_1D( PTR ) ( { free( PTR ); PTR = NULL; } )

@@ -16,7 +16,7 @@ profile* Utils::Bench::STL::stopTimer(stlTimer* sTimer)
 {
 
 
-	profile* sProfile = MEM_ALLOC_1D(profile, 1);
+	profile* sProfile = MEM_ALLOC_1D_GENERIC(profile, 1);
 
 	return sProfile;
 }

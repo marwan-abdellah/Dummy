@@ -44,7 +44,7 @@ void ex_BoostTimer::TestTimersReslution()
 	INFO("ex_BoostTimers - Single Timer");
 
 	// Allocating Timers
-	duration = MEM_ALLOC_1D(durationStruct, 1);
+	duration = MEM_ALLOC_1D_GENERIC(durationStruct, 1);
 
 	/**********************************************************
 	 * 5 micro seconds Case
@@ -159,8 +159,8 @@ void ex_BoostTimer::TestTimersReslutionWithAverage()
 	INFO("ex_BoostTimers - Timer Average");
 
 	// Allocating Timers
-	duration = MEM_ALLOC_1D(durationStruct, 1);
-	durationTotal = MEM_ALLOC_1D(durationStruct, 1);
+	duration = MEM_ALLOC_1D_GENERIC(durationStruct, 1);
+	durationTotal = MEM_ALLOC_1D_GENERIC(durationStruct, 1);
 
 	/**********************************************************
 	 * 5 micro seconds Case
