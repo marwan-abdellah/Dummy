@@ -18,12 +18,14 @@
 
 #include "Globals.h"
 #include "Utilities/MACROS.h"
+#include "Timers/BoostTimers.h"
+#include "Timers/TimerGlobals.h"
 
 namespace FFT
 {
 	float* FFT_Shift_1D_float(float* input, int nX);
 
-	float** FFT_Shift_2D_float(float** input, int nX, int nY);
+	float** FFT_Shift_2D_float(float** input, int nX, int nY, durationStruct* duration);
 	float*** FFT_Shift_3D_float(float*** input, int nX, int nY, int nZ);
 
 	float* repack_2D_float(float** input_2D, int nX, int nY);

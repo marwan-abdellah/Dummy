@@ -29,42 +29,43 @@
 extern 
 void cuCopyArray(dim3 cuBlock, dim3 cuGrid, float* devArrayOutput, float* devArrayInput, int nX)
 {
-    copyArray_2D_float_kernel <<< cuBlock, cuGrid>>> ( devArrayOutput, devArrayInput,  nX);   
+    copyArray_2D_float_kernel <<< cuGrid, cuBlock>>> ( devArrayOutput, devArrayInput,  nX);
+    printf("CUDA - Error %d \n", cudaPeekAtLastError());   
 } 
 
 extern 
-void cuFFTShift_2D(dim3 cuBlock, dim3 cuGrid, float* devArrayOutput, float* devArrayInput, int nX)
-{    
-    uint kernelTime;
-    cutCreateTimer(&kernelTime);
-    cutResetTimer(kernelTime);
-    cutStartTimer(kernelTime);
+void cuFFTShift_2D(dim3 cuBlock, dim3 cuGrid, 
+                    float* devArrayOutput, float* devArrayInput, int nX, cudaProfile* cuProfile)
+{   
+    cutCreateTimer(&(cuProfile->kernelTime));
+    cutResetTimer(cuProfile->kernelTime);
+    cutStartTimer(cuProfile->kernelTime);
      
-    fftShift_2D_Kernel <<< cuBlock, cuGrid>>> (devArrayOutput, devArrayInput, nX);
+    fftShift_2D_Kernel <<< cuGrid, cuBlock >>> (devArrayOutput, devArrayInput, nX);
     cudaThreadSynchronize(); 
-    cutStopTimer(kernelTime);
     
-    std::cout << "Timer: " << cutGetTimerValue(kernelTime) << " milli-sec" << std::endl;
+    cutStopTimer(cuProfile->kernelTime);
     
-    
+    cuProfile->kernelDuration = cutGetTimerValue(cuProfile->kernelTime);
+    cuProfile->kernelExecErr = cudaPeekAtLastError();
 }
 
 extern 
 void cuFFTShift_2D_Double(dim3 cuBlock, dim3 cuGrid, double* devArrayOutput, double* devArrayInput, int nX)
 {
-    fftShift_2D_Double_Kernel <<< cuBlock, cuGrid>>> (devArrayOutput, devArrayInput, nX); 
+    fftShift_2D_Double_Kernel <<< cuGrid, cuBlock>>> (devArrayOutput, devArrayInput, nX); 
 }
 
 extern 
 void cuFFTShift_2D_Complex(dim3 cuBlock, dim3 cuGrid, cufftComplex* devArrayOutput, cufftComplex* devArrayInput, int nX)
 {
-    fftShift_2D_Complex_Kernel <<< cuBlock, cuGrid>>> (devArrayOutput, devArrayInput, nX); 
+    fftShift_2D_Complex_Kernel <<< cuGrid, cuBlock>>> (devArrayOutput, devArrayInput, nX); 
 }
 
 extern 
 void cuFFTShift_2D_Double_Complex(dim3 cuBlock, dim3 cuGrid, cufftDoubleComplex* devArrayOutput, cufftDoubleComplex* devArrayInput, int nX)
 {
-    fftShift_2D_Double_Complex_Kernel <<< cuBlock, cuGrid>>> (devArrayOutput, devArrayInput, nX); 
+    fftShift_2D_Double_Complex_Kernel <<< cuGrid, cuBlock>>> (devArrayOutput, devArrayInput, nX); 
 }
 
 extern 

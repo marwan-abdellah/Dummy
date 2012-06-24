@@ -29,20 +29,30 @@ void fftShift_2D_Kernel(float* devArrayOutput, float* devArrayInput, int arrSize
     int sEq1 = (sSlice + sLine) / 2;
     int sEq2 = (sSlice - sLine) / 2; 
     
+    __syncthreads();
+    
     // Thread Index (1D)
     int xThreadIdx = threadIdx.x;
     int yThreadIdx = threadIdx.y;
+    
+    __syncthreads();
 
     // Block Width & Height
     int blockWidth = blockDim.x;
     int blockHeight = blockDim.y;
+    
+    __syncthreads();
 
     // Thread Index (2D)  
     int xIndex = blockIdx.x * blockWidth + xThreadIdx;
     int yIndex = blockIdx.y * blockHeight + yThreadIdx;
     
+    __syncthreads();
+    
     // Thread Index Converted into 1D Index
     int index = (yIndex * arrSize1D) + xIndex;
+    
+    __syncthreads();
     
     if (xIndex < arrSize1D / 2)
     {
@@ -50,11 +60,13 @@ void fftShift_2D_Kernel(float* devArrayOutput, float* devArrayInput, int arrSize
         {
             // First Quad 
             devArrayOutput[index] = devArrayInput[index + sEq1]; 
+            __syncthreads();
         }
         else 
         {
             // Third Quad 
-            devArrayOutput[index] = devArrayInput[index - sEq2]; 
+            devArrayOutput[index] = devArrayInput[index - sEq2];
+            __syncthreads(); 
         }
     }
     else 
@@ -63,11 +75,13 @@ void fftShift_2D_Kernel(float* devArrayOutput, float* devArrayInput, int arrSize
         {
             // Second Quad 
             devArrayOutput[index] = devArrayInput[index + sEq2];
+            __syncthreads();
         }
         else 
         {
             // Fourth Quad
             devArrayOutput[index] = devArrayInput[index - sEq1]; 
+            __syncthreads();
         }
     }
 }

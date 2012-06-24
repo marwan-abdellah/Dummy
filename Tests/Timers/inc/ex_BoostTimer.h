@@ -22,5 +22,5 @@ namespace ex_BoostTimer
 {
 	void TestTimersReslution();
 	void TestTimersReslutionWithAverage();
-	void ClearDurationCounters(durationStruct durationCounter);
+	void ClearDurationCounters(durationStruct* durationCounter);
 }

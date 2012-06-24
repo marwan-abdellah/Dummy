@@ -25,15 +25,16 @@ time_boost Timers::BoostTimers::getTime_MicroSecond()
 	return (time_boost) boost::posix_time::microsec_clock::local_time();
 }
 
-durationStruct Timers::BoostTimers::getDuration(time_boost startTime, time_boost endTime)
+durationStruct* Timers::BoostTimers::getDuration(time_boost startTime, time_boost endTime)
 {
 	duration_boost durationCalc = endTime - startTime;
 
-	durationStruct duration;
-	duration.unit_NanoSec = durationCalc.total_nanoseconds();
-	duration.unit_MicroSec = durationCalc.total_microseconds();
-	duration.unit_MilliSec = durationCalc.total_milliseconds();
-	duration.unit_Sec = durationCalc.total_seconds();
+	durationStruct* duration = MEM_ALLOC_1D(durationStruct, 1);
+
+	duration->unit_NanoSec = (double) durationCalc.total_nanoseconds();
+	duration->unit_MicroSec = (double) durationCalc.total_microseconds();
+	duration->unit_MilliSec = (double) durationCalc.total_microseconds() / 1000;
+	duration->unit_Sec = (double) durationCalc.total_microseconds()/ (1000 * 1000);
 
 	return duration;
 }

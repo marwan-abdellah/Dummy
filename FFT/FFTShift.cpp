@@ -14,6 +14,7 @@
  *********************************************************************/
 
 #include "FFTShift.h"
+#include "Timers/BoostTimers.h"
 
 float* FFT_Shift_1D_float(float* input, int nX)
 {
@@ -33,9 +34,13 @@ float* FFT_Shift_1D_float(float* input, int nX)
 	return output;
 }
 
-float** FFT::FFT_Shift_2D_float(float** input, int nX, int nY)
+float** FFT::FFT_Shift_2D_float(float** input, int nX, int nY, durationStruct* duration)
 {
 	LOG();
+
+	/* Timing parameters s*/
+	time_boost start, end;
+	durationStruct* resDuration;
 
 	// Only supporting a unified FFT shift for the time being
 	if (nX == nY)
@@ -44,6 +49,9 @@ float** FFT::FFT_Shift_2D_float(float** input, int nX, int nY)
 
 		float** output;
 		output = MEM_ALLOC_2D_FLOAT(N, N);
+
+		// Start timer
+		start = Timers::BoostTimers::getTime_MicroSecond();
 
 		for (int i = 0; i < N/2; i++)
 			for(int j = 0; j < N/2; j++)
@@ -54,6 +62,14 @@ float** FFT::FFT_Shift_2D_float(float** input, int nX, int nY)
 				output[i][(N/2) + j] = input[(N/2) + i][j];
 				output[(N/2) + i][j] = input[i][(N/2) + j];
 			}
+
+		// Start timer
+		end = Timers::BoostTimers::getTime_MicroSecond();
+
+		// Calculate the duration
+		resDuration = Timers::BoostTimers::getDuration(start, end);
+
+		*duration = *resDuration;
 
 		return output;
 	}

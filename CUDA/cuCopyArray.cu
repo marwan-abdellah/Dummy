@@ -37,7 +37,7 @@ void copyArray_2D_float_kernel(float* devArrayOutput, float* devArrayInput, int 
     int yIndex = blockIdx.y * blockHeight + yThreadIdx;
     
     int index = (yIndex * nX) + xIndex;
-    devArrayOutput[index] = 1.02145; 
+    devArrayOutput[index] =( nX * nX )- index; 
 }
     
 

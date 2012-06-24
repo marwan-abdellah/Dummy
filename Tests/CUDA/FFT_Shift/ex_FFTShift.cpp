@@ -34,6 +34,9 @@ namespace ex_FFTShift
 
 	float* dev_arr_3D_flat_float_input;
 	float* dev_arr_3D_flat_float_output;
+
+	/* Profilers */
+	durationStruct* duration;
 }
 
 void ex_FFTShift::FFTShift_2D_CPU(int size_X, int size_Y)
@@ -49,24 +52,40 @@ void ex_FFTShift::FFTShift_2D_CPU(int size_X, int size_Y)
 	Array::fillArray_2D_float(arr_2D_float, size_X, size_Y, 1);
 
 	// Printing input
+	int ctr = 0;
 	for (int i = 0; i < size_X; i++)
 		for (int j = 0; j < size_Y; j++)
-			printf("Input \t %f \n", arr_2D_float[i][j]);
+		{
+			if (ctr == 0 || ctr == size_X * size_Y - 1 )
+				printf("Input \t %f \n", arr_2D_float[i][j]);
+			ctr++;
+		}
+
+	duration = MEM_ALLOC_1D(durationStruct, 1);
 
 	// FFT shift operation
-	arr_2D_float = FFT::FFT_Shift_2D_float(arr_2D_float, size_X, size_Y);
+	arr_2D_float = FFT::FFT_Shift_2D_float(arr_2D_float, size_X, size_Y, duration);
 
 	// Printing output
+	ctr = 0;
 	for (int i = 0; i < size_X; i++)
 			for (int j = 0; j < size_Y; j++)
-				printf("Output \t %f \n", arr_2D_float[i][j]);
+			{
+				if (ctr == 0 || ctr == size_X * size_Y - 1 )
+					printf("Output \t %f \n", arr_2D_float[i][j]);
+
+				ctr++;
+			}
+	// Freeing memor
+	FREE_MEM_1D(duration);
 }
 
 void ex_FFTShift::FFTShift_2D_CUDA(int size_X, int size_Y)
 {
 	LOG();
 
-	INFO("2D FFT Shift - CUDA");
+
+	INFO("2D FFT Shift - CUDA" + ITS(size_X) + "x" + ITS(size_Y));
 
 	// Host allocation
 	arr_2D_flat_float = MEM_ALLOC_1D_FLOAT(size_X * size_Y);
@@ -78,7 +97,13 @@ void ex_FFTShift::FFTShift_2D_CUDA(int size_X, int size_Y)
 	int ctr = 0;
 	for (int i = 0; i < size_X; i++)
 		for (int j = 0; j < size_Y; j++)
-			printf("Input \t %f \n", arr_2D_flat_float[ctr++]);
+		{
+			if (ctr == 0 || ctr == size_X * size_Y - 1 )
+				printf("Input \t %f \n", arr_2D_flat_float[ctr]);
+
+			ctr++;
+		}
+
 
 	// Device allocation
 	int devMem = size_X * size_Y * sizeof(float);
@@ -88,11 +113,11 @@ void ex_FFTShift::FFTShift_2D_CUDA(int size_X, int size_Y)
 	cuUtils::upload_2D_float(arr_2D_flat_float, dev_arr_2D_flat_float, size_X, size_Y);
 
 	// CUDA Gridding
-	dim3 cuBlock(4, 4, 1);
-	dim3 cuGrid(size_X / cuBlock.x, size_Y/ cuBlock.y, 1);
+	dim3 cuBlock(8, 8, 1);
+	dim3 cuGrid(size_X / cuBlock.x, size_Y / cuBlock.y, 1);
 
 	// FFT shift
-	cuFFTShift_2D( cuBlock, cuGrid, dev_arr_2D_flat_float, dev_arr_2D_flat_float, size_X);
+	cuCopyArray( cuBlock, cuGrid, dev_arr_2D_flat_float, dev_arr_2D_flat_float, size_X);
 
 	// Downloading array
 	cuUtils::download_2D_float(arr_2D_flat_float, dev_arr_2D_flat_float, size_X, size_Y);
@@ -101,7 +126,12 @@ void ex_FFTShift::FFTShift_2D_CUDA(int size_X, int size_Y)
 	ctr = 0;
 	for (int i = 0; i < size_X; i++)
 		for (int j = 0; j < size_Y; j++)
-			printf("output \t %f \n", arr_2D_flat_float[ctr++]);
+		{
+			if (ctr == 0 || ctr == size_X * size_Y - 1 )
+				printf("output \t %f \n", arr_2D_flat_float[ctr]);
+
+			ctr++;
+		}
 }
 
 

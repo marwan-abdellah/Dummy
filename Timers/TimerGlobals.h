@@ -24,10 +24,10 @@ typedef uint timer_cuda;
 
 struct durationStruct
 {
-	long unit_NanoSec;
-	long unit_MicroSec;
-	long unit_MilliSec;
-	long unit_Sec;
+	double unit_NanoSec;
+	double unit_MicroSec;
+	double unit_MilliSec;
+	double unit_Sec;
 };
 
 

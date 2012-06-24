@@ -24,7 +24,7 @@ namespace Timers
 	{
 		time_boost getTime_MicroSecond();
 		time_boost getTime_Second();
-		durationStruct getDuration(time_boost startTime, time_boost endTime);
+		durationStruct* getDuration(time_boost startTime, time_boost endTime);
 	}
 
 }

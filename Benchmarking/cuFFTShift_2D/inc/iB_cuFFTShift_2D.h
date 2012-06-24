@@ -27,5 +27,4 @@ namespace iB_cuFFTShift_2D
 {
 	void FFTShift_2D_Float(int size_X, int size_Y, Sheet* xlSheet, int nLoop, dim3 cuGrid, dim3 cuBlock);
 	void FFTShift_2D_Float_CUDA(int size_X, int size_Y, Sheet* xlSheet, int nLoop, dim3 cuGrid, dim3 cuBlock);
-	void FFTShift_2D_Float_CUDA_(int size_X, int size_Y, Sheet* xlSheet, int nLoop, dim3 cuGrid, dim3 cuBlock);
 }

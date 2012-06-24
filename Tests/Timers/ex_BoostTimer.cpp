@@ -27,21 +27,24 @@ namespace ex_BoostTimer
 
 	time_boost start;
 	time_boost end;
-	durationStruct duration;
-	durationStruct durationTotal;
+	durationStruct* duration;
+	durationStruct* durationTotal;
 }
 
-void ex_BoostTimer::ClearDurationCounters(durationStruct durationCounter)
+void ex_BoostTimer::ClearDurationCounters(durationStruct* durationCounter)
 {
-	durationCounter.unit_NanoSec = 0;
-	durationCounter.unit_MicroSec = 0;
-	durationCounter.unit_MilliSec = 0;
-	durationCounter.unit_Sec = 0;
+	durationCounter->unit_NanoSec = 0;
+	durationCounter->unit_MicroSec = 0;
+	durationCounter->unit_MilliSec = 0;
+	durationCounter->unit_Sec = 0;
 }
 
 void ex_BoostTimer::TestTimersReslution()
 {
 	INFO("ex_BoostTimers - Single Timer");
+
+	// Allocating Timers
+	duration = MEM_ALLOC_1D(durationStruct, 1);
 
 	/**********************************************************
 	 * 5 micro seconds Case
@@ -52,10 +55,10 @@ void ex_BoostTimer::TestTimersReslution()
 	end = Timers::BoostTimers::getTime_MicroSecond();
 	duration = Timers::BoostTimers::getDuration(start, end);
 
-	INFO("NANO Seconds: " + ITS(duration.unit_NanoSec));
-	INFO("MICRO Seconds: " + ITS(duration.unit_MicroSec));
-	INFO("MILLI Seconds: " + ITS(duration.unit_MilliSec));
-	INFO("Seconds: " + ITS(duration.unit_Sec));
+	INFO("NANO Seconds: " + ITS(duration->unit_NanoSec));
+	INFO("MICRO Seconds: " + ITS(duration->unit_MicroSec));
+	INFO("MILLI Seconds: " + ITS(duration->unit_MilliSec));
+	INFO("Seconds: " + ITS(duration->unit_Sec));
 	SEP();
 
 	/**********************************************************
@@ -67,10 +70,10 @@ void ex_BoostTimer::TestTimersReslution()
 	end = Timers::BoostTimers::getTime_MicroSecond();
 	duration = Timers::BoostTimers::getDuration(start, end);
 
-	INFO("NANO Seconds: " + ITS(duration.unit_NanoSec));
-	INFO("MICRO Seconds: " + ITS(duration.unit_MicroSec));
-	INFO("MILLI Seconds: " + ITS(duration.unit_MilliSec));
-	INFO("Seconds: " + ITS(duration.unit_Sec));
+	INFO("NANO Seconds: " + ITS(duration->unit_NanoSec));
+	INFO("MICRO Seconds: " + ITS(duration->unit_MicroSec));
+	INFO("MILLI Seconds: " + ITS(duration->unit_MilliSec));
+	INFO("Seconds: " + ITS(duration->unit_Sec));
 	SEP();
 
 	/**********************************************************
@@ -82,10 +85,10 @@ void ex_BoostTimer::TestTimersReslution()
 	end = Timers::BoostTimers::getTime_MicroSecond();
 	duration = Timers::BoostTimers::getDuration(start, end);
 
-	INFO("NANO Seconds: " + ITS(duration.unit_NanoSec));
-	INFO("MICRO Seconds: " + ITS(duration.unit_MicroSec));
-	INFO("MILLI Seconds: " + ITS(duration.unit_MilliSec));
-	INFO("Seconds: " + ITS(duration.unit_Sec));
+	INFO("NANO Seconds: " + ITS(duration->unit_NanoSec));
+	INFO("MICRO Seconds: " + ITS(duration->unit_MicroSec));
+	INFO("MILLI Seconds: " + ITS(duration->unit_MilliSec));
+	INFO("Seconds: " + ITS(duration->unit_Sec));
 	SEP();
 
 	/**********************************************************
@@ -97,10 +100,10 @@ void ex_BoostTimer::TestTimersReslution()
 	end = Timers::BoostTimers::getTime_MicroSecond();
 	duration = Timers::BoostTimers::getDuration(start, end);
 
-	INFO("NANO Seconds: " + ITS(duration.unit_NanoSec));
-	INFO("MICRO Seconds: " + ITS(duration.unit_MicroSec));
-	INFO("MILLI Seconds: " + ITS(duration.unit_MilliSec));
-	INFO("Seconds: " + ITS(duration.unit_Sec));
+	INFO("NANO Seconds: " + ITS(duration->unit_NanoSec));
+	INFO("MICRO Seconds: " + ITS(duration->unit_MicroSec));
+	INFO("MILLI Seconds: " + ITS(duration->unit_MilliSec));
+	INFO("Seconds: " + ITS(duration->unit_Sec));
 	SEP();
 
 	/**********************************************************
@@ -112,10 +115,10 @@ void ex_BoostTimer::TestTimersReslution()
 	end = Timers::BoostTimers::getTime_MicroSecond();
 	duration = Timers::BoostTimers::getDuration(start, end);
 
-	INFO("NANO Seconds: " + ITS(duration.unit_NanoSec));
-	INFO("MICRO Seconds: " + ITS(duration.unit_MicroSec));
-	INFO("MILLI Seconds: " + ITS(duration.unit_MilliSec));
-	INFO("Seconds: " + ITS(duration.unit_Sec));
+	INFO("NANO Seconds: " + ITS(duration->unit_NanoSec));
+	INFO("MICRO Seconds: " + ITS(duration->unit_MicroSec));
+	INFO("MILLI Seconds: " + ITS(duration->unit_MilliSec));
+	INFO("Seconds: " + ITS(duration->unit_Sec));
 	SEP();
 
 	/**********************************************************
@@ -127,10 +130,10 @@ void ex_BoostTimer::TestTimersReslution()
 	end = Timers::BoostTimers::getTime_MicroSecond();
 	duration = Timers::BoostTimers::getDuration(start, end);
 
-	INFO("NANO Seconds: " + ITS(duration.unit_NanoSec));
-	INFO("MICRO Seconds: " + ITS(duration.unit_MicroSec));
-	INFO("MILLI Seconds: " + ITS(duration.unit_MilliSec));
-	INFO("Seconds: " + ITS(duration.unit_Sec));
+	INFO("NANO Seconds: " + ITS(duration->unit_NanoSec));
+	INFO("MICRO Seconds: " + ITS(duration->unit_MicroSec));
+	INFO("MILLI Seconds: " + ITS(duration->unit_MilliSec));
+	INFO("Seconds: " + ITS(duration->unit_Sec));
 	SEP();
 
 	/**********************************************************
@@ -142,16 +145,22 @@ void ex_BoostTimer::TestTimersReslution()
 	end = Timers::BoostTimers::getTime_MicroSecond();
 	duration = Timers::BoostTimers::getDuration(start, end);
 
-	INFO("NANO Seconds: " + ITS(duration.unit_NanoSec));
-	INFO("MICRO Seconds: " + ITS(duration.unit_MicroSec));
-	INFO("MILLI Seconds: " + ITS(duration.unit_MilliSec));
-	INFO("Seconds: " + ITS(duration.unit_Sec));
+	INFO("NANO Seconds: " + ITS(duration->unit_NanoSec));
+	INFO("MICRO Seconds: " + ITS(duration->unit_MicroSec));
+	INFO("MILLI Seconds: " + ITS(duration->unit_MilliSec));
+	INFO("Seconds: " + ITS(duration->unit_Sec));
 
+	// Freeing memory
+	FREE_MEM_1D(duration);
 }
 
 void ex_BoostTimer::TestTimersReslutionWithAverage()
 {
 	INFO("ex_BoostTimers - Timer Average");
+
+	// Allocating Timers
+	duration = MEM_ALLOC_1D(durationStruct, 1);
+	durationTotal = MEM_ALLOC_1D(durationStruct, 1);
 
 	/**********************************************************
 	 * 5 micro seconds Case
@@ -167,16 +176,16 @@ void ex_BoostTimer::TestTimersReslutionWithAverage()
 		end = Timers::BoostTimers::getTime_MicroSecond();
 		duration = Timers::BoostTimers::getDuration(start, end);
 
-		durationTotal.unit_NanoSec += duration.unit_NanoSec;
-		durationTotal.unit_MicroSec += duration.unit_MicroSec;
-		durationTotal.unit_MilliSec += duration.unit_MilliSec;
-		durationTotal.unit_Sec += duration.unit_Sec;
+		durationTotal->unit_NanoSec += duration->unit_NanoSec;
+		durationTotal->unit_MicroSec += duration->unit_MicroSec;
+		durationTotal->unit_MilliSec += duration->unit_MilliSec;
+		durationTotal->unit_Sec += duration->unit_Sec;
 	}
 
-	INFO("NANO Seconds: " + ITS(durationTotal.unit_NanoSec / iterationTimer));
-	INFO("MICRO Seconds: " + ITS(durationTotal.unit_MicroSec / iterationTimer));
-	INFO("MILLI Seconds: " + ITS(durationTotal.unit_MilliSec / iterationTimer));
-	INFO("Seconds: " + ITS(durationTotal.unit_Sec / iterationTimer));
+	INFO("NANO Seconds: " + ITS(durationTotal->unit_NanoSec / iterationTimer));
+	INFO("MICRO Seconds: " + ITS(durationTotal->unit_MicroSec / iterationTimer));
+	INFO("MILLI Seconds: " + ITS(durationTotal->unit_MilliSec / iterationTimer));
+	INFO("Seconds: " + ITS(durationTotal->unit_Sec / iterationTimer));
 	SEP();
 
 	/**********************************************************
@@ -193,16 +202,16 @@ void ex_BoostTimer::TestTimersReslutionWithAverage()
 		end = Timers::BoostTimers::getTime_MicroSecond();
 		duration = Timers::BoostTimers::getDuration(start, end);
 
-		durationTotal.unit_NanoSec += duration.unit_NanoSec;
-		durationTotal.unit_MicroSec += duration.unit_MicroSec;
-		durationTotal.unit_MilliSec += duration.unit_MilliSec;
-		durationTotal.unit_Sec += duration.unit_Sec;
+		durationTotal->unit_NanoSec += duration->unit_NanoSec;
+		durationTotal->unit_MicroSec += duration->unit_MicroSec;
+		durationTotal->unit_MilliSec += duration->unit_MilliSec;
+		durationTotal->unit_Sec += duration->unit_Sec;
 	}
 
-	INFO("NANO Seconds: " + ITS(durationTotal.unit_NanoSec / iterationTimer));
-	INFO("MICRO Seconds: " + ITS(durationTotal.unit_MicroSec / iterationTimer));
-	INFO("MILLI Seconds: " + ITS(durationTotal.unit_MilliSec / iterationTimer));
-	INFO("Seconds: " + ITS(durationTotal.unit_Sec / iterationTimer));
+	INFO("NANO Seconds: " + ITS(durationTotal->unit_NanoSec / iterationTimer));
+	INFO("MICRO Seconds: " + ITS(durationTotal->unit_MicroSec / iterationTimer));
+	INFO("MILLI Seconds: " + ITS(durationTotal->unit_MilliSec / iterationTimer));
+	INFO("Seconds: " + ITS(durationTotal->unit_Sec / iterationTimer));
 	SEP();
 
 
@@ -220,16 +229,16 @@ void ex_BoostTimer::TestTimersReslutionWithAverage()
 		end = Timers::BoostTimers::getTime_MicroSecond();
 		duration = Timers::BoostTimers::getDuration(start, end);
 
-		durationTotal.unit_NanoSec += duration.unit_NanoSec;
-		durationTotal.unit_MicroSec += duration.unit_MicroSec;
-		durationTotal.unit_MilliSec += duration.unit_MilliSec;
-		durationTotal.unit_Sec += duration.unit_Sec;
+		durationTotal->unit_NanoSec += duration->unit_NanoSec;
+		durationTotal->unit_MicroSec += duration->unit_MicroSec;
+		durationTotal->unit_MilliSec += duration->unit_MilliSec;
+		durationTotal->unit_Sec += duration->unit_Sec;
 	}
 
-	INFO("NANO Seconds: " + ITS(durationTotal.unit_NanoSec / iterationTimer));
-	INFO("MICRO Seconds: " + ITS(durationTotal.unit_MicroSec / iterationTimer));
-	INFO("MILLI Seconds: " + ITS(durationTotal.unit_MilliSec / iterationTimer));
-	INFO("Seconds: " + ITS(durationTotal.unit_Sec / iterationTimer));
+	INFO("NANO Seconds: " + ITS(durationTotal->unit_NanoSec / iterationTimer));
+	INFO("MICRO Seconds: " + ITS(durationTotal->unit_MicroSec / iterationTimer));
+	INFO("MILLI Seconds: " + ITS(durationTotal->unit_MilliSec / iterationTimer));
+	INFO("Seconds: " + ITS(durationTotal->unit_Sec / iterationTimer));
 	SEP();
 
 	/**********************************************************
@@ -246,16 +255,16 @@ void ex_BoostTimer::TestTimersReslutionWithAverage()
 		end = Timers::BoostTimers::getTime_MicroSecond();
 		duration = Timers::BoostTimers::getDuration(start, end);
 
-		durationTotal.unit_NanoSec += duration.unit_NanoSec;
-		durationTotal.unit_MicroSec += duration.unit_MicroSec;
-		durationTotal.unit_MilliSec += duration.unit_MilliSec;
-		durationTotal.unit_Sec += duration.unit_Sec;
+		durationTotal->unit_NanoSec += duration->unit_NanoSec;
+		durationTotal->unit_MicroSec += duration->unit_MicroSec;
+		durationTotal->unit_MilliSec += duration->unit_MilliSec;
+		durationTotal->unit_Sec += duration->unit_Sec;
 	}
 
-	INFO("NANO Seconds: " + ITS(durationTotal.unit_NanoSec / iterationTimer));
-	INFO("MICRO Seconds: " + ITS(durationTotal.unit_MicroSec / iterationTimer));
-	INFO("MILLI Seconds: " + ITS(durationTotal.unit_MilliSec / iterationTimer));
-	INFO("Seconds: " + ITS(durationTotal.unit_Sec / iterationTimer));
+	INFO("NANO Seconds: " + ITS(durationTotal->unit_NanoSec / iterationTimer));
+	INFO("MICRO Seconds: " + ITS(durationTotal->unit_MicroSec / iterationTimer));
+	INFO("MILLI Seconds: " + ITS(durationTotal->unit_MilliSec / iterationTimer));
+	INFO("Seconds: " + ITS(durationTotal->unit_Sec / iterationTimer));
 	SEP();
 
 	/**********************************************************
@@ -272,16 +281,16 @@ void ex_BoostTimer::TestTimersReslutionWithAverage()
 		end = Timers::BoostTimers::getTime_MicroSecond();
 		duration = Timers::BoostTimers::getDuration(start, end);
 
-		durationTotal.unit_NanoSec += duration.unit_NanoSec;
-		durationTotal.unit_MicroSec += duration.unit_MicroSec;
-		durationTotal.unit_MilliSec += duration.unit_MilliSec;
-		durationTotal.unit_Sec += duration.unit_Sec;
+		durationTotal->unit_NanoSec += duration->unit_NanoSec;
+		durationTotal->unit_MicroSec += duration->unit_MicroSec;
+		durationTotal->unit_MilliSec += duration->unit_MilliSec;
+		durationTotal->unit_Sec += duration->unit_Sec;
 	}
 
-	INFO("NANO Seconds: " + ITS(durationTotal.unit_NanoSec / iterationTimer));
-	INFO("MICRO Seconds: " + ITS(durationTotal.unit_MicroSec / iterationTimer));
-	INFO("MILLI Seconds: " + ITS(durationTotal.unit_MilliSec / iterationTimer));
-	INFO("Seconds: " + ITS(durationTotal.unit_Sec / iterationTimer));
+	INFO("NANO Seconds: " + ITS(durationTotal->unit_NanoSec / iterationTimer));
+	INFO("MICRO Seconds: " + ITS(durationTotal->unit_MicroSec / iterationTimer));
+	INFO("MILLI Seconds: " + ITS(durationTotal->unit_MilliSec / iterationTimer));
+	INFO("Seconds: " + ITS(durationTotal->unit_Sec / iterationTimer));
 	SEP();
 
 	/**********************************************************
@@ -298,14 +307,19 @@ void ex_BoostTimer::TestTimersReslutionWithAverage()
 		end = Timers::BoostTimers::getTime_MicroSecond();
 		duration = Timers::BoostTimers::getDuration(start, end);
 
-		durationTotal.unit_NanoSec += duration.unit_NanoSec;
-		durationTotal.unit_MicroSec += duration.unit_MicroSec;
-		durationTotal.unit_MilliSec += duration.unit_MilliSec;
-		durationTotal.unit_Sec += duration.unit_Sec;
+		durationTotal->unit_NanoSec += duration->unit_NanoSec;
+		durationTotal->unit_MicroSec += duration->unit_MicroSec;
+		durationTotal->unit_MilliSec += duration->unit_MilliSec;
+		durationTotal->unit_Sec += duration->unit_Sec;
 	}
 
-	INFO("NANO Seconds: " + ITS(durationTotal.unit_NanoSec / iterationTimer));
-	INFO("MICRO Seconds: " + ITS(durationTotal.unit_MicroSec / iterationTimer));
-	INFO("MILLI Seconds: " + ITS(durationTotal.unit_MilliSec / iterationTimer));
-	INFO("Seconds: " + ITS(durationTotal.unit_Sec / iterationTimer));
+	INFO("NANO Seconds: " + ITS(durationTotal->unit_NanoSec / iterationTimer));
+	INFO("MICRO Seconds: " + ITS(durationTotal->unit_MicroSec / iterationTimer));
+	INFO("MILLI Seconds: " + ITS(durationTotal->unit_MilliSec / iterationTimer));
+	INFO("Seconds: " + ITS(durationTotal->unit_Sec / iterationTimer));
+	SEP();
+
+	// Freeing memory
+	FREE_MEM_1D(duration);
+	FREE_MEM_1D(durationTotal);
 }

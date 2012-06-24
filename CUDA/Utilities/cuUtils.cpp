@@ -29,7 +29,9 @@ int cuUtils::upload_2D_float(float* hostArr, float* devArr, int size_X, int size
 {
 	LOG();
 
-	const int devMem = size_X * size_Y * sizeof(float);
+	const long devMem = size_X * size_Y * sizeof(float);
+
+	COUT << "Memory: " << ((devMem) / (1024 * 1024)) << " MBytes" << ENDL;
 
 	cutilSafeCall(cudaMemcpy(devArr, hostArr, devMem, cudaMemcpyHostToDevice));
 

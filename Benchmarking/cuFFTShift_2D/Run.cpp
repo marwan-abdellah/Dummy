@@ -10,19 +10,23 @@
  * Author(s)    : Marwan Abdellah <abdellah.marwan@gmail.com>
  * Created      : April 2011
  * Description  :
- * Note(s)      : Maximum Block Size = [512][512][64]
+ * Note(s)      : Maximum Block Size = [512][512][64] in 1D
  *********************************************************************/
 
 /* @ Maximum dimensions in 2D */
-#define N_2D_MAX 256
+#define N_2D_MAX 4 * 1024
 
-/* @ Maximum CUDA block dimensions */
-#define MAX_BLOCK_SIZE_X 512
-#define MAX_BLOCK_SIZE_Y 512
-#define MAX_BLOCK_SIZE_Z 64
+/* @ Maximum CUDA block dimensions in 3D */
+#define MAX_BLOCK_SIZE_X 16
+#define MAX_BLOCK_SIZE_Y 16
+#define MAX_BLOCK_SIZE_Z 1
+
+#define MAX_GRID_SIZE_X 65535
+#define MAX_GRID_SIZE_Y 65535
+#define MAX_GRID_SIZE_Z 1
 
 /* @ Considering the UNIFIED 2D case*/
-#define MAX_BLOXK_SIZE_N 512
+#define MAX_BLOXK_SIZE_N 16
 
 #include "iB_cuFFTShift_2D.h"
 
@@ -66,10 +70,21 @@ int main()
 			/* @ Initial cuBlock with minimum configuration */
 			cuBlock.x = 2;
 			cuBlock.y = 2;
-			cuBlock.z = 1;
+
 
 			// Reset cuFlag
 			cuFlag = 1;
+
+			/****
+			 * cudaErrorInvalidConfiguration
+			 * This indicates that a kernel launch is requesting resources
+			 * that can never be satisfied by the current device.
+			 * Requesting more shared memory per block than the
+			 * device supports will trigger this error, as will
+			 * requesting too many threads or blocks. See cudaDeviceProp
+			 * for more device limitations.
+			 *
+			 */
 
 			// Clearing the sizeString
 			snprintf(sizeString, sizeof(sizeString), "%s", "");
@@ -81,14 +96,17 @@ int main()
 
 				cuGrid.x = i / cuBlock.x;
 				cuGrid.y = i / cuBlock.y;
-				cuGrid.z = 1;
 
-				if (!(cuBlock.x <= MAX_BLOCK_SIZE_X 	&&
+
+				if (!(cuBlock.x <= MAX_BLOCK_SIZE_X &&
 					cuBlock.y <= MAX_BLOCK_SIZE_Y 	&&
 					cuBlock.z <= MAX_BLOCK_SIZE_Z	&&
 					cuGrid.x > 0 					&&
-					cuGrid.y > 0 					&&
-					cuGrid.z > 0))
+					cuGrid.y > 0					&&
+					cuGrid.x <= MAX_GRID_SIZE_X	&&
+					cuGrid.y <= MAX_GRID_SIZE_Y	&&
+					cuGrid.z <= MAX_GRID_SIZE_Z
+					))
 					cuFlag = 0;
 
 				// Copy the size string with < Arr[]_Grid[] >
@@ -99,27 +117,18 @@ int main()
 				snprintf(auxString, sizeof(auxString), "%d", cuBlock.x);
 				strcat(sizeString, auxString);
 
-				// Reset the blkFlag
-				blkFLag = 1;
-				if (i >= 64)
-					if (cuGrid.x >= 32)
-						{}//blkFLag = 0;
-
-				if (blkFLag && cuFlag)
+				if (cuFlag)
 				{
 					// Create the corresponding XL sheet
 					xlSheet = Utils::xl::addSheetToBook(sizeString, xlBook);
 
 					if (xlSheet)
-					{
-						// iB_cuFFTShift_2D::FFTShift_2D_Float(i, i, xlSheet, nLoop, cuGrid, cuBlock);
 						iB_cuFFTShift_2D::FFTShift_2D_Float(i, i, xlSheet, nLoop, cuGrid, cuBlock);
-					}
 				}
+
 				/* Next block dimensions */
 				cuBlock.x *= 2;
 				cuBlock.y *= 2;
-
 			}
 		}
 	}

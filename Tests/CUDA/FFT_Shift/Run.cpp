@@ -17,11 +17,27 @@
 
 int main()
 {
-	ex_FFTShift::FFTShift_2D_CPU(8, 8);
-	ex_FFTShift::FFTShift_2D_CUDA(8, 8);
+	//ex_FFTShift::FFTShift_2D_CPU(256, 256);
 
-	ex_FFTShift::FFTShift_3D_CPU(4, 4, 4);
-	ex_FFTShift::FFTShift_3D_CUDA(4,4, 4);
+
+	ex_FFTShift::FFTShift_2D_CUDA(32, 32);
+	SEP();
+	ex_FFTShift::FFTShift_2D_CUDA(64, 64);
+	SEP();
+	ex_FFTShift::FFTShift_2D_CUDA(128, 128);
+	SEP();
+	ex_FFTShift::FFTShift_2D_CUDA(256, 256);
+	SEP();
+	ex_FFTShift::FFTShift_2D_CUDA(512, 512);
+	SEP();
+	ex_FFTShift::FFTShift_2D_CUDA(1024, 1024);
+	SEP();
+	ex_FFTShift::FFTShift_2D_CUDA(1024 * 2, 1024 * 2);
+	SEP();
+	ex_FFTShift::FFTShift_2D_CUDA(1024 * 4, 1024 * 4);
+
+	//ex_FFTShift::FFTShift_3D_CPU(4, 4, 4);
+	//ex_FFTShift::FFTShift_3D_CUDA(4,4, 4);
 
 	return 0;
 }

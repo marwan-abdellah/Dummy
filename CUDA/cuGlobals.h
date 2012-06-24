@@ -21,4 +21,13 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 
+struct profileStruct
+{
+	uint kernelTime;
+	float kernelDuration;
+	int kernelExecErr;
+};
+
+typedef profileStruct cudaProfile;
+
 #endif /* CUGLOBALS_H_ */
