@@ -14,6 +14,102 @@
  *********************************************************************/
 #include "cuComplex.h"
 
+void Array::cuComplex::zeroArray_2D_flat(cufftComplex* arr, int size_X, int size_Y)
+{
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+		{
+			int index = (i + (size_X * j));
+			arr[index].x = (cufftReal) 0;
+			arr[index].y = (cufftReal) 0;
+		}
+}
+
+void Array::cuComplex::zeroArray_3D_flat(cufftComplex* arr, int size_X, int size_Y, int size_Z)
+{
+	int ctr = 0;
+
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+			for (int k = 0; k < size_Z; k++)
+			{
+				arr[ctr++].x = (cufftReal) 0;
+				arr[ctr++].y = (cufftReal) 0;
+			}
+}
+
+void Array::cuComplex::zeroArray_2D(cufftComplex** arr, int size_X, int size_Y)
+{
+	int ctr = 0;
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+		{
+			arr[i][j].x = (cufftReal) 0;
+			arr[i][j].y = (cufftReal) 0;
+		}
+
+}
+
+void Array::cuComplex::zeroArray_3D(cufftComplex*** arr, int size_X, int size_Y, int size_Z)
+{
+	int ctr = 0;
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+			for (int k = 0; k < size_Z; k++)
+			{
+				arr[i][j][k].x = (cufftReal) 0;
+				arr[i][j][k].y = (cufftReal) 0;
+			}
+}
+
+void Array::cuDoubleComplex::zeroArray_2D_flat(cufftDoubleComplex* arr, int size_X, int size_Y)
+{
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+		{
+			int index = (i + (size_X * j));
+			arr[index].x = (cufftDoubleReal) 0;
+			arr[index].y = (cufftDoubleReal) 0;
+		}
+}
+
+void Array::cuDoubleComplex::zeroArray_3D_flat(cufftDoubleComplex* arr, int size_X, int size_Y, int size_Z)
+{
+	int ctr = 0;
+
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+			for (int k = 0; k < size_Z; k++)
+			{
+				arr[ctr++].x = (cufftDoubleReal) 0;
+				arr[ctr++].y = (cufftDoubleReal) 0;
+			}
+}
+
+void Array::cuDoubleComplex::zeroArray_2D(cufftDoubleComplex** arr, int size_X, int size_Y)
+{
+	int ctr = 0;
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+		{
+			arr[i][j].x = (cufftDoubleReal) 0;
+			arr[i][j].y = (cufftDoubleReal) 0;
+		}
+
+}
+
+void Array::cuDoubleComplex::zeroArray_3D(cufftDoubleComplex*** arr, int size_X, int size_Y, int size_Z)
+{
+	int ctr = 0;
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+			for (int k = 0; k < size_Z; k++)
+			{
+				arr[i][j][k].x = (cufftDoubleReal) 0;
+				arr[i][j][k].y = (cufftDoubleReal) 0;
+			}
+}
+
 void Array::cuComplex::fillArray_1D(cufftComplex* arr, int size_X, bool Seq_Rnd)
 {
 	for (int i = 0; i < size_X; i++)
@@ -80,14 +176,16 @@ void Array::cuComplex::fillArray_2D(cufftComplex** arr, int size_X, int size_Y, 
 		{
 			if (Seq_Rnd)
 			{
-				arr[i][j].x = (cufftReal) ctr++;
-				arr[i][j].y = (cufftReal) ctr++;
+				arr[i][j].x = (cufftReal) ctr;
+				arr[i][j].y = (cufftReal) ctr;
 			}
 			else
 			{
 				arr[i][j].x = (cufftReal) Utils::rand_float();
 				arr[i][j].y = (cufftReal) Utils::rand_float();
 			}
+
+			ctr++;
 		}
 }
 
@@ -101,14 +199,16 @@ void Array::cuComplex::fillArray_3D(cufftComplex*** arr, int size_X, int size_Y,
 			{
 				if (Seq_Rnd)
 				{
-					arr[i][j][k].x = (cufftReal) ctr++;
-					arr[i][j][k].y = (cufftReal) ctr++;
+					arr[i][j][k].x = (cufftReal) ctr;
+					arr[i][j][k].y = (cufftReal) ctr;
 				}
 				else
 				{
 					arr[i][j][k].x = (cufftReal) Utils::rand_float();
 					arr[i][j][k].y = (cufftReal) Utils::rand_float();
 				}
+
+				ctr++;
 			}
 }
 

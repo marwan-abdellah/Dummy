@@ -26,6 +26,12 @@ namespace Array
 {
 	namespace cuComplex
 	{
+		void zeroArray_1D(cufftComplex* arr, int size_X);
+		void zeroArray_2D_flat(cufftComplex* arr, int size_X, int size_Y);
+		void zeroArray_3D_flat(cufftComplex* arr, int size_X, int size_Y, int size_Z);
+		void zeroArray_2D(cufftComplex** arr, int size_X, int size_Y);
+		void zeroArray_3D(cufftComplex*** arr, int size_X, int size_Y, int size_Z);
+
 		void fillArray_1D(cufftComplex* arr, int size_X, bool Seq_Rnd);
 		void fillArray_2D_flat(cufftComplex* arr, int size_X, int size_Y, bool Seq_Rnd);
 		void fillArray_3D_flat(cufftComplex* arr, int size_X, int size_Y, int size_Z, bool Seq_Rnd);
@@ -35,6 +41,12 @@ namespace Array
 
 	namespace cuDoubleComplex
 	{
+		void zeroArray_1D(cufftDoubleComplex* arr, int size_X);
+		void zeroArray_2D_flat(cufftDoubleComplex* arr, int size_X, int size_Y);
+		void zeroArray_3D_flat(cufftDoubleComplex* arr, int size_X, int size_Y, int size_Z);
+		void zeroArray_2D(cufftDoubleComplex** arr, int size_X, int size_Y);
+		void zeroArray_3D(cufftDoubleComplex*** arr, int size_X, int size_Y, int size_Z);
+
 		void fillArray_1D(cufftDoubleComplex* arr, int size_X, bool Seq_Rnd);
 		void fillArray_2D_flat(cufftDoubleComplex* arr, int size_X, int size_Y, bool Seq_Rnd);
 		void fillArray_3D_flat(cufftDoubleComplex* arr, int size_X, int size_Y, int size_Z, bool Seq_Rnd);

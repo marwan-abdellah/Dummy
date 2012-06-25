@@ -15,11 +15,23 @@
 
 #include "ex_Templates.h"
 #include <iostream>
+#include <typeinfo>
+#include <iostream>
 
 template <typename T>
 void ex_Templates::streamOut(const T val)
 {
 	std::cout << val << std::endl;
+
+	// Static type checking
+	if (typeid(val) == typeid(int))
+		std::cout << "int" << std::endl;
+	if (typeid(val) == typeid(float))
+		std::cout << "float" << std::endl;
+	if (typeid(val) == typeid(long))
+		std::cout << "long" << std::endl;
+	if (typeid(val) == typeid(double))
+		std::cout << "double" << std::endl;
 }
 
 template void ex_Templates::streamOut <int> (const int val);

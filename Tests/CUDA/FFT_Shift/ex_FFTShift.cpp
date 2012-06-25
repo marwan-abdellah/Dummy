@@ -64,7 +64,7 @@ void ex_FFTShift::FFTShift_2D_CPU(int size_X, int size_Y)
 	duration = MEM_ALLOC_1D_GENERIC(durationStruct, 1);
 
 	// FFT shift operation
-	arr_2D_float = FFT::FFT_Shift_2D_float(arr_2D_float, size_X, size_Y, duration);
+	//arr_2D_float = FFT::FFT_Shift_2D_float(arr_2D_float, size_X, size_Y, duration);
 
 	// Printing output
 	ctr = 0;
@@ -134,7 +134,6 @@ void ex_FFTShift::FFTShift_2D_CUDA(int size_X, int size_Y)
 		}
 }
 
-
 void ex_FFTShift::FFTShift_3D_CPU(int size_X, int size_Y, int size_Z)
 {
 	LOG();
@@ -153,7 +152,7 @@ void ex_FFTShift::FFTShift_3D_CPU(int size_X, int size_Y, int size_Z)
 			for (int k = 0; k < size_Z; k++)
 				printf("Input \t %f \n", arr_3D_float[i][j][k]);
 	// 3D FFT shift
-	arr_3D_float = FFT::FFT_Shift_3D_float(arr_3D_float, size_X, size_Y, size_Z);
+	//arr_3D_float = FFT::FFT_Shift_3D_float(arr_3D_float, size_X, size_Y, size_Z);
 
 	// Printing output
 	for (int i = 0; i < size_X; i++)

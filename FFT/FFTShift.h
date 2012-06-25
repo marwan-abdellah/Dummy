@@ -17,29 +17,44 @@
 #define FFT_SHIFT_H_
 
 #include "Globals.h"
+#include "CUDA/cuGlobals.h"
 #include "Utilities/MACROS.h"
 #include "Timers/BoostTimers.h"
 #include "Timers/TimerGlobals.h"
 
 namespace FFT
 {
-	float* FFT_Shift_1D_float(float* input, int nX);
-
+	/* @ float*/
+	float* FFT_Shift_1D_float(float* input, int nX, durationStruct* duration);
 	float** FFT_Shift_2D_float(float** input, int nX, int nY, durationStruct* duration);
-	float*** FFT_Shift_3D_float(float*** input, int nX, int nY, int nZ);
+	float*** FFT_Shift_3D_float(float*** input, int nX, int nY, int nZ, durationStruct* duration);
 
-	float* repack_2D_float(float** input_2D, int nX, int nY);
-	float* repack_3D_float(float*** input_3D, int nX, int nY, int nZ);
+	float* repack_2D_float(float** input_2D, int nX, int nY, durationStruct* duration);
+	float* repack_3D_float(float*** input_3D, int nX, int nY, int nZ, durationStruct* duration);
 
-	double* FFT_Shift_1D_double(double* input, int nX);
-
+	/* @ double */
+	double* FFT_Shift_1D_double(double* input, int nX, durationStruct* duration);
 	double** FFT_Shift_2D_double(double** input, int nX, int nY, durationStruct* duration);
-	double*** FFT_Shift_3D_double(double*** input, int nX, int nY, int nZ);
+	double*** FFT_Shift_3D_double(double*** input, int nX, int nY, int nZ, durationStruct* duration);
 
-	double* repack_2D_double(double** input_2D, int nX, int nY);
-	double* repack_3D_double(double*** input_3D, int nX, int nY, int nZ);
+	double* repack_2D_double(double** input_2D, int nX, int nY, durationStruct* duration);
+	double* repack_3D_double(double*** input_3D, int nX, int nY, int nZ, durationStruct* duration);
 
-	float*** FFT_Shift_3D_float_(float* Input, int N);
+	/* @ cuComplex */
+	cuComplex* FFT_Shift_1D_cuComplex(cuComplex* input, int nX, durationStruct* duration);
+	cuComplex** FFT_Shift_2D_cuComplex(cuComplex** input, int nX, int nY, durationStruct* duration);
+	cuComplex*** FFT_Shift_3D_cuComplex(cuComplex*** input, int nX, int nY, int nZ, durationStruct* duration);
+
+	cuComplex* repack_2D_cuComplex(cuComplex** input_2D, int nX, int nY, durationStruct* duration);
+	cuComplex* repack_3D_cuComplex(cuComplex*** input_3D, int nX, int nY, int nZ, durationStruct* duration);
+
+	/* @ cuDoubleComplex */
+	cuDoubleComplex* FFT_Shift_1D_cuDoubleComplex(cuDoubleComplex* input, int nX, durationStruct* duration);
+	cuDoubleComplex** FFT_Shift_2D_cuDoubleComplex(cuDoubleComplex** input, int nX, int nY, durationStruct* duration);
+	cuDoubleComplex*** FFT_Shift_3D_cuDoubleComplex(cuDoubleComplex*** input, int nX, int nY, int nZ, durationStruct* duration);
+
+	cuDoubleComplex* repack_2D_cuDoubleComplex(cuDoubleComplex** input_2D, int nX, int nY, durationStruct* duration);
+	cuDoubleComplex* repack_3D_cuDoubleComplex(cuDoubleComplex*** input_3D, int nX, int nY, int nZ, durationStruct* duration);
 }
 
 

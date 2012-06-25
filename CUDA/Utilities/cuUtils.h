@@ -39,6 +39,22 @@ namespace cuUtils
 	int download_1D_double(double* hostArr, double* devArr, int size_X);
 	int download_2D_double(double* hostArr, double* devArr, int size_X, int size_Y);
 	int download_3D_double(double* hostArr, double* devArr, int size_X, int size_Y, int size_Z);
+
+	int upload_1D_cuComplex(cufftComplex* hostArr, cufftComplex* devArr, int size_X);
+	int upload_2D_cuComplex(cufftComplex* hostArr, cufftComplex* devArr, int size_X, int size_Y);
+	int upload_3D_cuComplex(cufftComplex* hostArr, cufftComplex* devArr, int size_X, int size_Y, int size_Z);
+
+	int download_1D_cuComplex(cufftComplex* hostArr, cufftComplex* devArr, int size_X);
+	int download_2D_cuComplex(cufftComplex* hostArr, cufftComplex* devArr, int size_X, int size_Y);
+	int download_3D_cuComplex(cufftComplex* hostArr, cufftComplex* devArr, int size_X, int size_Y, int size_Z);
+
+	int upload_1D_cuDoubleComplex(cufftDoubleComplex* hostArr, cufftDoubleComplex* devArr, int size_X);
+	int upload_2D_cuDoubleComplex(cufftDoubleComplex* hostArr, cufftDoubleComplex* devArr, int size_X, int size_Y);
+	int upload_3D_cuDoubleComplex(cufftDoubleComplex* hostArr, cufftDoubleComplex* devArr, int size_X, int size_Y, int size_Z);
+
+	int download_1D_cuDoubleComplex(cufftDoubleComplex* hostArr, cufftDoubleComplex* devArr, int size_X);
+	int download_2D_cuDoubleComplex(cufftDoubleComplex* hostArr, cufftDoubleComplex* devArr, int size_X, int size_Y);
+	int download_3D_cuDoubleComplex(cufftDoubleComplex* hostArr, cufftDoubleComplex* devArr, int size_X, int size_Y, int size_Z);
 }
 
 #endif /* CUUTILS_H_ */

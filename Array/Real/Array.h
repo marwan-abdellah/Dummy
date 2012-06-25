@@ -56,7 +56,8 @@ namespace Array
 
 
 
-
+	template <typename T>
+	extern void zeroArray_2D_flat(T* arr, int size_X, int size_Y);
 
 
 

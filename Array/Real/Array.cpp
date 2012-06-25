@@ -348,3 +348,51 @@ void Array::cubeArray_3D_double(double* flatArr, double*** sqArr, int size_X, in
 			for (int k = 0; k < size_Z; k++)
 				 sqArr[i][j][k] = flatArr[ctr++];
 }
+
+
+
+
+
+
+template <typename T>
+void Array::zeroArray_2D_flat (T* arr, int size_X, int size_Y)
+{
+	for (int i = 0; i < size_X; i++)
+		for (int j = 0; j < size_Y; j++)
+		{
+			int index = (i + (size_X * j));
+
+			// Static type checking
+			if (typeid(T) == typeid(int) ||
+				typeid(T) == typeid(long) ||
+				typeid(T) == typeid(float) ||
+				typeid(T) == typeid(double))
+			{
+				arr[index] = (T) 0;
+			}
+			else if (typeid(T) == typeid(fftw_complex) ||
+					 typeid(T) == typeid(fftw_complex))
+			{
+				arr[index][0] = (T) 0;
+				arr[index][1] = (T) 0;
+			}
+			else if (typeid(arr) == typeid(fftw_complex) ||
+					 typeid(arr) == typeid(fftw_complex))
+			{
+				arr[index].x = (T) 0;
+				arr[index].y = (T) 0;
+			}
+			else
+			{
+				INFO ("");
+			}
+		}
+}
+
+
+
+
+
+
+
+
