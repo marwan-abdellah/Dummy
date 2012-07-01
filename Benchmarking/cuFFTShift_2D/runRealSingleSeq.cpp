@@ -40,7 +40,7 @@
 int main()
 {
 	/* @ Iterations "for averaging" */
-	int nLoop = 1;
+	int nLoop = 5;
 
 	Book* xlBook;
 	Sheet* xlSheet;
@@ -81,11 +81,6 @@ int main()
 
 			// Reset cuFlag
 			cuFlag = 1;
-
-			/****
-
-			 *
-			 */
 
 			// Clearing the sizeString
 			snprintf(sizeString, sizeof(sizeString), "%s", "");

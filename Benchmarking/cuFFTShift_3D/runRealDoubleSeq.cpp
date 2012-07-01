@@ -21,7 +21,7 @@
  *********************************************************************/
 
 /* @ Maximum dimensions in 3D */
-#define N_3D_MAX 64
+#define N_3D_MAX 128
 
 /* @ Maximum CUDA block dimensions in 3D */
 #define MAX_BLOCK_SIZE_X 16
@@ -40,7 +40,7 @@
 int main()
 {
 	/* @ Iterations "for averaging" */
-	int nLoop = 1;
+	int nLoop = 5;
 
 	Book* xlBook;
 	Sheet* xlSheet;
