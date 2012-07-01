@@ -22,6 +22,7 @@
 #include "CUDA/Utilities/cuUtils.h"
 #include "CUDA/cuGlobals.h"
 #include "CUDA/cuExterns.h"
+#include "Iterations.h"
 
 namespace iB_Real_FFTShift_2D
 {

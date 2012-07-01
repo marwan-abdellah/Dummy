@@ -23,6 +23,7 @@
 #include "CUDA/cuGlobals.h"
 #include "CUDA/cuExterns.h"
 #include "Array/Complex/cuComplex.h"
+#include "Iterations.h"
 
 namespace iB_Complex_FFTShift_3D
 {

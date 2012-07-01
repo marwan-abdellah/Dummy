@@ -40,7 +40,7 @@
 int main()
 {
 	/* @ Iterations "for averaging" */
-	int nLoop = 5;
+	int nLoop = ITERATIONS;
 
 	Book* xlBook;
 	Sheet* xlSheet;
