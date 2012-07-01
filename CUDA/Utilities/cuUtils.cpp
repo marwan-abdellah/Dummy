@@ -427,6 +427,7 @@ int cuUtils::upload_3D_cuComplex(cufftComplex* hostArr, cufftComplex* devArr, in
 		INFO("MEMORY WALL: " + ITS(MAX_GPU_MEMORY));
 	}
 
+
 	cutilSafeCall(cudaMemcpy(devArr, hostArr, devMem, cudaMemcpyHostToDevice));
 
 	return 0;

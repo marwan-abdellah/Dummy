@@ -60,10 +60,6 @@ void iB_Complex_FFTShift_3D::FFTShift_3D_Float_Seq
 	{
 		for (int iLoop = 0; iLoop < nLoop; iLoop++)
 		{
-
-			INFO("1");
-
-
 			// Rows
 			xlSheet->writeStr(2, (0), "ns");
 			xlSheet->writeStr(3, (0), "us");
@@ -87,8 +83,6 @@ void iB_Complex_FFTShift_3D::FFTShift_3D_Float_Seq
 			int devMem = size_X * size_Y * size_Z * sizeof(cufftComplex);
 			cudaMalloc((void**)(&in_dev_arr_3D_flat_cuComplex), devMem);
 			cudaMalloc((void**)(&out_dev_arr_3D_flat_cuComplex), devMem);
-
-			INFO("2");
 
 			// Filling arrays: 3D, Flat
 			Array::cuComplex::fillArray_3D(arr_3D_cuComplex, size_X, size_Y, size_Z, 1);
@@ -120,8 +114,6 @@ void iB_Complex_FFTShift_3D::FFTShift_3D_Float_Seq
 			// FFT shift operation - CPU
 			arr_3D_cuComplex = FFT::FFT_Shift_3D_cuComplex(arr_3D_cuComplex, size_X, size_Y, size_Z, cpuProfile);
 
-			INFO("3");
-
 			// Printing CPU output
 			ctr = 0;
 			for (int i = 0; i < size_X; i++)
@@ -147,8 +139,6 @@ void iB_Complex_FFTShift_3D::FFTShift_3D_Float_Seq
 			xlSheet->writeNum(4, ((iLoop * 8 ) + 4), cpuProfile->unit_MilliSec);
 			xlSheet->writeNum(5, ((iLoop * 8 ) + 4), cpuProfile->unit_Sec);
 
-			INFO("4");
-
 			// Printing GPU input
 			ctr = 0;
 			for (int i = 0; i < size_X; i++)
@@ -168,31 +158,21 @@ void iB_Complex_FFTShift_3D::FFTShift_3D_Float_Seq
 						ctr++;
 					}
 
-			INFO("5");
 
 			// Uploading input array
 			cuUtils::upload_3D_cuComplex(arr_3D_flat_cuComplex, in_dev_arr_3D_flat_cuComplex, size_X, size_Y, size_Z);
 
-			INFO("6");
-
 			// Profile strcutures
 			cuProfile = MEM_ALLOC_1D_GENERIC(cudaProfile, 1);
-
-			INFO("6");
 
 			// FFT shift
 			cuFFTShift_3D_Complex(cuBlock, cuGrid, out_dev_arr_3D_flat_cuComplex, in_dev_arr_3D_flat_cuComplex, size_X, cuProfile);
 
-			INFO("7");
-
 			Array::cuComplex::zeroArray_3D_flat(arr_3D_flat_cuComplex , size_X, size_Y, size_Z);
 
-			INFO("8");
 
 			// Downloading output array
 			cuUtils::download_3D_cuComplex(arr_3D_flat_cuComplex, out_dev_arr_3D_flat_cuComplex, size_X, size_Y, size_Z);
-
-			INFO("9");
 
 			// Free device memory
 			cutilSafeCall(cudaFree((void*) in_dev_arr_3D_flat_cuComplex));
@@ -206,18 +186,16 @@ void iB_Complex_FFTShift_3D::FFTShift_3D_Float_Seq
 					{
 						if(ctr == 0)
 						{
-							///xlSheet->writeNum(4 + START_ROW_DATA, ((iLoop * 8 ) + 7), arr_3D_flat_cuComplex[ctr].x);
-							//xlSheet->writeNum(4 + START_ROW_DATA, ((iLoop * 8 ) + 8), arr_3D_flat_cuComplex[ctr].y);
+							xlSheet->writeNum(4 + START_ROW_DATA, ((iLoop * 8 ) + 7), arr_3D_flat_cuComplex[ctr].x);
+							xlSheet->writeNum(4 + START_ROW_DATA, ((iLoop * 8 ) + 8), arr_3D_flat_cuComplex[ctr].y);
 						}
 						if(ctr == size_X * size_Y * size_Z - 1)
 						{
-							//xlSheet->writeNum(5 + START_ROW_DATA, ((iLoop * 8 ) + 7), arr_3D_flat_cuComplex[ctr].x);
-							//xlSheet->writeNum(5 + START_ROW_DATA, ((iLoop * 8 ) + 8), arr_3D_flat_cuComplex[ctr].y);
+							xlSheet->writeNum(5 + START_ROW_DATA, ((iLoop * 8 ) + 7), arr_3D_flat_cuComplex[ctr].x);
+							xlSheet->writeNum(5 + START_ROW_DATA, ((iLoop * 8 ) + 8), arr_3D_flat_cuComplex[ctr].y);
 						}
 						ctr++;
 					}
-
-			INFO("10");
 
 			// Printing profile data
 			xlSheet->writeNum(2, ((iLoop * 8 ) + 8), cuProfile->kernelDuration * 1000 * 1000);
@@ -231,8 +209,6 @@ void iB_Complex_FFTShift_3D::FFTShift_3D_Float_Seq
 			FREE_MEM_1D(arr_3D_flat_cuComplex);
 			FREE_MEM_1D(cuProfile);
 			FREE_MEM_1D(cpuProfile);
-			INFO("11");
-
 		}
 
 	}

@@ -21,7 +21,7 @@
  *********************************************************************/
 
 /* @ Maximum dimensions in 3D */
-#define N_3D_MAX 64
+#define N_3D_MAX 128
 
 /* @ Maximum CUDA block dimensions in 3D */
 #define MAX_BLOCK_SIZE_X 16
@@ -40,7 +40,7 @@
 int main()
 {
 	/* @ Iterations "for averaging" */
-	int nLoop = 2;
+	int nLoop = 1;
 
 	Book* xlBook;
 	Sheet* xlSheet;
@@ -95,12 +95,10 @@ int main()
 
 				if (!(cuBlock.x <= MAX_BLOCK_SIZE_X &&
 					cuBlock.y <= MAX_BLOCK_SIZE_Y 	&&
-					cuBlock.z <= MAX_BLOCK_SIZE_Z	&&
 					cuGrid.x > 0 					&&
 					cuGrid.y > 0					&&
 					cuGrid.x <= MAX_GRID_SIZE_X	&&
-					cuGrid.y <= MAX_GRID_SIZE_Y	&&
-					cuGrid.z <= MAX_GRID_SIZE_Z
+					cuGrid.y <= MAX_GRID_SIZE_Y
 					))
 					cuFlag = 0;
 

@@ -33,8 +33,9 @@ void Array::cuComplex::zeroArray_3D_flat(cufftComplex* arr, int size_X, int size
 		for (int j = 0; j < size_Y; j++)
 			for (int k = 0; k < size_Z; k++)
 			{
-				arr[ctr++].x = (cufftReal) 0;
-				arr[ctr++].y = (cufftReal) 0;
+				arr[ctr].x = 0;
+				arr[ctr].y = 0;
+				ctr++;
 			}
 }
 
@@ -81,8 +82,9 @@ void Array::cuDoubleComplex::zeroArray_3D_flat(cufftDoubleComplex* arr, int size
 		for (int j = 0; j < size_Y; j++)
 			for (int k = 0; k < size_Z; k++)
 			{
-				arr[ctr++].x = (cufftDoubleReal) 0;
-				arr[ctr++].y = (cufftDoubleReal) 0;
+				arr[ctr].x = (cufftDoubleReal) 0;
+				arr[ctr].y = (cufftDoubleReal) 0;
+				ctr++;
 			}
 }
 

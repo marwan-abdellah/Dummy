@@ -21,7 +21,7 @@
  *********************************************************************/
 
 /* @ Maximum dimensions in 3D */
-#define N_3D_MAX 2048
+#define N_3D_MAX 128
 
 /* @ Maximum CUDA block dimensions in 3D */
 #define MAX_BLOCK_SIZE_X 16
