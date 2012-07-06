@@ -4,7 +4,7 @@
 FIND_PACKAGE(CUDA)
 
 # Set SDK root directory 
-set(CUDA_SDK_ROOT "/home/abdellah/NVIDIA_GPU_Computing_SDK")
+set(CUDA_SDK_ROOT "${CMAKE_SOURCE_DIR}/../../NVIDIA_GPU_Computing_SDK")
 set(CUDA_SDK_INC_DIR "${CUDA_SDK_ROOT}/C/common/inc")
 set(CUDA_SDK_LIB_DIR "${CUDA_SDK_ROOT}/C/lib")
 
