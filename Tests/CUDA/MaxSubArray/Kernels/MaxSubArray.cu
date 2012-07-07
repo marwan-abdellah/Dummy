@@ -67,4 +67,40 @@ void findMax(int numRows, int numCols, Max* dev_maxValues, int* dev_inputArray)
     }
 }
 
+
+/*
+__global__ void reduction(Max* g_data, const int blockSize, int& idxMax)
+
+{
+ //allocate shared memory
+ __shared__ float gs_data[blockSize];
+
+ //thread index
+ int tx = threadIdx.x;
+ int tid = threadIdx.x + blockIdx.x * blockDim.x;
+int indOfMax=0;
+
+ //copy data to shared memory
+ gs_data[tx] = g_data[tid].val;
+
+ __syncthreads(); 
+ 
+ //working on the left half of the array to prevent divergence
+ for(int i = (blockDim.x/2); i>0; i/=2 )
+ {
+  if(tx < i)
+   if(gs_data[tx+i]>gs_data[tx]l)
+   {
+    gs_data[tx] = gs_data[tx+i];
+    indOfMax = tid;
+   }
+
+  __syncthreads();
+ }
+ if (tx==0)
+indxMax = indOfMax
+}
+*/
+
+
 #endif  //_MAXSUBARRAY_KERNEL_CU_

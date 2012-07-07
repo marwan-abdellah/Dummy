@@ -82,11 +82,6 @@ int main()
 			// Reset cuFlag
 			cuFlag = 1;
 
-			/****
-
-			 *
-			 */
-
 			// Clearing the sizeString
 			snprintf(sizeString, sizeof(sizeString), "%s", "");
 

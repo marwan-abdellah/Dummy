@@ -13,62 +13,61 @@
  * Note(s)      :
  *********************************************************************/
 
+#define MAX_SIZE_1D 2048
+
+#include "Array/Real/Array.h"
 #include "ex_MaxSubArray.h"
 
 int main(int argc, char** argv)
 {
-	// Allocating the input array
-	int* inputArray = (int*) malloc(sizeof(int) * ex_MaxSubArray::numRows * ex_MaxSubArray::numCols);
-	INFO("Allocating input array with size = "
-			+ ITS(ex_MaxSubArray::numRows) + "x" + ITS(ex_MaxSubArray::numCols));
-
 	// Number of numCores for OpenMP implementation
 	int numCores = atoi (argv[1]);
 	INFO("Number of available cores = " + ITS(numCores));
 
-	// Read the input image files
-	for(int argFile = 2; argFile < argc; argFile++)
+	// Excel sheet parameters
+	Book* xlBook;
+	Sheet* xlSheet;
+
+	// Create the XL book
+	xlBook = Utils::xl::createBook();
+	INFO("xlBook created");
+
+	if(xlBook)
 	{
-		char* fileName = argv[argFile];
-		ex_MaxSubArray::readFile(fileName, inputArray);
-		INFO("Reading the input file");
-
-		// Do the CPU implementation with OpenMP
-		INFO("CPU implementation with OpenMP");
-		ex_MaxSubArray::getMax_CPU(inputArray, numCores);
-
-		SEP();
-
-		// Allocate an array to hold the maximum of all possible combination
-		Max host_maxValues[ex_MaxSubArray::numRows];
-
-		// GPU implementation CUDA
-		INFO("GPU implementation with CUDA");
-		ex_MaxSubArray::getMax_CUDA(inputArray, host_maxValues);
-
-		int selectedMaxVal = 0;
-		int indexMaxVal = 0;
-
-		// Search for the maximum value in all maximum candidates
-		for (int i = 0; i < ex_MaxSubArray::numRows; i++)
+		for (int itrSize = 128; itrSize < MAX_SIZE_1D; itrSize *= 2)
 		{
-			if (host_maxValues[i].val > selectedMaxVal)
-			{
-				// Updating the selected values
-				selectedMaxVal = host_maxValues[i].val;
+			// Allocating the input array
+			int* inputArray = (int*) malloc(sizeof(int) * itrSize * itrSize);
+			INFO("Allocating input array with size = "
+					+ ITS(itrSize) + "x" + ITS(itrSize));
 
-				// updating the index
-				indexMaxVal = i;
-			}
+			INFO("Array size = " + ITS(itrSize) + "x" + ITS(itrSize));
+			// Filling the array with random numbers
+			Array::fillArray_2D_flat_int(inputArray, itrSize, itrSize, 0);
+
+			// Do the CPU implementation with OpenMP
+			INFO("CPU implementation with OpenMP");
+			ex_MaxSubArray::getMax_CPU(inputArray, numCores, itrSize, itrSize);
+
+			SEP();
+
+			// Allocate an array to hold the maximum of all possible combination
+			Max host_maxValues[itrSize];
+
+			// GPU implementation CUDA
+			INFO("GPU implementation with CUDA");
+			ex_MaxSubArray::getMax_CUDA(inputArray, host_maxValues, itrSize, itrSize);
+
+			// Freeing the memory
+			FREE_MEM_1D(inputArray);
 		}
-
-		INFO("GPU results for the Max Sub-Array : " + CATS("[") +
-				ITS(host_maxValues[indexMaxVal].y1) + "," +
-				ITS(host_maxValues[indexMaxVal].x1) + "," +
-				ITS(host_maxValues[indexMaxVal].y2) + "," +
-				ITS(host_maxValues[indexMaxVal].x2) + CATS("]"))
 	}
 
-	FREE_MEM_1D(inputArray);
 	return 0;
 }
+
+// Read the input image files
+// for(int argFile = 2; argFile < argc; argFile++)
+// INFO("Reading the input file");
+// char* fileName = argv[argFile];
+// ex_MaxSubArray::readFile(fileName, inputArray, numRows, numCols);

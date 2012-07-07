@@ -53,6 +53,7 @@ namespace Utils
     int rand_int();
     float rand_float();
     double rand_double();
+    int rand_int_range(int minNum, int maxNum);
 
 }
 

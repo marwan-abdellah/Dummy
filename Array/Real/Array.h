@@ -25,6 +25,12 @@ namespace Array
 	void zeroArray_3D_float(float*** arr, int size_X, int size_Y, int size_Z);
 	void zeroArray_3D_double(double*** arr, int size_X, int size_Y, int size_Z);
 
+	void fillArray_1D_int(int* arr, int size_X, bool Seq_Rnd);
+	void fillArray_2D_flat_int(int* arr, int size_X, int size_Y, bool Seq_Rnd);
+	void fillArray_3D_flat_int(int* arr, int size_X, int size_Y, int size_Z, bool Seq_Rnd);
+	void fillArray_2D_int(int** arr, int size_X, int size_Y, bool Seq_Rnd);
+	void fillArray_3D_int(int*** arr, int size_X, int size_Y, int size_Z, bool Seq_Rnd);
+
 	void fillArray_1D_float(float* arr, int size_X, bool Seq_Rnd);
 	void fillArray_2D_flat_float(float* arr, int size_X, int size_Y, bool Seq_Rnd);
 	void fillArray_3D_flat_float(float* arr, int size_X, int size_Y, int size_Z, bool Seq_Rnd);

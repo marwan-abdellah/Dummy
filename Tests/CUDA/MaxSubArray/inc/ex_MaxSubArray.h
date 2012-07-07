@@ -20,6 +20,7 @@
 #include "Utilities/Utils.h"
 #include "Utilities/MACROS.h"
 #include "Array/Real/Array.h"
+#include "Utilities/XL.h"
 
 #include <iostream>
 #include <fstream>
@@ -38,12 +39,9 @@
 
 namespace ex_MaxSubArray
 {
-	const int numRows = 1024;
-	const int numCols = 1024;
-
-	void readFile(char* inputArray, int* numCores);
-	void getMax_CPU(int* inputArray, int numCores);
-	void getMax_CUDA(int* , Max* );
+	void readFile(char* inputArray, int* numCores, int numRows, int numCols);
+	void getMax_CPU(int* inputArray, int numCores, int numRows, int numCols);
+	void getMax_CUDA(int* inputArray, Max* maxValue, int numRows, int numCols);
 }
 
 #endif // _EX_MAX_SUB_ARRAY_KERNEL_H_

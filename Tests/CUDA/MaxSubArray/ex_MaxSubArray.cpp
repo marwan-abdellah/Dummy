@@ -17,6 +17,7 @@
 #include "FFT/FFTShift.h"
 #include "CUDA/Utilities/cuUtils.h"
 
+#include "Utilities/Utils.h"
 #include "CUDA/cuGlobals.h"
 #include "CUDA/cuExterns.h"
 #include "cuExternsTest.h"
@@ -27,11 +28,15 @@ using std::string;
 
 namespace ex_MaxSubArray
 {
-	/* Profilers */
-	durationStruct* duration;
+	/* @ Profilers */
+	cudaProfile* cuProfile;
+	durationStruct* cpuProfile;
+
+	cudaProfile* cuTotalProfile;
+	durationStruct* cpuTotalProfile;
 }
 
-void ex_MaxSubArray::readFile(char* fileName, int* inputArray)
+void ex_MaxSubArray::readFile(char* fileName, int* inputArray, int numRows, int numCols)
 {
 	INFO("Reading file - Starting");
 
@@ -81,9 +86,9 @@ void ex_MaxSubArray::readFile(char* fileName, int* inputArray)
 	INFO("Reading file - Done");
 }
 
-void ex_MaxSubArray::getMax_CPU(int* inputArray,int numCores)
+void ex_MaxSubArray::getMax_CPU(int* inputArray,int numCores, int numRows, int numCols)
 {
-	INFO("CPU implementation - Starting");
+	INFO("Starting CPU implementation");
 	/*
 	 * An array for holding the maximum values of all
 	 * possible combination
@@ -146,7 +151,6 @@ void ex_MaxSubArray::getMax_CPU(int* inputArray,int numCores)
 		}
 	}
 
-
 	int selectedMAxVal = 0;
 	int indexMaxValue=0;
 
@@ -169,7 +173,7 @@ void ex_MaxSubArray::getMax_CPU(int* inputArray,int numCores)
 	INFO("CPU implementation - Done");
 }
 
-void ex_MaxSubArray::getMax_CUDA(int* hostInputArray, Max* hostMaxValues)
+void ex_MaxSubArray::getMax_CUDA(int* hostInputArray, Max* hostMaxValues, int numRows, int numCols)
 {
 	INFO("Starting CUDA implementation");
 
@@ -193,12 +197,15 @@ void ex_MaxSubArray::getMax_CUDA(int* hostInputArray, Max* hostMaxValues)
 
 	// Configuring the GPU
 	INFO("Addjusting Gridding configuration");
-	dim3 cuBlock(256, 1, 1);
+	dim3 cuBlock(128, 1, 1);
 	dim3 cuGrid(numRows/cuBlock.x, 1, 1);
+
+	// Allocating the CUDA profiler
+	cuProfile = MEM_ALLOC_1D_GENERIC(cudaProfile, 1);
 
 	// Invokig the CUDA kernel
 	INFO("Invoking CUDA kernel");
-	cuGetMax(cuBlock, cuGrid, devMaxValues, devInputArray, numRows, numCols);
+	cuGetMax(cuBlock, cuGrid, devMaxValues, devInputArray, numRows, numCols, cuProfile);
 
     // Checking if kernel execution failed or not
     cutilCheckMsg("Kernel execution failed \n");
@@ -207,9 +214,37 @@ void ex_MaxSubArray::getMax_CUDA(int* hostInputArray, Max* hostMaxValues)
     INFO("Downloading the resulting array to the CPU");
     cutilSafeCall(cudaMemcpy(hostMaxValues, devMaxValues, outputArrySize, cudaMemcpyDeviceToHost));
 
+	INFO("GPU Benchmarks: "
+			"\n \t Nano-Sec : " + DTS(cuProfile->kernelDuration * 1000 * 1000) +
+			"\n \t Micro-Sec : " + DTS(cuProfile->kernelDuration * 1000) +
+			"\n \t Milli-Sec : " + DTS(cuProfile->kernelDuration) +
+			"\n \t Sec : " + DTS(cuProfile->kernelDuration / 1000));
+
     // Freeingthe allocated memory on the device
     INFO("Freeing the device memory");
 	cudaFree(devMaxValues);
+
+	int selectedMaxVal = 0;
+	int indexMaxVal = 0;
+
+	// Search for the maximum value in all maximum candidates
+	for (int i = 0; i < numRows; i++)
+	{
+		if (hostMaxValues[i].val > selectedMaxVal)
+		{
+			// Updating the selected values
+			selectedMaxVal = hostMaxValues[i].val;
+
+			// updating the index
+			indexMaxVal = i;
+		}
+	}
+
+	INFO("GPU results for the Max Sub-Array : " + CATS("[") +
+			ITS(hostMaxValues[indexMaxVal].y1) + "," +
+			ITS(hostMaxValues[indexMaxVal].x1) + "," +
+			ITS(hostMaxValues[indexMaxVal].y2) + "," +
+			ITS(hostMaxValues[indexMaxVal].x2) + CATS("]"))
 
 	INFO("CUDA implementation Done");
 }

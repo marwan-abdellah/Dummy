@@ -74,7 +74,6 @@ char* Utils::stringToCharArray(string_t inputString)
 	return outputChar;
 }
 
-
 string_t Utils::charArrayToString_const (const char* inputCharArray)
 {
     string_t string;
@@ -97,4 +96,9 @@ float Utils::rand_float()
 double Utils::rand_double()
 {
 	return (double) (double(drand48()) / RAND_MAX);
+}
+
+int Utils::rand_int_range(int minNum, int maxNum)
+{
+	 return( rand() % (maxNum - minNum) + minNum);
 }
