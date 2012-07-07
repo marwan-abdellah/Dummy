@@ -19,6 +19,7 @@
 
 #include "CUDA/cuGlobals.h"
 #include "CUDA/cuExterns.h"
+#include "cuExternsTest.h"
 
 using std::cout;
 using std::endl;
@@ -30,66 +31,96 @@ namespace ex_MaxSubArray
 	durationStruct* duration;
 }
 
-void ex_MaxSubArray::readFile(char* fname, int* arr)
+void ex_MaxSubArray::readFile(char* fileName, int* inputArray)
 {
-	// init input file stream to read from the file
-	std::ifstream in(fname);
+	INFO("Reading file - Starting");
 
+	// Array indicies
+	int xIdx = 0;
+	int yIdx = 0;
 
-	if (in) {
-		std::string line;
-		
-		int y = 0;
-		while (std::getline(in, line)) {
-			
-			// Break down the row into column values
-			std::stringstream split(line);
-			int value;
+	// Input stream
+	std::ifstream inStream(fileName);
 
-			int x = 0;
-			while (split >> value)
+	if (inStream)
+	{
+		// Reading lineRow by lineRow
+		std::string lineRow;
+
+		// Initializing the Y index
+		yIdx = 0;
+
+		// Getting line by line
+		while (std::getline(inStream, lineRow))
+		{
+			// Getting column by column
+			std::stringstream split(lineRow);
+
+			int inputVal;
+
+			// Resetting the X index
+			xIdx = 0;
+			while (split >> inputVal)
 			{
-				arr[y*rows+x] = value;
-				x++;
-			}
-			y++;
-		}
-		
-	}
-	in.close();
+				// storing the input value from the file to the array
+				inputArray[((yIdx * numRows) + xIdx)] = inputVal;
 
+				// Incrementing the X idex
+				xIdx++;
+			}
+
+			// Incrementing the y index
+			yIdx++;
+		}
+	}
+
+	// Closing the input stream
+	INFO("Closing the input stream");
+	inStream.close();
+
+	INFO("Reading file - Done");
 }
 
-void ex_MaxSubArray::getMax_CPU(int* arr,int cores)
+void ex_MaxSubArray::getMax_CPU(int* inputArray,int numCores)
 {
+	INFO("CPU implementation - Starting");
+	/*
+	 * An array for holding the maximum values of all
+	 * possible combination
+	 */
+	Max maxValues[numRows];
 
-	// allocate an array to hold the maximum of all possible combination
-	Max maxValues[rows];
-
-	//start of parallel region in which we are going to divide rows on the number of threads ,
-	//each thread will calculate the maximum of all possible combination and only store the maximum of them all in maxVal
-	#pragma omp parallel num_threads(cores)
+	/*
+	 * start of parallel region inStream which we are going
+	 * to divide numRows on the number of threads, each thread
+	 * will calculate the maximum of all possible combination
+	 * and only store the maximum of them all inStream maxVal
+	 */
+#pragma omp parallel num_threads(numCores)
 	{
-		// this will be used in calculating the maximum
+		// Intermediate parameters
 		int tempMaxSum = 0;
 		int candMaxSubArr = 0 ,j;
-		int pr [cols];
-		#pragma omp for schedule(dynamic)
-		for( int g = 0; g < rows; g++)
+		int pr [numCols];
+
+#pragma omp for schedule(dynamic)
+		for( int g = 0; g < numRows; g++)
 		{
+			maxValues[g].S = 0;
+
 			//array pr will be used to calculate the prefix sum
-			for(int h = 0; h < cols; h++) 
+			for(int h = 0; h < numCols; h++)
 				pr[h] = 0;
 
-			for(int i = g; i < rows; i++)
+			for(int i = g; i < numRows; i++)
 			{
 				tempMaxSum = 0;
 				j = 0;
-				for(int h = 0; h < cols; h++)
+				for(int h = 0; h < numCols; h++)
 				{
-					pr[h] = pr[h] + arr[i*rows+h]; 
-					tempMaxSum = tempMaxSum + pr[h]; // t is the prefix sum of the strip start at row z to row x
-			
+					pr[h] = pr[h] + inputArray[i*numRows+h];
+					tempMaxSum = tempMaxSum + pr[h]; // t is the prefix sum of the strip start at row z to row xIdx
+
 					if( tempMaxSum > candMaxSubArr)
 					{ 
 						candMaxSubArr = tempMaxSum;
@@ -113,8 +144,8 @@ void ex_MaxSubArray::getMax_CPU(int* arr,int cores)
 
 
 	int S = 0,ind=0;
-	// search for the maximum value in all maximum candidates
-	for (int i = 0; i < rows; i++)
+	// search for the maximum inputVal inStream all maximum candidates
+	for (int i = 0; i < numRows; i++)
 	{
 		if (maxValues[i].S >S)
 		{
@@ -124,25 +155,50 @@ void ex_MaxSubArray::getMax_CPU(int* arr,int cores)
 	}
 
 	cout << maxValues[ind].y1 << " " << maxValues[ind].x1 << " " << maxValues[ind].y2 << " "  << maxValues[ind].x2 <<" "<< endl;
+	INFO("CPU implementation - Done");
 }
 
-void ex_MaxSubArray::getMax_CUDA(int* host_inputArray, Max* host_maxValues)
+void ex_MaxSubArray::getMax_CUDA(int* hostInputArray, Max* hostMaxValues)
 {
-	const int mem1 = sizeof(int) * rows * cols;
-	const int mem2 = sizeof(Max) * rows;
-/*
-	int* dev_inputArray;
-	cutilSafeCall(cudaMalloc( (void**)&dev_inputArray, mem1 ));
-	cutilSafeCall(cudaMemcpy(dev_inputArray, host_inputArray, mem1, cudaMemcpyHostToDevice));
+	INFO("Starting CUDA implementation");
 
-	Max *dev_maxValues;
-    cutilSafeCall(cudaMalloc( (void**)&dev_maxValues, mem2 ));
+	// Memory required for input & output arrays
+	INFO("Calculating memory required");
+	const int inputArraySize = sizeof(int) * numRows * numCols;
+	const int outputArrySize = sizeof(Max) * numRows;
 
-    findMax<<<1,rows>>>( rows, cols, dev_maxValues, dev_inputArray );
-	cutilCheckMsg("Kernel execution failed\n");
+	// Input & output arrays on the device side
+	int* devInputArray;
+	Max *devMaxValues;
 
-    cutilSafeCall(cudaMemcpy( host_maxValues, dev_maxValues, mem2, cudaMemcpyDeviceToHost ));
+	// Allocating the device arrays
+	INFO("Allocating device arrays");
+	cutilSafeCall(cudaMalloc((void**)&devInputArray, inputArraySize));
+	cutilSafeCall(cudaMalloc((void**)&devMaxValues, outputArrySize));
 
-	cudaFree( dev_maxValues );
-*/
+	// Upload the input array to the device side
+	INFO("Uploading the input array to the GPU");
+	cutilSafeCall(cudaMemcpy(devInputArray, hostInputArray, inputArraySize, cudaMemcpyHostToDevice));
+
+	// Configuring the GPU
+	INFO("Addjusting Gridding configuration");
+	dim3 cuBlock(256, 1, 1);
+	dim3 cuGrid(numRows/cuBlock.x, 1, 1);
+
+	// Invokig the CUDA kernel
+	INFO("Invoking CUDA kernel");
+	cuGetMax(cuBlock, cuGrid, devMaxValues, devInputArray, numRows, numCols);
+
+    // Checking if kernel execution failed or not
+    cutilCheckMsg("Kernel execution failed \n");
+
+    // Download the maxValues array to the host side
+    INFO("Downloading the resulting array to the CPU");
+    cutilSafeCall(cudaMemcpy(hostMaxValues, devMaxValues, outputArrySize, cudaMemcpyDeviceToHost));
+
+    // Freeingthe allocated memory on the device
+    INFO("Freeing the device memory");
+	cudaFree(devMaxValues);
+
+	INFO("CUDA implementation Done");
 }

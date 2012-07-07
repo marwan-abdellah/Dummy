@@ -38,8 +38,8 @@
 
 namespace ex_MaxSubArray
 {
-	const int rows = 1024;
-	const int cols = 1024;
+	const int numRows = 1024;
+	const int numCols = 1024;
 
 	void readFile(char* inputArray, int* numCores);
 	void getMax_CPU(int* inputArray, int numCores);

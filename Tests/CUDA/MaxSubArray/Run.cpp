@@ -17,26 +17,36 @@
 
 int main(int argc, char** argv)
 {
-	int* arr = (int*)malloc(sizeof(int)*ex_MaxSubArray::rows * ex_MaxSubArray::cols);
-	int cores = atoi (argv[1]);
-	for(int a=2;a<argc;a++)
-	{
-		char* fname=argv[a];
-		ex_MaxSubArray::readFile(fname, arr);
-		//for(int i=0;i<ex_MaxSubArray::rows;i++)
-		//	for(int j=0;j<ex_MaxSubArray::cols;j++)
-		//		cout<<arr[i*ex_MaxSubArray::rows+j]<<endl;
-		ex_MaxSubArray::getMax_CPU(arr, cores);
-		
-		/*
-		// allocate an array to hold the maximum of all possible combination
-		Max host_maxValues[ex_MaxSubArray::rows];
+	// Allocating the input array
+	int* inputArray = (int*) malloc(sizeof(int) * ex_MaxSubArray::numRows * ex_MaxSubArray::numCols);
+	INFO("Allocating input array with size = "
+			+ ITS(ex_MaxSubArray::numRows) + "x" + ITS(ex_MaxSubArray::numCols));
 
-		ex_MaxSubArray::MaxSubArray_CUDA(arr, host_maxValues);
+	// Number of numCores for OpenMP implementation
+	int numCores = atoi (argv[1]);
+	INFO("Number of available cores = " + ITS(numCores));
+
+	// Read the input image files
+	for(int argFile=2; argFile < argc; argFile++)
+	{
+		char* fileName = argv[argFile];
+		ex_MaxSubArray::readFile(fileName, inputArray);
+		INFO("Readig the input file");
+
+		// Do the CPU implementation with OpenMP
+		INFO("CPU implementation with OpenMP");
+		ex_MaxSubArray::getMax_CPU(inputArray, numCores);
+		
+		// allocate an array to hold the maximum of all possible combination
+		Max host_maxValues[ex_MaxSubArray::numRows];
+
+		// GPU implementation CUDA
+		INFO("GPU implementation with CUDA");
+		ex_MaxSubArray::getMax_CUDA(inputArray, host_maxValues);
 
 		int S = 0,ind=0;
 		// search for the maximum value in all maximum candidates
-		for (int i = 0; i < ex_MaxSubArray::rows; i++)
+		for (int i = 0; i < ex_MaxSubArray::numRows; i++)
 		{
 			if (host_maxValues[i].S >S)
 			{
@@ -45,11 +55,11 @@ int main(int argc, char** argv)
 			}
 		}
 
-		cout << host_maxValues[ind].y1 << " " << host_maxValues[ind].x1 << " " << host_maxValues[ind].y2 << " "  
+		cout << host_maxValues[ind].y1 << " " << host_maxValues[ind].x1 << " " << host_maxValues[ind].y2 << " "
 			<< host_maxValues[ind].x2 <<" "<< endl;
-			*/
+
 	}
 
-	free(arr);
+	free(inputArray);
 	return 0;
 }
