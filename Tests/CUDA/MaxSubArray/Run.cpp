@@ -27,39 +27,48 @@ int main(int argc, char** argv)
 	INFO("Number of available cores = " + ITS(numCores));
 
 	// Read the input image files
-	for(int argFile=2; argFile < argc; argFile++)
+	for(int argFile = 2; argFile < argc; argFile++)
 	{
 		char* fileName = argv[argFile];
 		ex_MaxSubArray::readFile(fileName, inputArray);
-		INFO("Readig the input file");
+		INFO("Reading the input file");
 
 		// Do the CPU implementation with OpenMP
 		INFO("CPU implementation with OpenMP");
 		ex_MaxSubArray::getMax_CPU(inputArray, numCores);
-		
-		// allocate an array to hold the maximum of all possible combination
+
+		SEP();
+
+		// Allocate an array to hold the maximum of all possible combination
 		Max host_maxValues[ex_MaxSubArray::numRows];
 
 		// GPU implementation CUDA
 		INFO("GPU implementation with CUDA");
 		ex_MaxSubArray::getMax_CUDA(inputArray, host_maxValues);
 
-		int S = 0,ind=0;
-		// search for the maximum value in all maximum candidates
+		int selectedMaxVal = 0;
+		int indexMaxVal = 0;
+
+		// Search for the maximum value in all maximum candidates
 		for (int i = 0; i < ex_MaxSubArray::numRows; i++)
 		{
-			if (host_maxValues[i].S >S)
+			if (host_maxValues[i].val > selectedMaxVal)
 			{
-				S = host_maxValues[i].S;
-				ind=i;
+				// Updating the selected values
+				selectedMaxVal = host_maxValues[i].val;
+
+				// updating the index
+				indexMaxVal = i;
 			}
 		}
 
-		cout << host_maxValues[ind].y1 << " " << host_maxValues[ind].x1 << " " << host_maxValues[ind].y2 << " "
-			<< host_maxValues[ind].x2 <<" "<< endl;
-
+		INFO("GPU results for the Max Sub-Array : " + CATS("[") +
+				ITS(host_maxValues[indexMaxVal].y1) + "," +
+				ITS(host_maxValues[indexMaxVal].x1) + "," +
+				ITS(host_maxValues[indexMaxVal].y2) + "," +
+				ITS(host_maxValues[indexMaxVal].x2) + CATS("]"))
 	}
 
-	free(inputArray);
+	FREE_MEM_1D(inputArray);
 	return 0;
 }

@@ -101,60 +101,71 @@ void ex_MaxSubArray::getMax_CPU(int* inputArray,int numCores)
 		// Intermediate parameters
 		int tempMaxSum = 0;
 		int candMaxSubArr = 0 ,j;
-		int pr [numCols];
+
+		// Array prefSum will be used to calculate the prefix sum
+		int prefSum[numCols];
 
 #pragma omp for schedule(dynamic)
-		for( int g = 0; g < numRows; g++)
+		for(int g = 0; g < numRows; g++)
 		{
-			maxValues[g].S = 0;
+			// Resetting the max value to 0
+			maxValues[g].val = 0;
 
-			//array pr will be used to calculate the prefix sum
-			for(int h = 0; h < numCols; h++)
-				pr[h] = 0;
+			// Resetting the prefix sum array
+			for(int iCtr = 0; iCtr < numCols; iCtr++)
+				prefSum[iCtr] = 0;
 
+			// Iterating
+			// TODO: To document what is happening in each iteration
 			for(int i = g; i < numRows; i++)
 			{
 				tempMaxSum = 0;
 				j = 0;
 				for(int h = 0; h < numCols; h++)
 				{
-					pr[h] = pr[h] + inputArray[i*numRows+h];
-					tempMaxSum = tempMaxSum + pr[h]; // t is the prefix sum of the strip start at row z to row xIdx
+					prefSum[h] = prefSum[h] + inputArray[i*numRows+h];
+					tempMaxSum = tempMaxSum + prefSum[h]; // t is the prefix sum of the strip start at row z to row xIdx
 
 					if( tempMaxSum > candMaxSubArr)
 					{ 
 						candMaxSubArr = tempMaxSum;
-						maxValues[g].S = candMaxSubArr;
+						maxValues[g].val = candMaxSubArr;
 						maxValues[g].x1 = g;
 						maxValues[g].y1 = j;
 						maxValues[g].x2 = i;
 						maxValues[g].y2 = h;
 					}
+
 					if( tempMaxSum < 0 )
 					{
 						tempMaxSum = 0;
 						j = h + 1;
 					}
 				}
-
 			}
-
 		}
 	}
 
 
-	int S = 0,ind=0;
-	// search for the maximum inputVal inStream all maximum candidates
+	int selectedMAxVal = 0;
+	int indexMaxValue=0;
+
+	// Search for the maximum inputVal inStream all maximum candidates
 	for (int i = 0; i < numRows; i++)
 	{
-		if (maxValues[i].S >S)
+		if (maxValues[i].val >selectedMAxVal)
 		{
-			S = maxValues[i].S;
-			ind=i;
+			selectedMAxVal = maxValues[i].val;
+			indexMaxValue = i;
 		}
 	}
 
-	cout << maxValues[ind].y1 << " " << maxValues[ind].x1 << " " << maxValues[ind].y2 << " "  << maxValues[ind].x2 <<" "<< endl;
+	INFO("CPU results for the Max Sub-Array : " + CATS("[") +
+		ITS(maxValues[indexMaxValue].y1) + "," +
+		ITS(maxValues[indexMaxValue].x1) + "," +
+		ITS(maxValues[indexMaxValue].y2) + "," +
+		ITS(maxValues[indexMaxValue].x2) + CATS("]"))
+
 	INFO("CPU implementation - Done");
 }
 
