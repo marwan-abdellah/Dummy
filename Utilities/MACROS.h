@@ -145,6 +145,8 @@
 
 /* @ Utilities */
 #define ITS( INT ) ( Utils::intToString( INT ) )
+#define FTS( FLT ) ( Utils::floatToString( FLT ) )
+#define DTS( DBL ) ( Utils::doubleToString( DBL ) )
 #define CITS( INT ) ( Utils::intToString_const( INT ) )
 #define CATS( CHAR ) ( Utils::charArrayToString( CHAR ) )
 #define CCATS( CHAR ) ( Utils::charArrayToString_const( CHAR ) )

@@ -1,0 +1,71 @@
+
+
+#ifndef _MAXSUBARRAY_KERNEL_H_
+#define _MAXSUBARRAY_KERNEL_H_
+
+#include <stdio.h>
+#include "ex_MaxSubArray.h"
+
+
+
+__global__ void 
+findMax( const int rows, const int cols, Max* dev_maxValues, int* dev_inputArray ) 
+{
+
+	int g = threadIdx.x;
+	int tempMaxSum = 0;
+	int candMaxSubArr = 0;
+	int j = 0;
+	int pr [1024]; 
+
+	for( int i = g; i < rows; i++)
+	{
+		tempMaxSum = 0;
+		j = 0;
+		for(int h = 0; h < cols; h++)
+		{
+			pr[h] = pr[h] + dev_inputArray[i * cols + h];
+			tempMaxSum = tempMaxSum + pr[h]; // t is the prefix sum of the strip start at row z to row x
+
+			if( tempMaxSum > candMaxSubArr)
+			{ 
+				candMaxSubArr = tempMaxSum;
+				dev_maxValues[g].S = candMaxSubArr;
+				dev_maxValues[g].x1 = g;
+				dev_maxValues[g].y1 = j;
+				dev_maxValues[g].x2 = i;
+				dev_maxValues[g].y2 = h;
+			}
+			if( tempMaxSum < 0 )
+			{
+				tempMaxSum = 0;
+				j = h + 1;
+			}
+		}
+	}
+
+}
+
+extern "C" void
+runTest(int* host_inputArray, Max* host_maxValues)
+{ 
+	const int mem1 = sizeof(int) * rows * cols;
+	const int mem2 = sizeof(Max) * rows;
+
+	int* dev_inputArray;
+	cutilSafeCall(cudaMalloc( (void**)&dev_inputArray, mem1 ));
+	cutilSafeCall(cudaMemcpy(dev_inputArray, host_inputArray, mem1, cudaMemcpyHostToDevice));
+
+	Max *dev_maxValues;
+    cutilSafeCall(cudaMalloc( (void**)&dev_maxValues, mem2 ));
+
+    findMax<<<1,rows>>>( rows, cols, dev_maxValues, dev_inputArray );
+	cutilCheckMsg("Kernel execution failed\n");
+
+    cutilSafeCall(cudaMemcpy( host_maxValues, dev_maxValues, mem2, cudaMemcpyDeviceToHost ));
+
+	cudaFree( dev_maxValues );
+
+}
+
+#endif  //_MAXSUBARRAY_KERNEL_H_

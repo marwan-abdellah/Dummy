@@ -12,26 +12,22 @@
  * Description  :
  * Note(s)      :
  *********************************************************************/
+ 
+#ifndef CU_EXTERNS_CU_
+#define CU_EXTERNS_CU_
 
-#include "ex_FFTShift.h"
+#include "CUDA/cuGlobals.h"
 
-int main()
+#include <cutil_inline.h>
+
+#include "MaxSubArray.cu"
+#include "Timers/BoostTimers.h"
+#include "Shared.h"
+
+extern  
+void cuGetMax(dim3 cuBlock, dim3 cuGrid, Max* dev_maxValues, int* devArrayInput, int rows, int cols)
 {
-	ex_FFTShift::FFTShift_2D_CUDA(32, 32);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(64, 64);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(128, 128);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(256, 256);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(512, 512);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(1024, 1024);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(1024 * 2, 1024 * 2);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(1024 * 4, 1024 * 4);
+    findMax <<<cuBlock, cuGrid>>> (  rows,  cols, dev_maxValues, devArrayInput ); 
+} 
 
-	return 0;
-}
+#endif // CU_EXTERNS_CU_

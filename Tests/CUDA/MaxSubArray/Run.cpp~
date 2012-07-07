@@ -13,25 +13,18 @@
  * Note(s)      :
  *********************************************************************/
 
-#include "ex_FFTShift.h"
+#include "ex_MaxSubArray.h"
 
-int main()
+int main(int argc, char** argv)
 {
-	ex_FFTShift::FFTShift_2D_CUDA(32, 32);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(64, 64);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(128, 128);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(256, 256);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(512, 512);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(1024, 1024);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(1024 * 2, 1024 * 2);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(1024 * 4, 1024 * 4);
+	int cores = atoi (argv[1]);
+	for(int a=2;a<argc;a++)
+	{
+		char* fname=argv[a];
+		ex_MaxSubArray::getMax(fname,cores);
+	}
 
 	return 0;
+
+	
 }

@@ -13,25 +13,12 @@
  * Note(s)      :
  *********************************************************************/
 
-#include "ex_FFTShift.h"
+#ifndef CUEXTERNS_H_
+#define CUEXTERNS_H_
 
-int main()
-{
-	ex_FFTShift::FFTShift_2D_CUDA(32, 32);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(64, 64);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(128, 128);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(256, 256);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(512, 512);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(1024, 1024);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(1024 * 2, 1024 * 2);
-	SEP();
-	ex_FFTShift::FFTShift_2D_CUDA(1024 * 4, 1024 * 4);
+#include "CUDA/cuGlobals.h"
 
-	return 0;
-}
+extern
+void cuGetMax(dim3 cuBlock, dim3 cuGrid, Max* dev_maxValues, float* devArrayInput, int rows, int cols);
+
+#endif /* CUEXTERNS_H_ */
