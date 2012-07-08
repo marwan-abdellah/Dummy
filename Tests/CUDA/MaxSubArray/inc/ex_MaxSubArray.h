@@ -40,8 +40,9 @@
 namespace ex_MaxSubArray
 {
 	void readFile(char* inputArray, int* numCores, int numRows, int numCols);
-	void getMax_CPU(int* inputArray, int numCores, int numRows, int numCols);
-	void getMax_CUDA(int* inputArray, Max* maxValue, int numRows, int numCols);
+
+	void getMax_CPU(int* inputArray, int numCores, int numRows, int numCols, int numItr, Sheet* xlSheet);
+	void getMax_CUDA(int* inputArray, int numRows, int numCols, int numItr, Sheet* xlSheet);
 }
 
 #endif // _EX_MAX_SUB_ARRAY_KERNEL_H_

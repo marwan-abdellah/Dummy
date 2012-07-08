@@ -13,7 +13,7 @@
  * Note(s)      :
  *********************************************************************/
 
-#define MAX_SIZE_1D 2048
+#define MAX_SIZE_1D 1024
 
 #include "Array/Real/Array.h"
 #include "ex_MaxSubArray.h"
@@ -24,9 +24,16 @@ int main(int argc, char** argv)
 	int numCores = atoi (argv[1]);
 	INFO("Number of available cores = " + ITS(numCores));
 
+	// Number of iterations for gathering some statistics :)
+	int numItr = 1;
+
 	// Excel sheet parameters
 	Book* xlBook;
 	Sheet* xlSheet;
+
+	/* xl Strings */
+	char sizeString[25];
+	char auxString[25];
 
 	// Create the XL book
 	xlBook = Utils::xl::createBook();
@@ -34,34 +41,65 @@ int main(int argc, char** argv)
 
 	if(xlBook)
 	{
-		for (int itrSize = 128; itrSize < MAX_SIZE_1D; itrSize *= 2)
+		for (int arrSize_1D = 128; arrSize_1D <= MAX_SIZE_1D; arrSize_1D *= 2)
 		{
-			// Allocating the input array
-			int* inputArray = (int*) malloc(sizeof(int) * itrSize * itrSize);
-			INFO("Allocating input array with size = "
-					+ ITS(itrSize) + "x" + ITS(itrSize));
+			snprintf(sizeString, sizeof(sizeString), "%s", "");
+			snprintf(auxString, sizeof(auxString), "%d", arrSize_1D);
+			strcat(sizeString, auxString);
 
-			INFO("Array size = " + ITS(itrSize) + "x" + ITS(itrSize));
-			// Filling the array with random numbers
-			Array::fillArray_2D_flat_int(inputArray, itrSize, itrSize, 0);
+			// Create the corresponding XL sheet
+			xlSheet = Utils::xl::addSheetToBook(sizeString, xlBook);
 
-			// Do the CPU implementation with OpenMP
-			INFO("CPU implementation with OpenMP");
-			ex_MaxSubArray::getMax_CPU(inputArray, numCores, itrSize, itrSize);
+			if (xlSheet)
+			{
+				// Allocating the input array
+				int* inputArray = (int*) malloc(sizeof(int) * arrSize_1D * arrSize_1D);
+				INFO("Allocating input array with size = "
+						+ ITS(arrSize_1D) + "x" + ITS(arrSize_1D));
 
-			SEP();
+				INFO("Array size = " + ITS(arrSize_1D) + "x" + ITS(arrSize_1D));
+				// Filling the array with random numbers
+				Array::fillArray_2D_flat_int(inputArray, arrSize_1D, arrSize_1D, 0);
 
-			// Allocate an array to hold the maximum of all possible combination
-			Max host_maxValues[itrSize];
+				// Do the CPU implementation with OpenMP
+				INFO("CPU implementation with OpenMP");
+				ex_MaxSubArray::getMax_CPU(inputArray, numCores, arrSize_1D, arrSize_1D, numItr, xlSheet);
 
-			// GPU implementation CUDA
-			INFO("GPU implementation with CUDA");
-			ex_MaxSubArray::getMax_CUDA(inputArray, host_maxValues, itrSize, itrSize);
+				SEP();
 
-			// Freeing the memory
-			FREE_MEM_1D(inputArray);
+				// GPU implementation CUDA
+				INFO("GPU implementation with CUDA");
+				ex_MaxSubArray::getMax_CUDA(inputArray, arrSize_1D, arrSize_1D, numItr, xlSheet);
+
+				// Freeing the memory
+				FREE_MEM_1D(inputArray);
+			}
+			else
+			{
+				INFO("Invalid XL sheet was created. Exiting ...");
+				EXIT(0);
+			}
 		}
 	}
+	else
+	{
+		INFO("Invalid XL book was created. Exiting ...");
+		EXIT(0);
+	}
+
+	// Writhe the Xl book to disk
+	snprintf(sizeString, sizeof(sizeString), "%s", "");
+	strcat(sizeString, "MaxSubArray_");
+	snprintf(auxString, sizeof(auxString), "%d", numCores);
+	strcat(sizeString, auxString);
+	strcat(sizeString, ".xls");
+
+	Utils::xl::saveBook(xlBook, sizeString);
+	INFO("Saving xlBook to disk");
+
+	// Release the book to be able to OPEN it
+	Utils::xl::releaseBook(xlBook);
+	INFO("Releasing xlBook");
 
 	return 0;
 }

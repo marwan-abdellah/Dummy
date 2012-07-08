@@ -86,165 +86,271 @@ void ex_MaxSubArray::readFile(char* fileName, int* inputArray, int numRows, int 
 	INFO("Reading file - Done");
 }
 
-void ex_MaxSubArray::getMax_CPU(int* inputArray,int numCores, int numRows, int numCols)
+/*
+ * This functions is divided in 2 stages. For the time being, we
+ * will refer to them by STAGE_1 & STAGE_2.
+ */
+void ex_MaxSubArray::getMax_CPU(int* inputArray, int numCores, int numRows, int numCols, int numItr, Sheet* xlSheet)
 {
-	INFO("Starting CPU implementation");
-	/*
-	 * An array for holding the maximum values of all
-	 * possible combination
-	 */
-	Max maxValues[numRows];
+	INFO("Starting CPU implementation : Iterations " + ITS(numItr));
 
-	/*
-	 * start of parallel region inStream which we are going
-	 * to divide numRows on the number of threads, each thread
-	 * will calculate the maximum of all possible combination
-	 * and only store the maximum of them all inStream maxVal
-	 */
-#pragma omp parallel num_threads(numCores)
+	/* CPU timing parameters */
+	time_boost start, end;
+
+	// Allocating CPU profiler
+	cpuProfile = MEM_ALLOC_1D_GENERIC(durationStruct, 1);
+	cpuTotalProfile = MEM_ALLOC_1D_GENERIC(durationStruct, 1);
+
+	if (xlSheet)
 	{
-		// Intermediate parameters
-		int tempMaxSum = 0;
-		int candMaxSubArr = 0 ,j;
+		// Averaging Rows
+		xlSheet->writeStr(13, (6), "Avg");
+		xlSheet->writeStr(15, (5), "ns");
+		xlSheet->writeStr(16, (5), "us");
+		xlSheet->writeStr(17, (5), "ms");
+		xlSheet->writeStr(18, (5), "s");
 
-		// Array prefSum will be used to calculate the prefix sum
-		int prefSum[numCols];
+		// Averaging Headers
+		xlSheet->writeStr(14, (6), "S1_CPU");
+		xlSheet->writeStr(14, (7), "S1_GPU");
+		xlSheet->writeStr(14, (8), "S2_CPU");
+		xlSheet->writeStr(14, (9), "S2_GPU");
+		xlSheet->writeStr(14, (10), "T_CPU");
+		xlSheet->writeStr(14, (11), "T_GPU");
+
+		// Rows
+		xlSheet->writeStr(3, (0), "# Itr");
+		xlSheet->writeStr(3, (0), "ns");
+		xlSheet->writeStr(4, (0), "us");
+		xlSheet->writeStr(5, (0), "ms");
+		xlSheet->writeStr(6, (0), "s");
+		xlSheet->writeStr(7, (0), "cuErrors");
+
+		// Iterate to average the results
+		for (int itr = 0; itr < numItr; itr++)
+		{
+			// Headers
+			xlSheet->writeNum(1, ((itr * 6) + 1), itr);
+			xlSheet->writeStr(2, ((itr * 6) + 1), "S1_CPU");
+			xlSheet->writeStr(2, ((itr * 6) + 3), "S2_CPU");
+			xlSheet->writeStr(2, ((itr * 6) + 5), "T_CPU");
+
+			/*
+			 * An array for holding the maximum values of all
+			 * possible combination
+			 */
+			Max maxValues[numRows];
+
+			/*
+			 * Start of parallel region inStream which we are going
+			 * to divide numRows on the number of threads, each thread
+			 * will calculate the maximum of all possible combination
+			 * and only store the maximum of them all inStream maxVal
+			 */
+#pragma omp parallel num_threads(numCores)
+			{
+				// Intermediate parameters
+				int tempMaxSum = 0;
+				int candMaxSubArr = 0 ,j;
+
+				// Array prefSum will be used to calculate the prefix sum
+				int prefSum[numCols];
+
+				// @ STAGE_1 "Starting"
+				start = Timers::BoostTimers::getTime_MicroSecond();
 
 #pragma omp for schedule(dynamic)
-		for(int g = 0; g < numRows; g++)
-		{
-			// Resetting the max value to 0
-			maxValues[g].val = 0;
-
-			// Resetting the prefix sum array
-			for(int iCtr = 0; iCtr < numCols; iCtr++)
-				prefSum[iCtr] = 0;
-
-			// Iterating
-			// TODO: To document what is happening in each iteration
-			for(int i = g; i < numRows; i++)
-			{
-				tempMaxSum = 0;
-				j = 0;
-				for(int h = 0; h < numCols; h++)
+				for(int g = 0; g < numRows; g++)
 				{
-					prefSum[h] = prefSum[h] + inputArray[i*numRows+h];
-					tempMaxSum = tempMaxSum + prefSum[h]; // t is the prefix sum of the strip start at row z to row xIdx
+					// Resetting the max value to 0
+					maxValues[g].val = 0;
 
-					if( tempMaxSum > candMaxSubArr)
-					{ 
-						candMaxSubArr = tempMaxSum;
-						maxValues[g].val = candMaxSubArr;
-						maxValues[g].x1 = g;
-						maxValues[g].y1 = j;
-						maxValues[g].x2 = i;
-						maxValues[g].y2 = h;
-					}
+					// Resetting the prefix sum array
+					for(int iCtr = 0; iCtr < numCols; iCtr++)
+						prefSum[iCtr] = 0;
 
-					if( tempMaxSum < 0 )
+					// Iterating
+					// TODO: To document what is happening in each iteration
+					for(int i = g; i < numRows; i++)
 					{
 						tempMaxSum = 0;
-						j = h + 1;
+						j = 0;
+						for(int h = 0; h < numCols; h++)
+						{
+							prefSum[h] = prefSum[h] + inputArray[i*numRows+h];
+							// t is the prefix sum of the strip start at row z to row xIdx
+							tempMaxSum = tempMaxSum + prefSum[h];
+
+							if( tempMaxSum > candMaxSubArr)
+							{
+								candMaxSubArr = tempMaxSum;
+								maxValues[g].val = candMaxSubArr;
+								maxValues[g].x1 = g;
+								maxValues[g].y1 = j;
+								maxValues[g].x2 = i;
+								maxValues[g].y2 = h;
+							}
+
+							if( tempMaxSum < 0 )
+							{
+								tempMaxSum = 0;
+								j = h + 1;
+							}
+						}
 					}
 				}
 			}
+
+			// @ STAGE_1 "Done"
+			end = Timers::BoostTimers::getTime_MicroSecond();
+
+			// Calculate the duration of STAGE_1
+			cpuProfile = Timers::BoostTimers::getDuration(start, end);
+
+			// Printing profile data
+			xlSheet->writeNum(3, ((itr * 6) + 1), cpuProfile->unit_NanoSec);
+			xlSheet->writeNum(4, ((itr * 6) + 1), cpuProfile->unit_MicroSec);
+			xlSheet->writeNum(5, ((itr * 6) + 1), cpuProfile->unit_MilliSec);
+			xlSheet->writeNum(6, ((itr * 6) + 1), cpuProfile->unit_Sec);
+
+			int selectedMAxVal = 0;
+			int indexMaxValue=0;
+
+			// @ STAGE_2 "Starting"
+			start = Timers::BoostTimers::getTime_MicroSecond();
+
+			// Search for the maximum inputVal inStream all maximum candidates
+			for (int i = 0; i < numRows; i++)
+			{
+				if (maxValues[i].val >selectedMAxVal)
+				{
+					selectedMAxVal = maxValues[i].val;
+					indexMaxValue = i;
+				}
+			}
+
+			// @ STAGE_2 "Done"
+			end = Timers::BoostTimers::getTime_MicroSecond();
+
+			// Calculate the duration for STAGE_2
+			cpuProfile = Timers::BoostTimers::getDuration(start, end);
+
+			// Printing profile data
+			xlSheet->writeNum(3, ((itr * 6) + 3), cpuProfile->unit_NanoSec);
+			xlSheet->writeNum(4, ((itr * 6) + 3), cpuProfile->unit_MicroSec);
+			xlSheet->writeNum(5, ((itr * 6) + 3), cpuProfile->unit_MilliSec);
+			xlSheet->writeNum(6, ((itr * 6) + 3), cpuProfile->unit_Sec);
+
+			xlSheet->writeNum(8, ((itr * 6) + 3), maxValues[indexMaxValue].y1);
+			xlSheet->writeNum(9, ((itr * 6) + 3), maxValues[indexMaxValue].x1);
+			xlSheet->writeNum(10, ((itr * 6) + 3), maxValues[indexMaxValue].y2);
+			xlSheet->writeNum(11, ((itr * 6) + 3), maxValues[indexMaxValue].x2);
 		}
 	}
-
-	int selectedMAxVal = 0;
-	int indexMaxValue=0;
-
-	// Search for the maximum inputVal inStream all maximum candidates
-	for (int i = 0; i < numRows; i++)
+	else
 	{
-		if (maxValues[i].val >selectedMAxVal)
-		{
-			selectedMAxVal = maxValues[i].val;
-			indexMaxValue = i;
-		}
+		INFO("No valid XL sheet was created. Exiting ... ");
+		EXIT(0);
 	}
 
-	INFO("CPU results for the Max Sub-Array : " + CATS("[") +
-		ITS(maxValues[indexMaxValue].y1) + "," +
-		ITS(maxValues[indexMaxValue].x1) + "," +
-		ITS(maxValues[indexMaxValue].y2) + "," +
-		ITS(maxValues[indexMaxValue].x2) + CATS("]"))
-
+	FREE_MEM_1D(cpuProfile);
 	INFO("CPU implementation - Done");
 }
 
-void ex_MaxSubArray::getMax_CUDA(int* hostInputArray, Max* hostMaxValues, int numRows, int numCols)
+/*
+ * This functions is divided in 2 stages. For the time being, we
+ * will refer to them by STAGE_1 & STAGE_2.
+ */
+void ex_MaxSubArray::getMax_CUDA(int* hostInputArray, int numRows, int numCols, int numItr, Sheet* xlSheet)
 {
 	INFO("Starting CUDA implementation");
-
-	// Memory required for input & output arrays
-	INFO("Calculating memory required");
-	const int inputArraySize = sizeof(int) * numRows * numCols;
-	const int outputArrySize = sizeof(Max) * numRows;
-
-	// Input & output arrays on the device side
-	int* devInputArray;
-	Max *devMaxValues;
-
-	// Allocating the device arrays
-	INFO("Allocating device arrays");
-	cutilSafeCall(cudaMalloc((void**)&devInputArray, inputArraySize));
-	cutilSafeCall(cudaMalloc((void**)&devMaxValues, outputArrySize));
-
-	// Upload the input array to the device side
-	INFO("Uploading the input array to the GPU");
-	cutilSafeCall(cudaMemcpy(devInputArray, hostInputArray, inputArraySize, cudaMemcpyHostToDevice));
-
-	// Configuring the GPU
-	INFO("Addjusting Gridding configuration");
-	dim3 cuBlock(128, 1, 1);
-	dim3 cuGrid(numRows/cuBlock.x, 1, 1);
 
 	// Allocating the CUDA profiler
 	cuProfile = MEM_ALLOC_1D_GENERIC(cudaProfile, 1);
 
-	// Invokig the CUDA kernel
-	INFO("Invoking CUDA kernel");
-	cuGetMax(cuBlock, cuGrid, devMaxValues, devInputArray, numRows, numCols, cuProfile);
-
-    // Checking if kernel execution failed or not
-    cutilCheckMsg("Kernel execution failed \n");
-
-    // Download the maxValues array to the host side
-    INFO("Downloading the resulting array to the CPU");
-    cutilSafeCall(cudaMemcpy(hostMaxValues, devMaxValues, outputArrySize, cudaMemcpyDeviceToHost));
-
-	INFO("GPU Benchmarks: "
-			"\n \t Nano-Sec : " + DTS(cuProfile->kernelDuration * 1000 * 1000) +
-			"\n \t Micro-Sec : " + DTS(cuProfile->kernelDuration * 1000) +
-			"\n \t Milli-Sec : " + DTS(cuProfile->kernelDuration) +
-			"\n \t Sec : " + DTS(cuProfile->kernelDuration / 1000));
-
-    // Freeingthe allocated memory on the device
-    INFO("Freeing the device memory");
-	cudaFree(devMaxValues);
-
-	int selectedMaxVal = 0;
-	int indexMaxVal = 0;
-
-	// Search for the maximum value in all maximum candidates
-	for (int i = 0; i < numRows; i++)
+	if (xlSheet)
 	{
-		if (hostMaxValues[i].val > selectedMaxVal)
+		for (int itr = 0; itr < numItr; itr++)
 		{
-			// Updating the selected values
-			selectedMaxVal = hostMaxValues[i].val;
+			// Headers
+			xlSheet->writeStr(2, ((itr * 6) + 2), "S1_GPU");
+			xlSheet->writeStr(2, ((itr * 6) + 4), "S2_GPU");
+			xlSheet->writeStr(2, ((itr * 6) + 6), "T_GPU");
 
-			// updating the index
-			indexMaxVal = i;
+			// Profile strcutures
+			cuProfile = MEM_ALLOC_1D_GENERIC(cudaProfile, 1);
+
+
+			// Memory required for input & output arrays
+			INFO("Calculating memory required");
+			const int inputArraySize = sizeof(int) * numRows * numCols;
+			const int outputArrySize = sizeof(Max) * numRows;
+
+			// Input & output arrays on the device side
+			int* devInputArray;
+			Max *devMaxValues;
+
+			// Allocate an array to hold the maximum of all possible combination
+			Max hostMaxValues[numRows];
+
+			// Allocating the device arrays
+			INFO("Allocating device arrays");
+			cutilSafeCall(cudaMalloc((void**)&devInputArray, inputArraySize));
+			cutilSafeCall(cudaMalloc((void**)&devMaxValues, outputArrySize));
+
+			// Upload the input array to the device side
+			INFO("Uploading the input array to the GPU");
+			cutilSafeCall(cudaMemcpy(devInputArray, hostInputArray, inputArraySize, cudaMemcpyHostToDevice));
+
+			// Configuring the GPU
+			INFO("Addjusting Gridding configuration");
+			dim3 cuBlock(128, 1, 1);
+			dim3 cuGrid(numRows/cuBlock.x, 1, 1);
+
+			// Invokig the CUDA kernel
+			INFO("Invoking CUDA kernel");
+			cuGetMax(cuBlock, cuGrid, devMaxValues, devInputArray, numRows, numCols, cuProfile);
+
+			// Printing profile data
+			xlSheet->writeNum(3, ((itr * 6) + 2), cuProfile->kernelDuration * 1000 * 1000);
+			xlSheet->writeNum(4, ((itr * 6) + 2), cuProfile->kernelDuration * 1000);
+			xlSheet->writeNum(5, ((itr * 6) + 2), cuProfile->kernelDuration );
+			xlSheet->writeNum(6, ((itr * 6) + 2), cuProfile->kernelDuration / 1000);
+			xlSheet->writeNum(7, ((itr * 6) + 2), cuProfile->kernelExecErr);
+
+			// Checking if kernel execution failed or not
+			cutilCheckMsg("Kernel execution failed \n");
+
+			// Download the maxValues array to the host side
+			INFO("Downloading the resulting array to the CPU");
+			cutilSafeCall(cudaMemcpy(hostMaxValues, devMaxValues, outputArrySize, cudaMemcpyDeviceToHost));
+
+			// Freeingthe allocated memory on the device
+			INFO("Freeing the device memory");
+			cudaFree(devMaxValues);
+
+			int selectedMaxVal = 0;
+			int indexMaxVal = 0;
+
+			// Search for the maximum value in all maximum candidates
+			for (int i = 0; i < numRows; i++)
+			{
+				if (hostMaxValues[i].val > selectedMaxVal)
+				{
+					// Updating the selected values
+					selectedMaxVal = hostMaxValues[i].val;
+
+					// Updating the index
+					indexMaxVal = i;
+				}
+			}
+
+			xlSheet->writeNum(8, ((itr * 6) + 3), hostMaxValues[indexMaxVal].y1);
+			xlSheet->writeNum(9, ((itr * 6) + 4), hostMaxValues[indexMaxVal].x1);
+			xlSheet->writeNum(10, ((itr * 6) + 4), hostMaxValues[indexMaxVal].y2);
+			xlSheet->writeNum(11, ((itr * 6) + 4), hostMaxValues[indexMaxVal].x2);
 		}
 	}
-
-	INFO("GPU results for the Max Sub-Array : " + CATS("[") +
-			ITS(hostMaxValues[indexMaxVal].y1) + "," +
-			ITS(hostMaxValues[indexMaxVal].x1) + "," +
-			ITS(hostMaxValues[indexMaxVal].y2) + "," +
-			ITS(hostMaxValues[indexMaxVal].x2) + CATS("]"))
-
+	FREE_MEM_1D(cuProfile);
 	INFO("CUDA implementation Done");
 }
