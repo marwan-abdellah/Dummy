@@ -126,6 +126,12 @@ void ex_MaxSubArray::getMax_CPU(int* inputArray, int numCores, int numRows, int 
 		xlSheet->writeStr(6, (0), "s");
 		xlSheet->writeStr(7, (0), "cuErrors");
 
+		// Initializing average profilers
+		cpuTotalProfile->unit_NanoSec = 0;
+		cpuTotalProfile->unit_MicroSec = 0;
+		cpuTotalProfile->unit_MilliSec = 0;
+		cpuTotalProfile->unit_Sec = 0;
+
 		// Iterate to average the results
 		for (int itr = 0; itr < numItr; itr++)
 		{
@@ -235,17 +241,29 @@ void ex_MaxSubArray::getMax_CPU(int* inputArray, int numCores, int numRows, int 
 			// Calculate the duration for STAGE_2
 			cpuProfile = Timers::BoostTimers::getDuration(start, end);
 
+			// Printing the results
+			xlSheet->writeNum(8, ((itr * 6) + 3), maxValues[indexMaxValue].y1);
+			xlSheet->writeNum(9, ((itr * 6) + 3), maxValues[indexMaxValue].x1);
+			xlSheet->writeNum(10, ((itr * 6) + 3), maxValues[indexMaxValue].y2);
+			xlSheet->writeNum(11, ((itr * 6) + 3), maxValues[indexMaxValue].x2);
+
 			// Printing profile data
 			xlSheet->writeNum(3, ((itr * 6) + 3), cpuProfile->unit_NanoSec);
 			xlSheet->writeNum(4, ((itr * 6) + 3), cpuProfile->unit_MicroSec);
 			xlSheet->writeNum(5, ((itr * 6) + 3), cpuProfile->unit_MilliSec);
 			xlSheet->writeNum(6, ((itr * 6) + 3), cpuProfile->unit_Sec);
 
-			xlSheet->writeNum(8, ((itr * 6) + 3), maxValues[indexMaxValue].y1);
-			xlSheet->writeNum(9, ((itr * 6) + 3), maxValues[indexMaxValue].x1);
-			xlSheet->writeNum(10, ((itr * 6) + 3), maxValues[indexMaxValue].y2);
-			xlSheet->writeNum(11, ((itr * 6) + 3), maxValues[indexMaxValue].x2);
+			cpuTotalProfile->unit_NanoSec += cpuProfile->unit_NanoSec;
+			cpuTotalProfile->unit_MicroSec += cpuProfile->unit_MicroSec;
+			cpuTotalProfile->unit_MilliSec += cpuProfile->unit_MilliSec;
+			cpuTotalProfile->unit_Sec += cpuProfile->unit_Sec;
 		}
+
+		// Printing average profile data
+		xlSheet->writeNum(15, 6, (int) (cpuTotalProfile->unit_NanoSec / numItr));
+		xlSheet->writeNum(16, 6, (int)(cpuTotalProfile->unit_MicroSec / numItr));
+		xlSheet->writeNum(17, 6, (int)(cpuTotalProfile->unit_MilliSec / numItr));
+		xlSheet->writeNum(18, 6, (int)(cpuTotalProfile->unit_Sec / numItr));
 	}
 	else
 	{
@@ -254,6 +272,7 @@ void ex_MaxSubArray::getMax_CPU(int* inputArray, int numCores, int numRows, int 
 	}
 
 	FREE_MEM_1D(cpuProfile);
+	FREE_MEM_1D(cpuTotalProfile);
 	INFO("CPU implementation - Done");
 }
 
