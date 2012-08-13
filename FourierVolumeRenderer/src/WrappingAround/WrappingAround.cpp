@@ -4,8 +4,7 @@
 #include "Utilities/Utils.h"
 
 
-void WrappingAround::WrapAroundVolume(float*** eCubeVolume,
-                                      float* eFlatVolume,
+void WrappingAround::WrapAroundVolume(float* eFlatVolume,
                                       const int N)
 {
     INFO("Wrapping-around SPATIAL volume with unified dimensions "
@@ -13,14 +12,15 @@ void WrappingAround::WrapAroundVolume(float*** eCubeVolume,
             + STRG( "[" ) + ITS( N ) + STRG( "]" ) + " x "
             + STRG( "[" ) + ITS( N ) + STRG( "]" ));
 
+    float*** eCubeVolume;
+
     eCubeVolume = FFTShift::FFT_Shift_3D(eFlatVolume, N);
     eFlatVolume = FFTShift::Repack_3D(eCubeVolume, eFlatVolume, N);
 
     INFO("Wrapping-around SPATIAL volume DONE");
 }
 
-void WrappingAround::WrapAroundSpectrum(float*** eCubeVolume,
-                                        float* eFlatVolume,
+void WrappingAround::WrapAroundSpectrum(float* eFlatVolume,
                                         fftwf_complex* eFlatVolume_complex,
                                         const int N)
 {
@@ -28,6 +28,8 @@ void WrappingAround::WrapAroundSpectrum(float*** eCubeVolume,
             + STRG( "[" ) + ITS( N ) + STRG( "]" ) + " x "
             + STRG( "[" ) + ITS( N ) + STRG( "]" ) + " x "
             + STRG( "[" ) + ITS( N ) + STRG( "]" ));
+
+    float*** eCubeVolume;
 
     INFO("Real Part ...");
 

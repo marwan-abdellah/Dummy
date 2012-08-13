@@ -13,17 +13,19 @@
 namespace WrappingAround
 {
     /* @ Shifting the spatial volume */
-    void WrapAroundVolume(float*** eCubeVolume, float* eFlatVolume,
+    void WrapAroundVolume(float* eFlatVolume,
                           const int N);
+
     /* @ Shifting the spectral volume */
-    void WrapAroundSpectrum(float*** eCubeVolume, float* eFlatVolume,
+    void WrapAroundSpectrum(float* eFlatVolume,
                             fftwf_complex* eFlatVolume_complex,
                             const int N);
+
     /* @ Shifting the reconstructed projection image */
     void WrapAroundImage(float** eSquareImage_MAIN,
-                                         float** eSquareImage_TEMP,
-                                         float* eFlatImage,
-                                         const int N);
+                         float** eSquareImage_TEMP,
+                         float* eFlatImage,
+                         const int N);
 }
 
 #endif // WRAPPINGAROUND_H

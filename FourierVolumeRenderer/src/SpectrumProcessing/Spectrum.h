@@ -22,8 +22,7 @@
 namespace Spectrum
 {
     /* @ */
-    fftwf_complex* createSpectrum(float* iSpectralVolume,
-                                  const volDim* iVolDim);
+    fftwf_complex* createSpectrum(volume* iSpectralVolume);
 
     /* @ */
     float* packingSpectrumTexture(const fftwf_complex* iSpectralVolume,

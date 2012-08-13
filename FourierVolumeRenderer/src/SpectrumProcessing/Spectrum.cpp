@@ -2,26 +2,25 @@
 #include "Utilities/MACROS.h"
 #include "Utilities/Utils.h"
 
-fftwf_complex* Spectrum::createSpectrum(float* iSpectralVolume,
-                                        const volDim* iVolDim)
+fftwf_complex* Spectrum::createSpectrum(volume* iSpectralVolume)
 {
     LOG();
 
     INFO("Creating COMPLEX SPECTRUM : "
-         + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ) + " x "
-         + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ) + " x "
-         + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ));
+         + STRG( "[" ) + ITS( iSpectralVolume->sizeX ) + STRG( "]" ) + " x "
+         + STRG( "[" ) + ITS( iSpectralVolume->sizeY ) + STRG( "]" ) + " x "
+         + STRG( "[" ) + ITS( iSpectralVolume->sizeZ ) + STRG( "]" ));
 
     /* @ Allocatig spectral volume */
     fftwf_complex* eSpectralVolume_complex = (fftwf_complex*) fftwf_malloc
-            (iVolDim->size_X * iVolDim->size_Y * iVolDim->size_Z
+            (iSpectralVolume->sizeX * iSpectralVolume->sizeY * iSpectralVolume->sizeZ
              * sizeof(fftwf_complex));
 
     /* @ Packing complex array in interleaved manner */
-    for (int i = 0; i < (iVolDim->size_X * iVolDim->size_Y * iVolDim->size_Z); i++)
+    for (int i = 0; i < (iSpectralVolume->sizeX * iSpectralVolume->sizeY * iSpectralVolume->sizeZ); i++)
     {
-        eSpectralVolume_complex[i][0] = iSpectralVolume[i];
-        eSpectralVolume_complex[i][1] = iSpectralVolume[i];
+        eSpectralVolume_complex[i][0] = iSpectralVolume->ptrVol_float[i];
+        eSpectralVolume_complex[i][1] = iSpectralVolume->ptrVol_float[i];
 
     }
 
@@ -29,9 +28,9 @@ fftwf_complex* Spectrum::createSpectrum(float* iSpectralVolume,
 
     /* @ 3D FFT */
     fftwf_plan eFFTPlan = fftwf_plan_dft_3d(
-                            iVolDim->size_X,
-                            iVolDim->size_Y,
-                            iVolDim->size_Z,
+                            iSpectralVolume->sizeX,
+                            iSpectralVolume->sizeY,
+                            iSpectralVolume->sizeZ,
                             eSpectralVolume_complex,
                             eSpectralVolume_complex,
                             FFTW_FORWARD,
