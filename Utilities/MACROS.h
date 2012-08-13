@@ -124,6 +124,8 @@
 		(  Memory::free_2D_double(PTR, SIZE_X, SIZE_Y ) )
 #define FREE_MEM_3D_FLOAT( PTR, SIZE_X, SIZE_Y, SIZE_Z ) 						\
 		(  Memory::free_3D_float(PTR, SIZE_X, SIZE_Y, SIZE_Z ) )
+#define FREE_MEM_3D_CHAR( PTR, SIZE_X, SIZE_Y, SIZE_Z ) 						\
+        (  Memory::free_3D_char(PTR, SIZE_X, SIZE_Y, SIZE_Z ) )
 #define FREE_MEM_3D_DOUBLE( PTR, SIZE_X, SIZE_Y, SIZE_Z ) 						\
 		(  Memory::free_3D_double(PTR, SIZE_X, SIZE_Y, SIZE_Z ) )
 #define FREE_MEM_2D_FFTWFCOMPLEX( PTR, SIZE_X, SIZE_Y ) 						\

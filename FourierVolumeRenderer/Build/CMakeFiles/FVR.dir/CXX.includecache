@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../src/shared.h
+iostream
+-
+fstream
+-
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+vector
+-
+math.h
+-
+
+/home/abdellah/Software/FourierVolumeRenderer/src/Loader/Loader.cpp
+Loader.h
+/home/abdellah/Software/FourierVolumeRenderer/src/Loader/Loader.h
+shared.h
+/home/abdellah/Software/FourierVolumeRenderer/src/Loader/shared.h
+iostream
+-
+fstream
+-
+stdio.h
+-
+stdlib.h
+-
+
+/home/abdellah/Software/FourierVolumeRenderer/src/Loader/Loader.h
+shared.h
+/home/abdellah/Software/FourierVolumeRenderer/src/Loader/shared.h
+

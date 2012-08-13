@@ -255,6 +255,19 @@ void Memory::free_3D_float(float*** ptrData, const int size_X, const int size_Y,
 	ptrData = NULL;
 }
 
+void Memory::free_3D_char(char*** ptrData, const int size_X, const int size_Y, const int size_Z)
+{
+    for(int i = 0; i < size_Y; i++)
+    {
+        for(int j = 0; j < size_Z; j++)
+                free(ptrData[i][j]);
+        free(ptrData[i]);
+    }
+
+    free(ptrData);
+    ptrData = NULL;
+}
+
 void Memory::free_3D_double(double*** ptrData, const int size_X, const int size_Y, const int size_Z)
 {
 	for(int i = 0; i < size_Y; i++)

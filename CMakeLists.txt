@@ -6,10 +6,10 @@
 # * Department, Faculty of Engineering, Cairo University.
 # * Please, don't use or distribute without authors' permission.
 
-# * File        : Volume
+# * File        : CMakeLists.txt
 # * Author(s)	: Marwan Abdellah <abdellah.marwan@gmail.com>
 # * Created	: April 2011
-# * Description	:
+# * Description	: CMake 
 # * Note(s)	:
 # *********************************************************************
 
@@ -17,11 +17,12 @@
 cmake_minimum_required(VERSION 2.6)
 
 # Fourier Volume Rendeing
-PROJECT(FourierVolumeRenderer)
+PROJECT(cuYuri)
 
 # Add CMake modules 
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake)
 
+# FFTW
 SET(FFTW_ROOT ${PROJECT_SOURCE_DIR}/../install) 
 FIND_PACKAGE(FFTW REQUIRED)
 IF(FFTW_FOUND)
@@ -34,9 +35,9 @@ ELSE(FFTW_FOUND)
   MESSAGE(FATAL_ERROR "FFTW not found")
 ENDIF(FFTW_FOUND)
 
-# OpenGL & GLU & GLUT  
+# OpenGL
 FIND_PACKAGE(OpenGL REQUIRED)
-FIND_PACKAGE(GLUT REQUIRED)
+
 
 IF(OPENGL_FOUND)
   MESSAGE(STATUS "OpenGL found...")
@@ -48,6 +49,8 @@ ELSE(OPENGL_FOUND)
   MESSAGE(FATAL_ERROR "OpenGL not found")
 ENDIF(OPENGL_FOUND)
 
+# GLUT
+FIND_PACKAGE(GLUT REQUIRED)
 IF(GLUT_FOUND)
   MESSAGE(STATUS  "GLUT found...")
   MESSAGE("GLUT include directory : ${GLUT_INCLUDE_DIR}")
@@ -58,10 +61,15 @@ ELSE(GLUT_FOUND)
   MESSAGE(FATAL_ERROR "GLUT not found")
 ENDIF(GLUT_FOUND)
 
+# GLEW
+INCLUDE(FindGLEW)
+LINK_LIBRARIES(${GLEW_LIB})
+INCLUDE_DIRECTORIES(${GLEW_INCLUDE_DIR})
+
 # Add the heade files to the include directories
 INCLUDE_DIRECTORIES("${OPENGL_INCLUDE_DIR}")
 
-# Include FindCUDA.cmake 
+# CUDA
 INCLUDE(FindCUDA_Local)
 
 # LibXL 64 bit
@@ -76,25 +84,21 @@ INCLUDE(FindBoost_Local)
 # OpenMP
 INCLUDE(FindOpenMP_Local)
 
-SET(SOURCES 
-	Volume/Volume.cpp
-	Array/Real/Array.cpp
-	Array/Complex/cuComplex.cpp
-	Array/Complex/fftwComplex.cpp
-	Timers/BoostTimers.cpp
-	Timers/CUDATimers.cpp
-	Utilities/Utils.cpp
-	Utilities/Logging.cpp
-	Utilities/Tracing.cpp
-	Utilities/Memory.cpp
-	Utilities/XL.cpp
-	Utilities/Bench.cpp
-	OpenGL/DisplayLists.cpp
-	FFT/FFTShift.cpp
-	FFT/FFT2D.cpp
-	FFT/FFT3D.cpp
-	CUDA/Utilities/cuUtils.cpp
-	FourierVolumeRenderer.cpp)
+SET(BASIC_SOURCES Array/Real/Array.cpp
+            Array/Complex/cuComplex.cpp
+            Array/Complex/fftwComplex.cpp
+            Timers/BoostTimers.cpp
+            Timers/CUDATimers.cpp
+            Utilities/Utils.cpp
+            Utilities/Logging.cpp
+            Utilities/Tracing.cpp
+            Utilities/Memory.cpp
+            Utilities/XL.cpp
+            Utilities/Bench.cpp
+            FFT/FFTShift.cpp
+            FFT/FFT2D.cpp
+            FFT/FFT3D.cpp
+            CUDA/Utilities/cuUtils.cpp)
 
 # Include directories 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
@@ -110,12 +114,14 @@ INCLUDE_DIRECTORIES(${CUDA_KERNELS_DIR})
 SET(CUDA_SOURCES CUDA/cuExterns.cu)
     
 # Generate the executable considering CUDA stuff :)
-CUDA_ADD_EXECUTABLE(FVR FVR.cpp ${CUDA_SOURCES} ${SOURCES})
+#CUDA_ADD_EXECUTABLE(cuYuri runEngine.cpp ${CUDA_SOURCES} ${SOURCES})
 
 # Link to a library to be used later 
-ADD_LIBRARY(CORE ${CUDA_SOURCES} ${SOURCES})
+ADD_LIBRARY(CORE ${CUDA_SOURCES} ${BASIC_SOURCES})
 
-# Tests 
+# --------------------------------------------------------
+# Test Projects
+# --------------------------------------------------------
 #INCLUDE(${CMAKE_SOURCE_DIR}/Tests/CUDA/MatMul/CMakeLists.cmake)
 #INCLUDE(${CMAKE_SOURCE_DIR}/Tests/CUDA/FFT_Shift/CMakeLists.cmake)
 #INCLUDE(${CMAKE_SOURCE_DIR}/Tests/LibXL/CMakeLists.cmake)
@@ -124,10 +130,15 @@ ADD_LIBRARY(CORE ${CUDA_SOURCES} ${SOURCES})
 #INCLUDE(${CMAKE_SOURCE_DIR}/Tests/Array/Real/CMakeLists.cmake)
 #INCLUDE(${CMAKE_SOURCE_DIR}/Tests/Timers/CMakeLists.cmake)
 #INCLUDE(${CMAKE_SOURCE_DIR}/Tests/Templates/CMakeLists.cmake)
-INCLUDE(${CMAKE_SOURCE_DIR}/Tests/CUDA/MaxSubArray/CMakeLists.cmake)
+#INCLUDE(${CMAKE_SOURCE_DIR}/Tests/CUDA/MaxSubArray/CMakeLists.cmake)
 
-# Benchmarking 
+# --------------------------------------------------------
+# Benchmarking Projects
+# --------------------------------------------------------
 #INCLUDE(${CMAKE_SOURCE_DIR}/Benchmarking/FFT_Shift/CMakeLists.cmake)
 #INCLUDE(${CMAKE_SOURCE_DIR}/Benchmarking/cuFFTShift_2D/CMakeLists.cmake)
 #INCLUDE(${CMAKE_SOURCE_DIR}/Benchmarking/cuFFTShift_3D/CMakeLists.cmake)
 #INCLUDE(${CMAKE_SOURCE_DIR}/Benchmarking/FFT_Shift/2D/Real/CMakeLists.cmake)
+
+# FVR
+INCLUDE(${CMAKE_SOURCE_DIR}/FourierVolumeRenderer/CMakeLists.cmake)
