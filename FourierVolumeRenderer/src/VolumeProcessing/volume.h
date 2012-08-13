@@ -12,11 +12,12 @@ namespace Volume
 {
     char*** allocCubeVolume_char(const int size_X,const int size_Y,const int size_Z);
     float*** allocCubeVolume_float(const int size_X, const int size_Y, const int size_Z);
-    void packFlatVolume(char* flatVolume, char*** cubeVolume, const volDim* iVolDim);
-    void packCubeVolume(char*** cubeVolume, char* flatVolume, const volDim* iVolDim);
+    void packFlatVolume(volume* iVolume, char*** cubeVolume);
+    void packCubeVolume(char*** cubeVolume, volume* iVolume);
     void extractSubVolume(char*** originalCubeVol, char*** finalCubeVol, const subVolDim* iSubVolDim);
-    char* extractFinalVolume(char* originalFlatVol, const volDim* originalDim, const subVolDim* iSubVol);
-    float* createFloatVolume(char* flatVol_char, const volDim* iVolDim);
+    volume* extractFinalVolume(volume* originalFlatVol, const subVolDim* iSubVol);
+    volume* createFloatVolume(volume* iVolume_char);
+
 }
 
 #endif // VOLUME_H
