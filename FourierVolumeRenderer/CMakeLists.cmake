@@ -2,7 +2,10 @@
 SET(FVR_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/FourierVolumeRenderer/src)
 
 INCLUDE_DIRECTORIES(${FVR_SOURCE_DIR}/)
-SET(SOURCES ${FVR_SOURCE_DIR}/FourierVolumeRenderer.cpp)
+SET(SOURCES ${FVR_SOURCE_DIR}/runEngine.cpp)
+
+# eFourierVolRen Example
+LIST(APPEND SOURCES ${FVR_SOURCE_DIR}/eFourierVolRen.cpp)
 
 # Loader
 LIST(APPEND SOURCES ${FVR_SOURCE_DIR}/Loader/Loader.cpp)
@@ -52,4 +55,4 @@ INCLUDE_DIRECTORIES(${CUDA_KERNELS_DIR})
 # SET(CUDA_SOURCES)
     
 # Generate the executable considering CUDA stuff :)
-CUDA_ADD_EXECUTABLE(FVR ${SOURCES} ${BASIC_SOURCES})
+CUDA_ADD_EXECUTABLE(eFourierVolRen ${SOURCES} ${BASIC_SOURCES})

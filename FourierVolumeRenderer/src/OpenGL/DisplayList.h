@@ -6,8 +6,10 @@
 #include <GL/glut.h>
 #include "shared.h"
 
+/* @ OpenGL namespace */
 namespace OpenGL
 {
+    /* @ */
     GLuint setDisplayList(float center, float sideLength);
 }
 

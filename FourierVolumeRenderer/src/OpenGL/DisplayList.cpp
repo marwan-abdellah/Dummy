@@ -1,38 +1,42 @@
 #include "DisplayList.h"
+#include "Utilities/MACROS.h"
+#include "Utilities/Utils.h"
 
 
-GLuint OpenGL::setDisplayList(float center, float sideLength)
+GLuint OpenGL::setDisplayList(float iCenter, float iSideLength)
 {
-    printf("Creating Display List ... \n");
+    INFO("Creating DisplayList")
 
-    // Center (Z = 0), Side Lenght = 1, Just 1 Slice, 4 Vertices, 3 Coordinates
+    /* @ How thw display list is being created
+     *   iCenter (Z = 0), Side Lenght = 1,
+     *   Just 1 Slice, 4 Vertices, 3 Coordinates
+     */
 
     int numSlices           = 1;
     int numElements         = 4 * numSlices;
     GLfloat *vertexList	= new GLfloat [3 * numElements];
 
-    // Fill the Display List with Vertecies
-    vertexList[0] = -sideLength / 2;
-    vertexList[1] = -sideLength / 2;
-    vertexList[2] =  center;
+    /* @ Fill the DisplayList with vertecies */
+    vertexList[0] = -iSideLength / 2;
+    vertexList[1] = -iSideLength / 2;
+    vertexList[2] =  iCenter;
 
-    vertexList[3] =  sideLength / 2;
-    vertexList[4] = -sideLength / 2;
-    vertexList[5] =  center;
+    vertexList[3] =  iSideLength / 2;
+    vertexList[4] = -iSideLength / 2;
+    vertexList[5] =  iCenter;
 
-    vertexList[6] =  sideLength / 2;
-    vertexList[7] =  sideLength / 2;
-    vertexList[8] =  center;
+    vertexList[6] =  iSideLength / 2;
+    vertexList[7] =  iSideLength / 2;
+    vertexList[8] =  iCenter;
 
-    vertexList[9] = -sideLength / 2;
-    vertexList[10] =  sideLength / 2;
-    vertexList[11] =  center;
+    vertexList[9] = -iSideLength / 2;
+    vertexList[10] =  iSideLength / 2;
+    vertexList[11] =  iCenter;
 
-    // Fill the Display List with Vertecies
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, 0, vertexList);
 
-    // Create the disply list
+    /* @ Create the final DisplayList */
     GLuint displyList = glGenLists(1);
     glNewList(displyList, GL_COMPILE);
     glDrawArrays(GL_QUADS, 0, numElements);
@@ -40,7 +44,7 @@ GLuint OpenGL::setDisplayList(float center, float sideLength)
 
     delete [] vertexList;
 
-    printf("	Display List Created Successfully \n\n");
+    INFO("Creating DisplayList DONE ");
 
     return displyList;
 }

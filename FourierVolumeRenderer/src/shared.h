@@ -37,6 +37,7 @@ struct volume
     int sizeX;
     int sizeY;
     int sizeZ;
+    int sizeUni;
 
     int volSize;
     int volSizeBytes;

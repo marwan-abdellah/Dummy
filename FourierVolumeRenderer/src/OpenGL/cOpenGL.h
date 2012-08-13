@@ -1,44 +1,48 @@
 #ifndef _COPENGL_H_
 #define _COPENGL_H_
 
-
-#include <iostream>
-#include <fstream>
-#include <stdio.h>
-#include <string.h>
-#include <vector>
-#include <math.h>
-#include <fftw3.h>
+/* @ OpenGL includes */
 #include <GL/glew.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+
+/* System includes */
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+
+/* @ CUDA includes */
 #include <cutil_inline.h>
 
-
-
-
-using namespace std;
+/* @ Internal includes */
+#include "shared.h"
 
 #define OFFSET(i) ((char *)NULL + (i))
 
-// extern  GLuint		mSliceTextureID; 	// Extracted Slice ID
-
-namespace cOpenGL
+/* @ OpenGL namespace */
+namespace OpenGL
 {
-    void InitOpenGLContext(int argc, char** argv);
+    /* @ initialization functions */
+    void initOpenGLContext(int argc, char** argv);
     void initOpenGL();
-    CUTBoolean CheckOpenGLExtensions();
     void initGlut(int argc, char** argv);
-    void DisplayGL();
-    void Reshape(int fWindowWidth, int fWindowHeight);
-    void KeyBoard(unsigned char, int, int);
-    void Idle();
-    void Mouse(int fButton, int fState, int fX, int fY);
-    void MouseMotion(int fX, int fY);
-    void RegisterOpenGLCallBacks();
 
+    /* @ Checking required OpenGL extensions */
+    bool checkGLExtensions();
+
+    /* @ preparing FBO */
     void prepareFBO(GLuint* iFBO_ID, GLuint* iSliceTexture_ID);
     void updateSliceTexture(GLuint* iImageTexture_ID);
+
+    /* @ OpenGL callbacks */
+    void displayGL();
+    void reshapeGL(int iWinWidth, int iWinHeight);
+    void keyboardGL(unsigned char Button, int iX, int iY);
+    void idleGL();
+    void mouseGL(int iButton, int iState, int IX, int iY);
+    void mouseMotionGL(int iX, int iY);
+    void registerOpenGLCallBacks();
 }
 
 #endif // COPENGL_H

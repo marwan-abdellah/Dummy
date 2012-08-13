@@ -119,6 +119,7 @@ FourierVolumeRenderer/src/OpenGL/cOpenGL.cpp
 FourierVolumeRenderer/src/OpenGL/cOpenGL.h
 FourierVolumeRenderer/src/OpenGL/DisplayList.cpp
 FourierVolumeRenderer/src/OpenGL/DisplayList.h
+FourierVolumeRenderer/src/OpenGL/OpenGLCheck.h
 FourierVolumeRenderer/src/RenderingLoop/RenderingLoop.cpp
 FourierVolumeRenderer/src/RenderingLoop/RenderingLoop.h
 FourierVolumeRenderer/src/SliceProcessing/Slice.cpp
@@ -129,7 +130,9 @@ FourierVolumeRenderer/src/VolumeProcessing/volume.cpp
 FourierVolumeRenderer/src/VolumeProcessing/volume.h
 FourierVolumeRenderer/src/WrappingAround/WrappingAround.cpp
 FourierVolumeRenderer/src/WrappingAround/WrappingAround.h
-FourierVolumeRenderer/src/FourierVolumeRenderer.cpp
+FourierVolumeRenderer/src/eFourierVolRen.cpp
+FourierVolumeRenderer/src/eFourierVolRen.h
+FourierVolumeRenderer/src/runEngine.cpp
 FourierVolumeRenderer/src/shared.h
 FourierVolumeRenderer/CMakeLists.cmake
 LibXL/doc/images/alignh_center.png

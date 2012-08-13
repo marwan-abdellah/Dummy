@@ -1,124 +1,120 @@
 #include "cOpenGL.h"
+#include "OpenGLCheck.h"
+#include "Utilities/MACROS.h"
+#include "Utilities/Utils.h"
 
 
+/*************/
+/* @ EXTERNS */
+/*************/
+extern float eXRot_Glob;
+extern float eYRot_Glob;
+extern float eZRot_Glob;
+extern float eZoomLevel_Glob ;
+extern float eSliceTrans_Glob ;
+extern void GetSpectrumSlice();
 
-extern float mXrot;
-extern float mYrot;
-extern float mZrot;
-extern int mScalingFactor ;
-extern float trans ;
-
- int sWindowWidth;
- int sWindowHeight;
- float mImageScale = 2;
- float sVal = 1.0;
- int mWindowWidth		= 512;
- int mWindowHeight		= 512;
-
- extern void GetSpectrumSlice();
-
-// OpenGL Checking
-const char *appName = "fourierVolumeRender";
-
-// Linux Machine
-#include <X11/Xlib.h>
-
-bool IsOpenGLAvailable(const char *appName)
-{
-Display *Xdisplay = XOpenDisplay(NULL);
-
-if (Xdisplay == NULL)
-{
-   return false;
-}
-else
-{
-   XCloseDisplay(Xdisplay);
-   return true;
-}
-}
-
+/************/
+/* @ LOCALS */
+/************/
 GLuint* cGL_ImageTexture_ID;
 
-void cOpenGL::updateSliceTexture(GLuint* iImageTexture_ID)
+int    eWinWidth;
+int    eWinHeight;
+float  eImageZoom       = 1;
+float  eNormValue       = 1.0;
+int    eGloWinWidth     = 512;
+int    eGloWinHeight    = 512;
+
+void OpenGL::updateSliceTexture(GLuint* iImageTexture_ID)
 {
     cGL_ImageTexture_ID = iImageTexture_ID;
 }
 
-void cOpenGL::prepareFBO(GLuint* iFBO_ID, GLuint* iSliceTexture_ID)
+void OpenGL::prepareFBO(GLuint* iFBO_ID, GLuint* iSliceTexture_ID)
 {
-    printf("Preparing FrameBuffer Object & Its Associated Texture \n");
+    INFO("Preparing FBO");
 
     glGenFramebuffersEXT(1, iFBO_ID);
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, *iFBO_ID);
 
-    // Attach Texture to FBO Color Attachement Point
-    glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, *iSliceTexture_ID, 0);
+    /* @ Attaching the FBO to the associated texture */
+    glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+                              GL_TEXTURE_2D, *iSliceTexture_ID, 0);
+
+    /* @ Unbinding */
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 
-    printf("	Frame Buffer Preparation Done Successfully \n\n");
+    INFO("Preparing FBO DONE");
 }
 
-void cOpenGL::InitOpenGLContext(int argc, char** argv)
+void OpenGL::initOpenGLContext(int argc, char** argv)
 {
-    printf ("Initializing OpenGL Contex ... \n");
-    printf ("	First Initialize OpenGL Context, So We Can Properly Set the GL for CUDA. \n");
-    printf ("	This is Necessary in order to Achieve Optimal Performance with OpenGL/CUDA Interop. \n");
+    INFO ("Initializing OpenGL Contex");
 
-    if (IsOpenGLAvailable(appName))
-        fprintf(stderr, "	OpenGL Device is Available \n\n");
+    /* checking the avialability of OpenGL context */
+    if (isOpenGLAvailable())
+    {
+        INFO("OpenGL device is available");
+    }
     else
     {
-        fprintf(stderr, "	OpenGL device is NOT Available, [%s] exiting...\n  PASSED\n\n", appName );
-        exit(0);
+        INFO("OpenGL device is NOT available");
+        EXIT(0);
     }
 
-    // GLUT Initialization
+    /* @ GLUT Initialization */
     initGlut(argc, argv);
 
-    // Initialize Necessary OpenGL Extensions
-    if (CUTFalse == CheckOpenGLExtensions())
+    /* Initialize necessary OpenGL extensions */
+    if (!checkGLExtensions())
     {
-        printf("	Missing OpenGL Necessary Extensions  \n Exiting ..... \n");
-        exit(0);
+        INFO("Missing OpenGL Necessary Extensions");
+        EXIT(0);
     }
     else
-        printf("	Requied OpenGL Extensions are Found \n\n");
+        INFO("Requied OpenGL extensions are FOUND");
 
-    // Register OpenGL CallBack Functions
-    RegisterOpenGLCallBacks();
+    INFO("Registering OpenGL callbacks");
+
+    /* @ Registering OpenGL CallBack Functions */
+    registerOpenGLCallBacks();
+
+    INFO("Initializing OpenGL Contex DONE");
 }
 
-void cOpenGL::initGlut(int argc, char** argv)
+void OpenGL::initGlut(int argc, char** argv)
 {
-    // Initializing GLUT
-    printf("Initializing GLUT ... \n");
+    /* @ Initializing GLUT */
+    INFO("Initializing GLUT");
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-    glutInitWindowSize(512, 512);
-    glutCreateWindow("Fourier Volume Rendering on CUDA");
+    glutInitWindowSize(eGloWinWidth, eGloWinHeight);
+    glutCreateWindow("Fourier Volume Renderer - Marwan Abdellah");
 
-    printf("	Display Mode		: GLUT_RGBA | GLUT_DOUBLE \n");
-    printf("	GLUT Windows Size	: %d mLoop %d \n \n", 512, 512);
+    INFO("Display Mode : GLUT_RGBA | GLUT_DOUBLE");
+    INFO("Initializing GLUT DONE");
 }
 
-CUTBoolean cOpenGL::CheckOpenGLExtensions()
+bool OpenGL::checkGLExtensions()
 {
-    printf("Checking OpenGL Extensions via GLEW ... \n");
+    INFO("Checking OpenGL Extensions - GLEW");
+
+    /* @ initializing GLEW */
     glewInit();
 
+    /* Check OpenGL 2.0*/
     if (! glewIsSupported("GL_VERSION_2_0"))
     {
-        fprintf(stderr, "ERROR: Support for Necessary OpenGL Extensions Missing ..... \n");
-        fflush(stderr);
-        return CUTFalse;
-        }
-        else
-            return CUTTrue;
+        INFO("ERROR: Support for necessary OpenGL extensions missing ");
+        return 0;
+    }
+    else
+        return 1;
 }
 
-void cOpenGL::initOpenGL()
+void OpenGL::initOpenGL()
 {
     /* @ Clearing color buffer */
     glClearColor (0.0, 0.0, 0.0, 0.0);
@@ -127,34 +123,35 @@ void cOpenGL::initOpenGL()
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
-void cOpenGL::DisplayGL()
+void OpenGL::displayGL()
 {
-    // Clearing Color Buffer
+    /* @ Clearing color buffer */
     glClear(GL_COLOR_BUFFER_BIT);
 
+    /* @ Disabling depth test */
     glDisable(GL_DEPTH_TEST);
 
-    // Binding Slice Texture to be Displayed On OpenGL Quad
+    /* @ Binding slice texture to be displayed On OpenGL Quad */
     glBindTexture(GL_TEXTURE_2D, *cGL_ImageTexture_ID);
     glEnable(GL_TEXTURE_2D);
 
-    // Slice Texture Parameters
+    /* Adjusting slice texture parameters */
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    // Adjusting Viewport
-    glViewport(-sWindowWidth / 2, -sWindowHeight / 2, sWindowWidth * 2, sWindowHeight * 2);
+    /* @ Adjusting viewport */
+    glViewport(-eWinWidth / 2, -eWinHeight / 2, eWinWidth * 2, eWinHeight * 2);
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
 
-    // Center Slice Texture (0,0)
-    glScalef(mImageScale, mImageScale, 1);
+    /* @ Center slice texture at the orgin (0,0) */
+    glScalef(eImageZoom, eImageZoom, 1);
     glTranslatef(-0.5, -0.5, 0.0);
 
+    /* @ Texture the slice on the QUAD */
     glBegin(GL_QUADS);
         glVertex2f(0, 0);		glTexCoord2f(0, 0);
         glVertex2f(0, 1);		glTexCoord2f(1, 0);
@@ -163,32 +160,34 @@ void cOpenGL::DisplayGL()
     glEnd();
     glPopMatrix();
 
-    // Release Texture Reference & Disable Texturing
+    /* @ Release texture reference & disable texturing */
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_TEXTURE_2D);
 
-    // Swapping Buffer Contents
+    /* @ Swapping buffer contents */
     glutSwapBuffers();
 }
 
-void cOpenGL::Reshape(int fWindowWidth, int fWindowHeight)
+void OpenGL::reshapeGL(int iWinWidth, int iWinHeight)
 {
-    // ViewPort
-    glViewport(0, 0, fWindowWidth, fWindowHeight);
-    sWindowHeight = fWindowHeight;
-    sWindowWidth = fWindowWidth;
+    /* @ Adjusting viewPort */
+    glViewport(0, 0, iWinWidth, iWinHeight);
+
+    /* @ For adjusting window size */
+    eWinHeight = iWinHeight;
+    eWinWidth = iWinWidth;
 
     // Projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 }
 
-void cOpenGL::Idle()
+void OpenGL::idleGL()
 {
     glutPostRedisplay();
 }
 
-void cOpenGL::KeyBoard(unsigned char fKey, int fX, int fY)
+void OpenGL::keyboardGL(unsigned char fKey, int fX, int fY)
 {
 
     // Dummy
@@ -200,118 +199,133 @@ void cOpenGL::KeyBoard(unsigned char fKey, int fX, int fY)
             exit (0);
             break;
         case 'Q':
-            mXrot += 5.0;
-            printf("Rotating %d around mLoop ... \n", (float) mXrot);
+            eXRot_Glob += 5.0;
+            printf("Rotating %f around mLoop ... \n", (float) eXRot_Glob);
             break;
         case 'q':
-            mXrot -= 5.0;
-            printf("Rotating %d around mLoop ... \n", (float) mXrot);
+            eXRot_Glob -= 5.0;
+            printf("Rotating %f around mLoop ... \n", (float) eXRot_Glob);
             break;
         case 'W':
-            mYrot += 5.0;
-            printf("Rotating %d around Y ... \n", (float) mYrot);
+            eYRot_Glob += 5.0;
+            printf("Rotating %f around Y ... \n", (float) eYRot_Glob);
             break;
         case 'w':
-            mYrot -= 5.0;
-            printf("Rotating %d around Y ... \n", (float) mYrot);
+            eYRot_Glob -= 5.0;
+            printf("Rotating %f around Y ... \n", (float) eYRot_Glob);
             break;
         case 'E':
-            mZrot += 5.0;
-            printf("Rotating %d around Z ... \n", (float) mZrot);
+            eZRot_Glob += 5.0;
+            printf("Rotating %f around Z ... \n", (float) eZRot_Glob);
             break;
         case 'e':
-            mZrot -= 5.0;
-            printf("Rotating %d around Z ... \n", (float) mZrot);
+            eZRot_Glob -= 5.0;
+            printf("Rotating %f around Z ... \n", (float) eZRot_Glob);
             break;
         case ' ':
 
             break;
 
         case 'R':
-            sVal = sVal * 10;
-            printf("sVal %d \n", sVal);
+            eNormValue = eNormValue * 10;
+            printf("eNormValue %f \n", eNormValue);
             break;
 
         case 'r':
-            sVal = sVal / 10;
-            printf("sVal %d \n", sVal);
+            eNormValue = eNormValue / 10;
+            printf("eNormValue %f \n", eNormValue);
             break;
 
         case 'o':
-            trans = trans + 1;
-            printf("trans : %d/256 \n", trans);
+            eSliceTrans_Glob = eSliceTrans_Glob + 1;
+            printf("eSliceTrans_Glob : %f/256 \n", eSliceTrans_Glob);
             break;
 
         case 'p':
-            trans = trans - 1;
-            printf("trans : %d/256 \n", trans);
+            eSliceTrans_Glob = eSliceTrans_Glob - 1;
+            printf("eSliceTrans_Glob : %f/256 \n", eSliceTrans_Glob);
             break;
 
         case 's':
-            mScalingFactor *= 5;
-            printf("mScalingFactor : %d \n", mScalingFactor);
+            eZoomLevel_Glob *= 5;
+            printf("eZoomLevel_Glob : %f \n", eZoomLevel_Glob);
             break;
 
         case 'S':
-            mScalingFactor /= 5;
-            printf("mScalingFactor : %d \n", mScalingFactor);
+            eZoomLevel_Glob /= 5;
+            printf("eZoomLevel_Glob : %f \n", eZoomLevel_Glob);
             break;
 
         case 'a':
-            mScalingFactor += 10;
-            printf("mScalingFactor : %d \n", mScalingFactor);
+            eZoomLevel_Glob += 10;
+            printf("eZoomLevel_Glob : %f \n", eZoomLevel_Glob);
             break;
 
         case 'A':
-            mScalingFactor -= 10;
-            printf("mScalingFactor : %d \n", mScalingFactor);
+            eZoomLevel_Glob -= 10;
+            printf("eZoomLevel_Glob : %f \n", eZoomLevel_Glob);
             break;
 
-        case 'z' : mImageScale += 0.5;
+        case 'z' : eImageZoom += 0.5;
         break;
 
-        case 'Z' : mImageScale -= 0.5;
+        case 'Z' : eImageZoom -= 0.5;
         break;
 
         default:
             break;
     }
 
-    // Re-Slice & Re-Display
+    /* @ Reslice & redisplay */
     GetSpectrumSlice();
     glutPostRedisplay();
 }
 
-
-void cOpenGL::Mouse(int fButton, int fState, int fX, int fY)
+void OpenGL::mouseGL(int fButton, int fState, int fX, int fY)
 {
+    if(fState == GLUT_DOWN)
+    {
+        if(fButton == GLUT_LEFT_BUTTON)
+        {
+            printf("1");
+        }
+        else if(fButton == GLUT_MIDDLE_BUTTON)
+        {
+             printf("12");
+        }
+        else if(fButton == GLUT_RIGHT_BUTTON)
+        {
+             printf("13");
+        }
+    }
+    else
+    {
+        //alternate code
+    }
+
+    /* @ Reslice & redisplay */
     glutPostRedisplay();
-
-    // Dummy
-    if (fX | fY | fState | fButton) {}
-
 }
 
-void cOpenGL::MouseMotion(int fX, int fY)
+void OpenGL::mouseMotionGL(int iX, int iY)
 {
-    glutPostRedisplay();
-
     // Dummy
-    if (fX | fY) {}
+    if (iX | iY) {}
+
+    glutPostRedisplay();
 }
 
-
-void cOpenGL::RegisterOpenGLCallBacks()
+void OpenGL::registerOpenGLCallBacks()
 {
-    // Registering OpenGL Context
-    printf("Registerng OpenGL Context CallBacks ... \n");
+    /* Registering OpenGL context callbacks*/
+    INFO("Registerng OpenGL context callbacks");
 
-    glutDisplayFunc(DisplayGL);
-    glutKeyboardFunc(KeyBoard);
-    glutReshapeFunc(Reshape);
-    glutIdleFunc(Idle);
-    glutMouseFunc(Mouse);
-    glutMotionFunc(MouseMotion);
+    glutDisplayFunc(displayGL);
+    glutKeyboardFunc(keyboardGL);
+    glutReshapeFunc(reshapeGL);
+    glutIdleFunc(idleGL);
+    glutMouseFunc(mouseGL);
+    glutMotionFunc(mouseMotionGL);
 
-    printf("	CallBacks Registered Successfully \n\n");
+    INFO("Registerng OpenGL context callbacks DONE");
 }

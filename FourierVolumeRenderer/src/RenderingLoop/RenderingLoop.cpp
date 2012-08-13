@@ -64,7 +64,7 @@ void RenderingLoop::run(const float iRot_X,
     eSlice_complex, eRecImageAbsolute);
 
     /* @ Update the rendering context with the new image */
-    cOpenGL::updateSliceTexture(iImageTexture_ID);
+    OpenGL::updateSliceTexture(iImageTexture_ID);
 
     /* @ Upload the image to the GPU */
     Slice::uploadImage(iSliceWidth, iSliceHeight, eRecImage, iImageTexture_ID);

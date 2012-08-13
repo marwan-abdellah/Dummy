@@ -162,7 +162,6 @@ void Slice::readBackSlice(const int iSliceWidth, const int iSliceHeight,
     }
 }
 
-
 void Slice::backTransformSlice(unsigned char *iRecImage,
                                float** iSquareImage_TEMP,
                                float** iSquareImage_MAIN,
@@ -204,7 +203,6 @@ void Slice::backTransformSlice(unsigned char *iRecImage,
         iRecImage[i] = (unsigned char)(iRecImage_ABS[i]);
 }
 
-
 void Slice::uploadImage(const int iSliceWidth, const int iSliceHeight,
                         const unsigned char* iRecImage, GLuint* iSliceTexture_ID)
 {
@@ -227,28 +225,26 @@ void Slice::uploadImage(const int iSliceWidth, const int iSliceHeight,
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-
 void Slice::createSliceTexture(int iSliceWidth, int iSliceHeight, GLuint* iSliceTexture_ID)
 {
-    printf("Creating & Binding Input Slice Texture ... \n");
+    INFO("Creating & binding slice texture");
 
-    // Create 2D Texture Object as a Render Target
+    /* @ Create 2D texture object as a render target */
     glGenTextures(1, iSliceTexture_ID);
     glBindTexture(GL_TEXTURE_2D, *iSliceTexture_ID);
 
-    // 2D Texture Creation & Parameters
+    /* @ 2D Texture creation & parameters */
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    // Automatic Mipmap Generation Included in OpenGL v1.4
+    /* @ Uploading the slice texture to the GPU */
     glTexImage2D(GL_TEXTURE_2D, 0, RG32F, iSliceWidth, iSliceHeight, 0, RG, GL_FLOAT, NULL);
 
-    // Unbind Texture
+    /* @ Unbind textures */
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    printf("	Creating Input Slice Texture Done Successfully \n\n");
+    INFO("Creating & binding slice texture DONE ");
 }
 

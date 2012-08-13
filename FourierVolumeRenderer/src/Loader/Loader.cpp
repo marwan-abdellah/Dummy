@@ -80,6 +80,17 @@ volume* Loader::loadVolume(const char* path)
     iVolume->sizeY = iVolDim->size_Y;
     iVolume->sizeZ = iVolDim->size_Z;
 
+    if (iVolume->sizeX == iVolume->sizeY && iVolume->sizeX == iVolume->sizeZ)
+    {
+        iVolume->sizeUni = iVolume->sizeX;
+        INFO("Loaded volume has unified dimensiosn of:" + ITS(iVolume->sizeUni));
+    }
+    else
+    {
+        INFO("NON UNIFIED VOLUME HAS BEEN LOADDED - EXITING");
+        EXIT(0);
+    }
+
     /* @ Volume flat size */
     iVolume->volSize = iVolume->sizeX * iVolume->sizeY * iVolume->sizeZ;
     INFO("Volume flat size : " + ITS(iVolume->volSize));
@@ -117,5 +128,6 @@ volume* Loader::loadVolume(const char* path)
     }
 
     INFO("Reading volume raw file DONE");
+
     return iVolume;
 }
