@@ -19,6 +19,7 @@
 #include "shared.h"
 
 
+/* @ Slice namespace */
 namespace Slice
 {
     /* @ Creating th projection slice texture to be
@@ -27,22 +28,32 @@ namespace Slice
      */
     void createSliceTexture(int sliceWidth, int sliceHeight, GLuint* sliceTex_ID);
 
-    void GetSlice(float sliceCenter, float sliceSideLength,
-                  float rot_X, float rot_Y, float rot_Z,
-                  GLuint* sliceTex_ID,
-                  GLuint* spectralVolTex_ID,
-                  GLuint sliceFBO_ID);
+    /* @ */
+    void getSlice(const float iSliceCenter,
+                         const float iSliceSideLength,
+                         const float rot_X,
+                         const float rot_Y,
+                         const float rot_Z,
+                         GLuint* iSliceTexture_ID,
+                         GLuint* spectralVolTex_ID,
+                         GLuint sliceFBO_ID);
 
-    void readBackSlice(int sliceWidth, int sliceHeight, GLuint sliceFBO_ID,
-                              float* FBarray, fftwf_complex* complexSlice );
+    /* @ */
+    void readBackSlice(const int iSliceWidth, const int iSliceHeight,
+                       GLuint iFOB_ID,
+                       float* iSlice_FB, fftwf_complex* iSlice_complex);
+    /* @ */
+    void backTransformSlice(unsigned char *iRecImage,
+                            float** iSquareImage_TEMP,
+                            float** iSquareImage_MAIN,
+                            const int iSliceWidth,
+                            const int iSliceHeight,
+                            fftwf_complex* iSlice_complex,
+                            float* iRecImage_ABS);
 
-    void backTransformSlice(unsigned char* RecImage, float** Img_2D_Temp, float** Img_2D,
-    fftwf_complex* complexSlice, float* AbsoluteReconstructedImage);
-
-    void UploadImage(int sliceWidth, int sliceHeight, unsigned char* image, GLuint* sliceTex_ID);
-
-
-
+    /* @ */
+    void uploadImage(const int iSliceWidth, const int iSliceHeight,
+                     const unsigned char* iRecImage, GLuint* iSliceTexture_ID);
 }
 
 #endif // SLICE_H

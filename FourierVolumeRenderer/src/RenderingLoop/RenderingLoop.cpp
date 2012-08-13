@@ -39,7 +39,7 @@ void RenderingLoop::run(float iRot_X, float iRot_Y, float iRot_Z,
                         GLuint* iImageTexture_ID)
 {
     /* @ Extrat the projection slice from the spectral volume texture */
-    Slice::GetSlice(iSliceCenter, iSliceSideLength, iRot_X, iRot_Y, iRot_Z,
+    Slice::getSlice(iSliceCenter, iSliceSideLength, iRot_X, iRot_Y, iRot_Z,
                     iSliceTexture_ID, iVolumeTexture_ID, iFBO_ID);
 
     for (int i = 0; i < iSliceWidth * iSliceHeight * 2; i++)
@@ -52,12 +52,12 @@ void RenderingLoop::run(float iRot_X, float iRot_Y, float iRot_Z,
 
 
     /* @ Back transform the extracted slice to create the projection */
-    Slice::backTransformSlice(eRecImage, eImage_TEMP, eImage_MAIN,
+    Slice::backTransformSlice(eRecImage, eImage_TEMP, eImage_MAIN, iSliceWidth, iSliceHeight,
     eSlice_complex, eRecImageAbsolute);
 
     /* @ Update the rendering context with the new image */
     cOpenGL::updateSliceTexture(iImageTexture_ID);
 
     /* @ Upload the image to the GPU */
-    Slice::UploadImage(iSliceWidth, iSliceHeight, eRecImage, iImageTexture_ID);
+    Slice::uploadImage(iSliceWidth, iSliceHeight, eRecImage, iImageTexture_ID);
 }

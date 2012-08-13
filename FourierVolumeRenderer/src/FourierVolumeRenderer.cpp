@@ -125,7 +125,7 @@ int main(int argc, char** argv)
     float* eSpectrumTexture = Spectrum::packingSpectrumTexture(eVolumeData_complex, &eOriginalDim);
 
     /* @ Uploading the spectrum to the GPU texture */
-    Spectrum::UploadSpectrumTexture(&eVolumeTexture_ID, eSpectrumTexture, &eOriginalDim);
+    Spectrum::uploadSpectrumTexture(&eVolumeTexture_ID, eSpectrumTexture, &eOriginalDim);
 
     free(eVolumeData_float);
 	

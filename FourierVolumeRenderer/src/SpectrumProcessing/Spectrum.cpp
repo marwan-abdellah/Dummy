@@ -1,85 +1,92 @@
 #include "Spectrum.h"
-#include "shared.h"
+#include "Utilities/MACROS.h"
+#include "Utilities/Utils.h"
 
-#include <iostream>
-#include <fstream>
-#include <stdio.h>
-#include <stdlib.h>
-
-
-fftwf_complex* Spectrum::createSpectrum(float* spatialVol, volDim* iVolDim)
+fftwf_complex* Spectrum::createSpectrum(float* iSpectralVolume,
+                                        const volDim* iVolDim)
 {
-    printf("Creating Complex Spectrum ... \n");
+    LOG();
 
-    fftwf_complex* spectralVol =
-            (fftwf_complex*) fftwf_malloc (iVolDim->size_X *
-                                           iVolDim->size_Y *
-                                           iVolDim->size_Z *
-                                           sizeof(fftwf_complex));
+    INFO("Creating COMPLEX SPECTRUM : "
+         + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ) + " x "
+         + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ) + " x "
+         + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ));
 
+    /* @ Allocatig spectral volume */
+    fftwf_complex* eSpectralVolume_complex = (fftwf_complex*) fftwf_malloc
+            (iVolDim->size_X * iVolDim->size_Y * iVolDim->size_Z
+             * sizeof(fftwf_complex));
 
-    // Packing Complex Array
-    printf("	Packing Volume Array for Single Precision Format ... \n");
-    for (int i = 0; i < iVolDim->size_X * iVolDim->size_Y * iVolDim->size_Z ; i++)
+    /* @ Packing complex array in interleaved manner */
+    for (int i = 0; i < (iVolDim->size_X * iVolDim->size_Y * iVolDim->size_Z); i++)
     {
-        spectralVol[i][0] = spatialVol[i];
-        spectralVol[i][1] = spatialVol[i];
+        eSpectralVolume_complex[i][0] = iSpectralVolume[i];
+        eSpectralVolume_complex[i][1] = iSpectralVolume[i];
 
     }
-    printf("	Packing Done Successfully \n\n");
 
-    // 3D Forward Fourier Transforming Data
-    printf("	Executing 3D Forward FFT  ... \n");
+    INFO("3D FFT");
 
-    fftwf_plan fftPlan = fftwf_plan_dft_3d(iVolDim->size_X,
-                                  iVolDim->size_Y,
-                                  iVolDim->size_Z,
-                                  spectralVol,
-                                  spectralVol,
-                                  FFTW_FORWARD,
-                                  FFTW_ESTIMATE);
-    fftwf_execute(fftPlan);
+    /* @ 3D FFT */
+    fftwf_plan eFFTPlan = fftwf_plan_dft_3d(
+                            iVolDim->size_X,
+                            iVolDim->size_Y,
+                            iVolDim->size_Z,
+                            eSpectralVolume_complex,
+                            eSpectralVolume_complex,
+                            FFTW_FORWARD,
+                            FFTW_ESTIMATE);
+    /* @ executing the FFT plan */
+    fftwf_execute(eFFTPlan);
 
-    printf("	3D Forward FFT Done Successfully  \n\n");
+    INFO("Creating COMPLEX SPECTRUM DONE");
 
-    return spectralVol;
+    return eSpectralVolume_complex;
 }
 
 
 //  Packing 3D Texture with 2 Components, Real+Imaginary
-float* Spectrum::packingSpectrumTexture(fftwf_complex* spectralVol, volDim* iVolDim)
+float* Spectrum::packingSpectrumTexture(const fftwf_complex* iSpectralVolume,
+                                        const volDim* iVolDim)
 {
-    // Allocate Complex Texture Array to be Sent to the GPU
-    // mTextureArray = (float*) malloc (mVolumeSize * 2 * sizeof(float));
+    INFO("Packing spectral CPU texture : "
+         + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ) + " x "
+         + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ) + " x "
+         + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ));
 
-    float* spectrumTexture =  (float*)
-            malloc (2 * sizeof(float) * iVolDim->size_X * iVolDim->size_Y * iVolDim->size_Z);
+    const int eVolSize = iVolDim->size_X * iVolDim->size_Y * iVolDim->size_Z;
 
-    printf("Packing Spectrum Into Texture ... \n");
-
+    /* @ Allocating the CPU spectral texture array */
+    float* eSpectralTexture =  (float*) malloc (eVolSize * 2 * sizeof(float));
+    /* @ Filling the CPU spectral texture */
     int ctr = 0;
-    for (int i = 0; i < (iVolDim->size_X * iVolDim->size_Y * iVolDim->size_Z * 2); i += 2)
+    for (int i = 0; i < (eVolSize * 2); i += 2)
     {
-        spectrumTexture[i]		= spectralVol[ctr][0];
-        spectrumTexture[i + 1]	= spectralVol[ctr][1];
+        eSpectralTexture[i]		= iSpectralVolume[ctr][0];
+        eSpectralTexture[i + 1]	= iSpectralVolume[ctr][1];
         ctr++;
     }
 
-    printf("	Packing Spectrum Into Texture Done Successfully \n\n");
+    INFO("Packing spectral CPU texture DONE");
 
-    return spectrumTexture;
+    return eSpectralTexture;
 }
 
 // Send Texture Volume to the GPU Texture Memory
-void Spectrum::UploadSpectrumTexture(GLuint* spectrumTexID, float* spectrum, volDim* iVolDim)
+void Spectrum::uploadSpectrumTexture(GLuint* iSpectralTexture_ID,
+                                     const float* iSpectralArray,
+                                     const volDim* iVolDim)
 {
-    printf("Creating & Binding Spectrum Texture To GPU ... \n");
+    INFO("Creating, binding & uploading GPU spectral texture : "
+         + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ) + " x "
+         + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ) + " x "
+         + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ));
 
-    // 3D Texture Creation & Binding
-    glGenTextures(1, spectrumTexID);
-    glBindTexture(GL_TEXTURE_3D, *spectrumTexID);
+    /* @ 3D Texture creation & binding */
+    glGenTextures(1, iSpectralTexture_ID);
+    glBindTexture(GL_TEXTURE_3D, *iSpectralTexture_ID);
 
-    // Parameters
+    /* @ Texture parameters */
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
@@ -87,15 +94,20 @@ void Spectrum::UploadSpectrumTexture(GLuint* spectrumTexID, float* spectrum, vol
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-    // For Automatic Texture Coordinate Generation
+    /* @ For automatic texture coordinate generation */
     glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
     glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
     glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
 
-    // Transfer Data to GPU Memory
-    printf("	Transfer Data to GPU Memory ... \n");
+    INFO("Transfering the data to the GPU Memory");
 
-    glTexImage3D(GL_TEXTURE_3D, 0, RG32F, iVolDim->size_X, iVolDim->size_Y, iVolDim->size_Z, 0, RG, GL_FLOAT,  spectrum);
+    /* @ Uplading the texture to the GPU */
+    glTexImage3D(GL_TEXTURE_3D, 0, RG32F,
+                 iVolDim->size_X,
+                 iVolDim->size_Y,
+                 iVolDim->size_Z,
+                 0, RG, GL_FLOAT,  iSpectralArray);
 
-    printf("	Transfering Data to GPU Memory Done Successfully \n\n");
+    INFO("Creating, binding & uploading GPU spectral texture DONE");
+
 }
