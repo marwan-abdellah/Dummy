@@ -1,6 +1,6 @@
 #include "Slice.h"
 #include "OpenGL/DisplayList.h"
-#include "FFTShift/FFTShift.h"
+#include "WrappingAround/WrappingAround.h"
 
 void Slice::GetSlice(float sliceCenter,
                      float sliceSideLength,
@@ -188,10 +188,8 @@ void Slice::backTransformSlice(unsigned char *RecImage, float** Img_2D_Temp, flo
             ctr++;
         }
 
-    //* printf("Wrapping Around Resulting Image - Begin.... \n");
-    Img_2D = FFTShift::FFT_Shift_2D(Img_2D_Temp, Img_2D, 256);
-    AbsoluteReconstructedImage = FFTShift::Repack_2D(Img_2D, AbsoluteReconstructedImage, 256);
-    //* printf("Wrapping Around Resulting Image - End.... \n");
+    WrappingAround::WrapAroundImage(Img_2D, Img_2D_Temp, AbsoluteReconstructedImage, 256);
+
 
     for (int i = 0; i < 256 * 256; i++)
     {

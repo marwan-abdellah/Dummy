@@ -1,8 +1,19 @@
 #ifndef RENDERINGLOOP_H
 #define RENDERINGLOOP_H
 
+/* @ OpenGL includes */
+#include <GL/glew.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
 
-#include "SliceProcessing/Slice.h"
+/* @ System includes */
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+
+/* @ FFTW includes */
+#include <fftw3.h>
 
 namespace RenderingLoop
 {

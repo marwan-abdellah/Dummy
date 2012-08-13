@@ -1,43 +1,72 @@
 #include "WrappingAround.h"
+#include "FFTShift/FFTShift.h"
+#include "Utilities/MACROS.h"
+#include "Utilities/Utils.h"
 
 
-
-// 3D Wrapping Around for Space Data
-void WrappingAround::WrapAroundVolume(float*** Vol_3D, float* VolumeDataFloat, int N)
+void WrappingAround::WrapAroundVolume(float*** eCubeVolume,
+                                      float* eFlatVolume,
+                                      const int N)
 {
-    printf("Wrapping Around Volume Data ... \n");
+    INFO("Wrapping-around SPATIAL volume with unified dimensions "
+            + STRG( "[" ) + ITS( N ) + STRG( "]" ) + " x "
+            + STRG( "[" ) + ITS( N ) + STRG( "]" ) + " x "
+            + STRG( "[" ) + ITS( N ) + STRG( "]" ));
 
-    Vol_3D = FFTShift::FFT_Shift_3D(VolumeDataFloat, N);
-    VolumeDataFloat = FFTShift::Repack_3D(Vol_3D, VolumeDataFloat, N);
+    eCubeVolume = FFTShift::FFT_Shift_3D(eFlatVolume, N);
+    eFlatVolume = FFTShift::Repack_3D(eCubeVolume, eFlatVolume, N);
 
-    printf("	Wrapping Around Volume Data Done Successfully \n\n");
+    INFO("Wrapping-around SPATIAL volume DONE");
 }
 
-// 3D Wrapping Around the Spectrum
-void WrappingAround::WrapAroundSpectrum(float*** Vol_3D, float* VolumeDataFloat, fftwf_complex* VolumeArrayComplex, int N)
+void WrappingAround::WrapAroundSpectrum(float*** eCubeVolume,
+                                        float* eFlatVolume,
+                                        fftwf_complex* eFlatVolume_complex,
+                                        const int N)
 {
-    printf("Wrapping Around Spectrum Data ... \n");
-    printf("	Real Part ... \n");
+    INFO("Wrapping-around SPECTRAL volume with unified dimensions "
+            + STRG( "[" ) + ITS( N ) + STRG( "]" ) + " x "
+            + STRG( "[" ) + ITS( N ) + STRG( "]" ) + " x "
+            + STRG( "[" ) + ITS( N ) + STRG( "]" ));
+
+    INFO("Real Part ...");
+
+    for (int i = 0; i < (N * N * N); i++)
+        eFlatVolume[i] =  eFlatVolume_complex[i][0];
+
+    eCubeVolume = FFTShift::FFT_Shift_3D(eFlatVolume, N);
+    eFlatVolume = FFTShift::Repack_3D(eCubeVolume, eFlatVolume, N);
+
+    for (int i = 0; i < (N * N * N); i++)
+        eFlatVolume_complex[i][0] = eFlatVolume[i];
+
+    INFO("Imaginary Part ...");
 
     for (int i = 0; i < N*N*N; i++)
-        VolumeDataFloat[i] =  VolumeArrayComplex[i][0];
+        eFlatVolume[i] =  eFlatVolume_complex[i][1];
 
-   Vol_3D = FFTShift::FFT_Shift_3D(VolumeDataFloat, N);
-    VolumeDataFloat = FFTShift::Repack_3D(Vol_3D, VolumeDataFloat, N);
-
-    for (int i = 0; i < N*N*N; i++)
-       VolumeArrayComplex[i][0] = VolumeDataFloat[i];
-
-    printf("	Imaginary Part ... \n");
+    eCubeVolume = FFTShift::FFT_Shift_3D(eFlatVolume, N);
+    eFlatVolume = FFTShift::Repack_3D(eCubeVolume, eFlatVolume, N);
 
     for (int i = 0; i < N*N*N; i++)
-        VolumeDataFloat[i] =  VolumeArrayComplex[i][1];
+        eFlatVolume_complex[i][1] = eFlatVolume[i];
 
-    Vol_3D = FFTShift::FFT_Shift_3D(VolumeDataFloat, N);
-    VolumeDataFloat = FFTShift::Repack_3D(Vol_3D, VolumeDataFloat, N);
-
-    for (int i = 0; i < N*N*N; i++)
-        VolumeArrayComplex[i][1] = VolumeDataFloat[i];
-
-    printf("	Wrapping Around Spectrum Data Done Successfully \n\n");
+    INFO("Wrapping-around SPECTRAL volume DONE");
 }
+
+void WrappingAround::WrapAroundImage(float** eSquareImage_MAIN,
+                                     float** eSquareImage_TEMP,
+                                     float* eFlatImage,
+                                     const int N)
+{
+
+    INFO("Wrapping-around PROJECTION image with unified dimensions "
+            + STRG( "[" ) + ITS( N ) + STRG( "]" ) + " x "
+            + STRG( "[" ) + ITS( N ) + STRG( "]" ));
+
+    eSquareImage_MAIN = FFTShift::FFT_Shift_2D(eSquareImage_TEMP, eSquareImage_MAIN, N);
+    eFlatImage = FFTShift::Repack_2D(eSquareImage_MAIN, eFlatImage, N);
+
+    INFO("Wrapping-around PROJECTION image DONE");
+}
+

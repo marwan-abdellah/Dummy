@@ -1,5 +1,6 @@
 #include "RenderingLoop.h"
-#include "cOpenGL.h"
+#include "OpenGL/cOpenGL.h"
+#include "SliceProcessing/Slice.h"
 
 
 float* eFB;
