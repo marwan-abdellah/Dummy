@@ -53,19 +53,12 @@ Build/CMakeFiles/CORE.dir/cmake_clean.cmake
 Build/CMakeFiles/CORE.dir/cmake_clean_target.cmake
 Build/CMakeFiles/CORE.dir/DependInfo.cmake
 Build/CMakeFiles/CORE.dir/link.txt
-Build/CMakeFiles/FVR.dir/CUDA/FVR_generated_cuExterns.cu.o.cmake
 Build/CMakeFiles/FVR.dir/cmake_clean.cmake
 Build/CMakeFiles/FVR.dir/DependInfo.cmake
 Build/CMakeFiles/FVR.dir/link.txt
-Build/CMakeFiles/MaxSubArray.dir/CUDA/MaxSubArray_generated_cuExterns.cu.o.cmake
-Build/CMakeFiles/MaxSubArray.dir/Tests/CUDA/MaxSubArray/Kernels/MaxSubArray_generated_cuExternsTest.cu.o.cmake
-Build/CMakeFiles/MaxSubArray.dir/cmake_clean.cmake
-Build/CMakeFiles/MaxSubArray.dir/DependInfo.cmake
-Build/CMakeFiles/MaxSubArray.dir/link.txt
 Build/CMakeFiles/CMakeCCompiler.cmake
 Build/CMakeFiles/CMakeCXXCompiler.cmake
 Build/CMakeFiles/CMakeDirectoryInformation.cmake
-Build/CMakeFiles/CMakeRuleHashes.txt
 Build/CMakeFiles/CMakeSystem.cmake
 Build/CMakeFiles/TargetDirectories.txt
 Build/cmake_install.cmake
@@ -75,6 +68,7 @@ CMake/CPackConfig.cmake
 CMake/FindBoost_Local.cmake
 CMake/FindCUDA_Local.cmake
 CMake/FindFFTW.cmake
+CMake/FindGLEW.cmake
 CMake/FindLibXL.cmake
 CMake/FindOpenMP_Local.cmake
 CMake/FindSTLSoft.cmake
@@ -125,8 +119,6 @@ FourierVolumeRenderer/src/OpenGL/cOpenGL.cpp
 FourierVolumeRenderer/src/OpenGL/cOpenGL.h
 FourierVolumeRenderer/src/OpenGL/DisplayList.cpp
 FourierVolumeRenderer/src/OpenGL/DisplayList.h
-FourierVolumeRenderer/src/OpenGL/OpenGL.cpp
-FourierVolumeRenderer/src/OpenGL/OpenGL.h
 FourierVolumeRenderer/src/RenderingLoop/RenderingLoop.cpp
 FourierVolumeRenderer/src/RenderingLoop/RenderingLoop.h
 FourierVolumeRenderer/src/SliceProcessing/Slice.cpp

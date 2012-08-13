@@ -17,17 +17,20 @@
 
 namespace RenderingLoop
 {
-    void prepareRenderingArray(int iSliceWidth, int iSliceHeight);
-    void run(float iRot_X, float iRot_Y, float iRot_Z,
-                            float iSliceCenter, float iSliceSideLength,
-                            int iSliceWidth, int iSliceHeight,
-                            GLuint* iSliceTexture_ID,
-                            GLuint* iVolumeTexture_ID,
-                            GLuint iFBO_ID,
-                            GLuint* iImageTexture_ID);
+    /* @ */
+    void prepareRenderingArray(const int iSliceWidth,
+                               const int iSliceHeight);
+    /* @ */
+    void run(const float iRot_X,
+             const float iRot_Y,
+             const float iRot_Z,
+             float iSliceCenter,
+             const float iSliceSideLength,
+             const int iSliceWidth, const int iSliceHeight,
+             GLuint* iSliceTexture_ID,
+             GLuint* iVolumeTexture_ID,
+             GLuint iFBO_ID,
+             GLuint* iImageTexture_ID);
 }
 
 #endif // RENDERINGLOOP_H
-
-// RenderingLoop::run(mXrot, mYrot, mZrot, 0, 1, 256, 256,
-  //                 &eSliceTexture_ID, &eVolumeTexture_ID, eFBO_ID, &eImageTexture_ID);

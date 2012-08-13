@@ -2,15 +2,18 @@
 #include "OpenGL/cOpenGL.h"
 #include "SliceProcessing/Slice.h"
 
+/*****************************/
+/* @ LOCALS - (e) = EXTERNAL */
+/*****************************/
+float*          eFB;
+fftwf_complex*  eSlice_complex;
+unsigned char*  eRecImage;
+float*          eRecImageAbsolute;
+float**         eImage_MAIN;
+float**         eImage_TEMP;
 
-float* eFB;
-fftwf_complex* eSlice_complex;
-unsigned char* eRecImage;
-float* eRecImageAbsolute;
-float** eImage_MAIN;
-float** eImage_TEMP;
-
-void RenderingLoop::prepareRenderingArray(int iSliceWidth, int iSliceHeight)
+void RenderingLoop::prepareRenderingArray(const int iSliceWidth,
+                                          const int iSliceHeight)
 {
     /* @ Reading back the FBO after initialization */
     eFB = (float*) malloc (iSliceWidth * iSliceHeight * sizeof(float));
@@ -30,9 +33,11 @@ void RenderingLoop::prepareRenderingArray(int iSliceWidth, int iSliceHeight)
     }
 }
 
-void RenderingLoop::run(float iRot_X, float iRot_Y, float iRot_Z,
-                        float iSliceCenter, float iSliceSideLength,
-                        int iSliceWidth, int iSliceHeight,
+void RenderingLoop::run(const float iRot_X,
+                        const float iRot_Y,
+                        const float iRot_Z,
+                        float iSliceCenter, const float iSliceSideLength,
+                        const int iSliceWidth, const int iSliceHeight,
                         GLuint* iSliceTexture_ID,
                         GLuint* iVolumeTexture_ID,
                         GLuint iFBO_ID,
@@ -42,14 +47,17 @@ void RenderingLoop::run(float iRot_X, float iRot_Y, float iRot_Z,
     Slice::getSlice(iSliceCenter, iSliceSideLength, iRot_X, iRot_Y, iRot_Z,
                     iSliceTexture_ID, iVolumeTexture_ID, iFBO_ID);
 
+    /* @ Initialzing the eFB array */
     for (int i = 0; i < iSliceWidth * iSliceHeight * 2; i++)
         eFB[i] = 0;
 
-    // Extracted Slice in the Frequency Domain
-    eSlice_complex = (fftwf_complex*) fftwf_malloc (256 * 256 * sizeof(fftwf_complex));
+    /* Allocating complex slice array */
+    eSlice_complex = (fftwf_complex*)
+            fftwf_malloc (iSliceWidth * iSliceHeight * sizeof(fftwf_complex));
 
+    /* @ Reading back the extracted slice from the texture
+     * attached to the FBo to the eSlice_complex array */
     Slice::readBackSlice(iSliceWidth, iSliceHeight, iFBO_ID, eFB, eSlice_complex);
-
 
     /* @ Back transform the extracted slice to create the projection */
     Slice::backTransformSlice(eRecImage, eImage_TEMP, eImage_MAIN, iSliceWidth, iSliceHeight,
