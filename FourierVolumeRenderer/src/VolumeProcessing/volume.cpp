@@ -29,31 +29,6 @@ char*** Volume::allocCubeVolume_char(const int size_X,
     return cubeVolume;
 }
 
-float*** Volume::allocCubeVolume_float(const int size_X,
-                                       const int size_Y,
-                                       const int size_Z)
-{
-    INFO("Allocating FLOAT32 CUBE volume : "
-         + STRG( "[" ) + ITS( size_X ) + STRG( "]" ) + " x "
-         + STRG( "[" ) + ITS( size_X ) + STRG( "]" ) + " x "
-         + STRG( "[" ) + ITS( size_X ) + STRG( "]" ));
-
-    float*** cubeVolume;
-    cubeVolume = (float***) malloc(size_X * sizeof(float**));
-    for (int y = 0; y < size_X; y++)
-    {
-        cubeVolume[y] = (float**) malloc (size_Y* sizeof(float*));
-        for (int x = 0; x < size_Y; x++)
-        {
-            cubeVolume[y][x] = (float*) malloc(size_Z * sizeof(float));
-        }
-    }
-
-    INFO("FLOAT32 CUBE volume allocation DONE");
-
-    return cubeVolume;
-}
-
 void Volume::packFlatVolume(volume* iVolume,
                             char*** cubeVolume)
 {
@@ -133,7 +108,7 @@ void Volume::extractSubVolume(char*** originalCubeVol,
 }
 
 volume* Volume::extractFinalVolume(volume* iOriginaVol,
-                                   const subVolDim* iSubVol)
+                                   const subVolDim* iSubVolDim)
 {
      INFO("Extracting SUB-VOLUME to be processed in a SINGLE thread");
 
@@ -146,80 +121,87 @@ volume* Volume::extractFinalVolume(volume* iOriginaVol,
     char*** originalCubeVol = Volume::allocCubeVolume_char
             (iOriginaVol->sizeX, iOriginaVol->sizeY, iOriginaVol->sizeZ);
 
-    INFO("Packing the FLAt array in the CUBE ");
+    INFO("Packing the FLAT array in the CUBE ");
 
     /* @ Packing the original flat volume in the cube */
     Volume::packCubeVolume(originalCubeVol, iOriginaVol);
 
-    /* @ Allocating the final cube volume "SUB-VOLUME" */
-    volDim iVolDim;
-    iVolDim.size_X = iSubVol->max_X - iSubVol->min_X;
-    iVolDim.size_Y = iSubVol->max_Y - iSubVol->min_Y;
-    iVolDim.size_Z = iSubVol->max_Z - iSubVol->min_Z;
+    /* @ Allocating the final volume */
+    volume* iFinalSubVolume = (volume*) malloc (sizeof(volume));
+
+    iFinalSubVolume->sizeX = iSubVolDim->max_X - iSubVolDim->min_X;
+    iFinalSubVolume->sizeY = iSubVolDim->max_Y - iSubVolDim->min_Y;
+    iFinalSubVolume->sizeZ = iSubVolDim->max_Z - iSubVolDim->min_Z;
+
+    if (iFinalSubVolume->sizeX == iFinalSubVolume->sizeY
+            && iFinalSubVolume->sizeX == iFinalSubVolume->sizeZ)
+    {
+        INFO("Final SUB-VOLUME has unified dimensions "
+             + ITS(iFinalSubVolume->sizeX));
+
+         iFinalSubVolume->sizeUni =  iFinalSubVolume->sizeZ;
+    }
+    else
+    {
+        INFO("Final SUB-VOLUME DOESN'T have unified dimensions "
+             + ITS(iFinalSubVolume->sizeX));
+        EXIT(0);
+    }
+
+    iFinalSubVolume->ptrVol_char =
+            (char*) malloc (sizeof(char) * iFinalSubVolume->sizeX
+                            * iFinalSubVolume->sizeY
+                            * iFinalSubVolume->sizeZ);
 
     INFO("Allocating CUBE array for the final SUB-VOLUME: "
-              + STRG( "[" ) + ITS( iVolDim.size_X ) + STRG( "]" ) + " x "
-              + STRG( "[" ) + ITS( iVolDim.size_Y ) + STRG( "]" ) + " x "
-              + STRG( "[" ) + ITS( iVolDim.size_Z ) + STRG( "]" ));
+              + STRG( "[" ) + ITS(  iFinalSubVolume->sizeX ) + STRG( "]" ) + " x "
+              + STRG( "[" ) + ITS(  iFinalSubVolume->sizeY ) + STRG( "]" ) + " x "
+              + STRG( "[" ) + ITS(  iFinalSubVolume->sizeZ ) + STRG( "]" ));
 
+    /* @ Allocating the final cube volume "SUB-VOLUME" */
     char*** finalCubeVol = Volume::allocCubeVolume_char
-            (iVolDim.size_X, iVolDim.size_Y, iVolDim.size_Z);
+            (iFinalSubVolume->sizeX, iFinalSubVolume->sizeY, iFinalSubVolume->sizeZ);
 
     INFO("Extractng the SUB-VOLUME");
 
     /* @ Extractig the SUB-VOLUME */
-    Volume::extractSubVolume(originalCubeVol, finalCubeVol, iSubVol);
+    Volume::extractSubVolume(originalCubeVol, finalCubeVol, iSubVolDim);
 
     /* @ Dellocating the original cube volume */
     FREE_MEM_3D_CHAR(originalCubeVol, iOriginaVol->sizeX, iOriginaVol->sizeY, iOriginaVol->sizeZ);
 
-    INFO("Allocating FLAT volume for the SUB-VOLUME");
-
-    /* @ Allocating the final flat volume */
-    char* finalFlatVolume = (char*) malloc (sizeof(char) * (iVolDim.size_X)
-                                            * (iVolDim.size_Y)
-                                            * (iVolDim.size_Z));
-
     /* @ Packing the final cube volume in the flat array */
-    Volume::packFlatVolume(iOriginaVol, finalCubeVol);
+    Volume::packFlatVolume(iFinalSubVolume, finalCubeVol);
 
     INFO("Final volume extraction DONE");
 
-    volume* finalVolume = (volume*) malloc (sizeof(volume));
-    finalVolume->ptrVol_char = iOriginaVol->ptrVol_char;
-    finalVolume->sizeX = 256;
-    finalVolume->sizeY=256;
-    finalVolume->sizeZ=256;
-    finalVolume->sizeUni=256;
-
-
-    return finalVolume;
+    return iFinalSubVolume;
 }
 
-volume* Volume::createFloatVolume(volume* iVolume_char)
+volume* Volume::createFloatVolume(volume* iVolume)
 {
     INFO("Creating FLAT FLOAT32 volume : "
-              + STRG( "[" ) + ITS( iVolume_char->sizeX ) + STRG( "]" ) + " x "
-              + STRG( "[" ) + ITS( iVolume_char->sizeY ) + STRG( "]" ) + " x "
-              + STRG( "[" ) + ITS( iVolume_char->sizeZ ) + STRG( "]" ));
+              + STRG( "[" ) + ITS( iVolume->sizeX ) + STRG( "]" ) + " x "
+              + STRG( "[" ) + ITS( iVolume->sizeY ) + STRG( "]" ) + " x "
+              + STRG( "[" ) + ITS( iVolume->sizeZ ) + STRG( "]" ));
 
     /* @ Allocating float flat array */
     float* flatVol_float = (float*) malloc
-            (sizeof(float*) * iVolume_char->sizeX * iVolume_char->sizeY * iVolume_char->sizeZ);
+            (sizeof(float*) * iVolume->sizeX * iVolume->sizeY * iVolume->sizeZ);
 
     /* @ Type conversion */
-    for (int i = 0; i < iVolume_char->sizeX * iVolume_char->sizeY * iVolume_char->sizeZ; i++)
-        flatVol_float[i] = (float) (unsigned char) iVolume_char->ptrVol_char[i];
+    for (int i = 0; i < iVolume->sizeX * iVolume->sizeY * iVolume->sizeZ; i++)
+        flatVol_float[i] = (float) (unsigned char) iVolume->ptrVol_char[i];
 
     /* @ linking the float array to the original volume structure */
-    iVolume_char->ptrVol_float = flatVol_float;
+    iVolume->ptrVol_float = flatVol_float;
 
     INFO("Freeing the BYTE volume");
 
     /* @ freeing the BYTE volume */
-    free(iVolume_char->ptrVol_char);
+    free(iVolume->ptrVol_char);
 
     INFO("Creating FLAT FLOAT32 volume DONE");
 
-    return iVolume_char;
+    return iVolume;
 }
