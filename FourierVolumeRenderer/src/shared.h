@@ -26,8 +26,6 @@
 #include <ImageMagick/Magick++/STL.h>
 #include <ImageMagick/Magick++/TypeMetric.h>
 
-
-
 struct subVolDim
 {
     int min_X;
@@ -64,6 +62,13 @@ struct volume
 
     int volSize;
     int volSizeBytes;
+};
+
+struct compositionImages
+{
+    Magick::Image* image_H1;
+    Magick::Image* image_H2;
+    Magick::Image* image_Final;
 };
 
 #endif // SHARED_H

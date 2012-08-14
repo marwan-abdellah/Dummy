@@ -24,16 +24,16 @@ namespace RenderingLoop
     void prepareRenderingArray(const int iSliceWidth,
                                const int iSliceHeight);
     /* @ */
-    void run(const float iRot_X,
-             const float iRot_Y,
-             const float iRot_Z,
-             float iSliceCenter,
-             const float iSliceSideLength,
-             const int iSliceWidth, const int iSliceHeight,
-             GLuint* iSliceTexture_ID,
-             GLuint* iVolumeTexture_ID,
-             GLuint iFBO_ID,
-             GLuint* iImageTexture_ID);
+    Magick::Image* run(const float iRot_X,
+                       const float iRot_Y,
+                       const float iRot_Z,
+                       float iSliceCenter,
+                       const float iSliceSideLength,
+                       const int iSliceWidth, const int iSliceHeight,
+                       GLuint* iSliceTexture_ID,
+                       GLuint* iVolumeTexture_ID,
+                       GLuint iFBO_ID,
+                       GLuint* iImageTexture_ID);
 }
 
 #endif // RENDERINGLOOP_H

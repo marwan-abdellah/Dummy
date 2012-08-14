@@ -3,6 +3,7 @@
 #include "Utilities/MACROS.h"
 #include "Utilities/Utils.h"
 
+using namespace Magick;
 
 /*************/
 /* @ EXTERNS */
@@ -13,7 +14,7 @@ extern float eZRot_Glob;
 extern float eZoomLevel_Glob ;
 extern float eSliceTrans_Glob ;
 extern float eNormValue_Glob;
-extern void GetSpectrumSlice();
+extern Image* GetSpectrumSlice();
 
 /************/
 /* @ LOCALS */
@@ -26,6 +27,7 @@ float  eImageZoom       = 1;
 float  eNormValue       = 1.0;
 int    eGloWinWidth     = 512;
 int    eGloWinHeight    = 512;
+Image* eDumpImage;
 
 void OpenGL::updateSliceTexture(GLuint* iImageTexture_ID)
 {
@@ -290,7 +292,7 @@ void OpenGL::keyboardGL(unsigned char fKey, int fX, int fY)
     }
 
     /* @ Reslice & redisplay */
-    GetSpectrumSlice();
+    eDumpImage = GetSpectrumSlice();
     glutPostRedisplay();
 }
 

@@ -1,6 +1,8 @@
 #include "RenderingLoop.h"
 #include "OpenGL/cOpenGL.h"
 #include "SliceProcessing/Slice.h"
+#include "Utilities/MACROS.h"
+#include "Utilities/Utils.h"
 
 using namespace Magick;
 
@@ -36,8 +38,10 @@ void RenderingLoop::prepareRenderingArray(const int iSliceWidth,
     }
 }
 
-void writeImageToDisk(float* eRecImageAbsolute, int iSliceWidth, int iSliceHeight, int imageIndex)
+Image* writeImageToDisk(float* eRecImageAbsolute, int iSliceWidth, int iSliceHeight, int imageIndex)
 {
+    INFO("Writing image to disk");
+
     /* @ Basic image name */
     char eImageName[1000] = "image";
 
@@ -45,14 +49,15 @@ void writeImageToDisk(float* eRecImageAbsolute, int iSliceWidth, int iSliceHeigh
     int ePixel = 0;
 
     /* Basic gray scale image */
-    Magick::Image eImage;
-    eImage.type(GrayscaleType);
+    Image* eImage;
+    eImage = new Image();
+    eImage->type(GrayscaleType);
 
     /* Define image geometry */
     Geometry eGeom;
     eGeom.width(iSliceWidth);
     eGeom.height(iSliceHeight);
-    eImage.size(eGeom);
+    eImage->size(eGeom);
 
     /* @ Write the pixels */
     for (int i = 0; i < iSliceWidth; i++)
@@ -60,18 +65,22 @@ void writeImageToDisk(float* eRecImageAbsolute, int iSliceWidth, int iSliceHeigh
         for (int j = 0; j < iSliceHeight; j++)
         {
             ColorGray gsColor(eRecImageAbsolute[ePixel]);
-            eImage.pixelColor( i, j, gsColor);
+            eImage->pixelColor( i, j, gsColor);
             ePixel++;
         }
     }
 
     /* @ File name */
-    snprintf(eImageName, sizeof(eImageName), "%d", loopCounter);
+    snprintf(eImageName, sizeof(eImageName), "%d", imageIndex);
     sprintf(eImageName, "%s.png", eImageName);
-    eImage.write( eImageName );
+    eImage->write( eImageName );
+
+    INFO("Writing image to disk DONE");
+
+    return eImage;
 }
 
-void RenderingLoop::run(const float iRot_X,
+Image* RenderingLoop::run(const float iRot_X,
                         const float iRot_Y,
                         const float iRot_Z,
                         float iSliceCenter, const float iSliceSideLength,
@@ -104,11 +113,13 @@ void RenderingLoop::run(const float iRot_X,
     Slice::backTransformSlice(eRecImage, eImage_TEMP, eImage_MAIN, iSliceWidth, iSliceHeight,
     eSlice_complex, eRecImageAbsolute);
 
-    writeImageToDisk(eRecImageAbsolute, iSliceWidth, iSliceHeight, loopCounter);
+    Image* eImage = writeImageToDisk(eRecImageAbsolute, iSliceWidth, iSliceHeight, loopCounter);
 
     /* @ Update the rendering context with the new image */
     OpenGL::updateSliceTexture(iImageTexture_ID);
 
     /* @ Upload the image to the GPU */
     Slice::uploadImage(iSliceWidth, iSliceHeight, eRecImageAbsolute, iImageTexture_ID);
+
+    return eImage;
 }
