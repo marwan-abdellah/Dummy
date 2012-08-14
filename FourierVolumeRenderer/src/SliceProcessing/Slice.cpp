@@ -4,6 +4,9 @@
 #include "Utilities/MACROS.h"
 #include "Utilities/Utils.h"
 
+extern float eNormValue_Glob;
+extern float eSliceUniSize_Glob;
+
 void Slice::getSlice(const float iSliceCenter,
                      const float iSliceSideLength,
                      const float rot_X,
@@ -31,8 +34,9 @@ void Slice::getSlice(const float iSliceCenter,
     /* @ Binding 3D texture */
     glBindTexture(GL_TEXTURE_3D, *spectralVolTex_ID);
 
-    /* @ Adjusting OpenGL View Port */
-    glViewport(-128,-128,512,512);
+    /* @ Adjusting OpenGL Viewport to fit the slice size */
+    glViewport(-(eSliceUniSize_Glob / 2),-(eSliceUniSize_Glob / 2),
+               (eSliceUniSize_Glob * 2),(eSliceUniSize_Glob * 2));
 
     /* Texture corrdinate automatic generation */
     glEnable(GL_TEXTURE_GEN_S);
@@ -177,7 +181,7 @@ void Slice::backTransformSlice(unsigned char *iRecImage,
 
     /* Scaling the reconstructed iRecImage */
     int eSliceSize = iSliceWidth * iSliceHeight;
-    int eNormValue = eSliceSize * 50 * 1;
+    int eNormValue = eSliceSize * 100 * eNormValue_Glob;
     for (int i = 0; i < eSliceSize; i++)
         iRecImage_ABS[i] = (float)
                 sqrt((iSlice_complex[i][0] * iSlice_complex[i][0]) +
@@ -196,15 +200,26 @@ void Slice::backTransformSlice(unsigned char *iRecImage,
             ctr++;
         }
     }
-    WrappingAround::WrapAroundImage(iSquareImage_MAIN, iSquareImage_TEMP, iRecImage_ABS, 256);
+
+    if (iSliceWidth == iSliceHeight)
+    {
+        INFO("Projection image has UNIFIED dimensions : " + ITS(iSliceWidth));
+    }
+
+    else
+    {
+        INFO("Projection image DOEN'T have UNIFIED dimensions - EXITING");
+        EXIT(0);
+    }
+    WrappingAround::WrapAroundImage(iSquareImage_MAIN, iSquareImage_TEMP, iRecImage_ABS, iSliceWidth);
 
     /* @ Downscaling the pixel value to fit th BYTE range */
-    for (int i = 0; i < 256 * 256; i++)
+    for (int i = 0; i < iSliceWidth * iSliceHeight; i++)
         iRecImage[i] = (unsigned char)(iRecImage_ABS[i]);
 }
 
 void Slice::uploadImage(const int iSliceWidth, const int iSliceHeight,
-                        const unsigned char* iRecImage, GLuint* iSliceTexture_ID)
+                        const float* iRecImage, GLuint* iSliceTexture_ID)
 {
     /* @ Create 2D texture object as a render target */
     glGenTextures(1, iSliceTexture_ID);
@@ -219,7 +234,7 @@ void Slice::uploadImage(const int iSliceWidth, const int iSliceHeight,
     /* @ Automatic mipmap Generation included in OpenGL v1.4 */
     glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE,
                  iSliceWidth, iSliceHeight, 0,
-                 GL_LUMINANCE, GL_UNSIGNED_BYTE, iRecImage);
+                 GL_LUMINANCE, GL_FLOAT, iRecImage);
 
     /* @ Unbinding texture */
     glBindTexture(GL_TEXTURE_2D, 0);

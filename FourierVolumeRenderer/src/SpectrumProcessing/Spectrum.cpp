@@ -50,8 +50,8 @@ float* Spectrum::packingSpectrumTexture(const fftwf_complex* iSpectralVolume,
 {
     INFO("Packing spectral CPU texture : "
          + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ) + " x "
-         + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ) + " x "
-         + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ));
+         + STRG( "[" ) + ITS( iVolDim->size_Y ) + STRG( "]" ) + " x "
+         + STRG( "[" ) + ITS( iVolDim->size_Z ) + STRG( "]" ));
 
     const int eVolSize = iVolDim->size_X * iVolDim->size_Y * iVolDim->size_Z;
 

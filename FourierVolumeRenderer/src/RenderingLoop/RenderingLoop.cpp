@@ -2,6 +2,8 @@
 #include "OpenGL/cOpenGL.h"
 #include "SliceProcessing/Slice.h"
 
+using namespace Magick;
+
 /*****************************/
 /* @ LOCALS - (e) = EXTERNAL */
 /*****************************/
@@ -11,6 +13,7 @@ unsigned char*  eRecImage;
 float*          eRecImageAbsolute;
 float**         eImage_MAIN;
 float**         eImage_TEMP;
+int             loopCounter = 0;
 
 void RenderingLoop::prepareRenderingArray(const int iSliceWidth,
                                           const int iSliceHeight)
@@ -33,6 +36,41 @@ void RenderingLoop::prepareRenderingArray(const int iSliceWidth,
     }
 }
 
+void writeImageToDisk(float* eRecImageAbsolute, int iSliceWidth, int iSliceHeight, int imageIndex)
+{
+    /* @ Basic image name */
+    char eImageName[1000] = "image";
+
+    /* @ Just a pixel counter */
+    int ePixel = 0;
+
+    /* Basic gray scale image */
+    Magick::Image eImage;
+    eImage.type(GrayscaleType);
+
+    /* Define image geometry */
+    Geometry eGeom;
+    eGeom.width(iSliceWidth);
+    eGeom.height(iSliceHeight);
+    eImage.size(eGeom);
+
+    /* @ Write the pixels */
+    for (int i = 0; i < iSliceWidth; i++)
+    {
+        for (int j = 0; j < iSliceHeight; j++)
+        {
+            ColorGray gsColor(eRecImageAbsolute[ePixel]);
+            eImage.pixelColor( i, j, gsColor);
+            ePixel++;
+        }
+    }
+
+    /* @ File name */
+    snprintf(eImageName, sizeof(eImageName), "%d", loopCounter);
+    sprintf(eImageName, "%s.png", eImageName);
+    eImage.write( eImageName );
+}
+
 void RenderingLoop::run(const float iRot_X,
                         const float iRot_Y,
                         const float iRot_Z,
@@ -43,6 +81,9 @@ void RenderingLoop::run(const float iRot_X,
                         GLuint iFBO_ID,
                         GLuint* iImageTexture_ID)
 {
+    /* @ Loop counter */
+    loopCounter++;
+
     /* @ Extrat the projection slice from the spectral volume texture */
     Slice::getSlice(iSliceCenter, iSliceSideLength, iRot_X, iRot_Y, iRot_Z,
                     iSliceTexture_ID, iVolumeTexture_ID, iFBO_ID);
@@ -63,9 +104,11 @@ void RenderingLoop::run(const float iRot_X,
     Slice::backTransformSlice(eRecImage, eImage_TEMP, eImage_MAIN, iSliceWidth, iSliceHeight,
     eSlice_complex, eRecImageAbsolute);
 
+    writeImageToDisk(eRecImageAbsolute, iSliceWidth, iSliceHeight, loopCounter);
+
     /* @ Update the rendering context with the new image */
     OpenGL::updateSliceTexture(iImageTexture_ID);
 
     /* @ Upload the image to the GPU */
-    Slice::uploadImage(iSliceWidth, iSliceHeight, eRecImage, iImageTexture_ID);
+    Slice::uploadImage(iSliceWidth, iSliceHeight, eRecImageAbsolute, iImageTexture_ID);
 }

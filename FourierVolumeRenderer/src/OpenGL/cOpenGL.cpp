@@ -12,6 +12,7 @@ extern float eYRot_Glob;
 extern float eZRot_Glob;
 extern float eZoomLevel_Glob ;
 extern float eSliceTrans_Glob ;
+extern float eNormValue_Glob;
 extern void GetSpectrumSlice();
 
 /************/
@@ -195,55 +196,67 @@ void OpenGL::keyboardGL(unsigned char fKey, int fX, int fY)
 
     switch(fKey)
     {
+        /* @ exit key */
         case 27:
-            exit (0);
+            INFO("EXETING");
+            EXIT(0);
             break;
+
+        /* @ Rotation */
         case 'Q':
-            eXRot_Glob += 5.0;
-            printf("Rotating %f around mLoop ... \n", (float) eXRot_Glob);
+            eXRot_Glob += 1.0;
+            INFO("X-axis rotaion angle : " + FTS(eXRot_Glob));
             break;
         case 'q':
-            eXRot_Glob -= 5.0;
-            printf("Rotating %f around mLoop ... \n", (float) eXRot_Glob);
+            eXRot_Glob -= 1.0;
+            INFO("X-axis rotaion angle : " + FTS(eXRot_Glob));
             break;
         case 'W':
-            eYRot_Glob += 5.0;
-            printf("Rotating %f around Y ... \n", (float) eYRot_Glob);
+            eYRot_Glob += 1.0;
+            INFO("Y-axis rotaion angle : " + FTS(eYRot_Glob));
             break;
         case 'w':
-            eYRot_Glob -= 5.0;
-            printf("Rotating %f around Y ... \n", (float) eYRot_Glob);
+            eYRot_Glob -= 1.0;
+            INFO("Y-axis rotaion angle : " + FTS(eYRot_Glob));
             break;
         case 'E':
-            eZRot_Glob += 5.0;
-            printf("Rotating %f around Z ... \n", (float) eZRot_Glob);
+            eZRot_Glob += 1.0;
+            INFO("Z-axis rotaion angle : " + FTS(eZRot_Glob));
             break;
         case 'e':
-            eZRot_Glob -= 5.0;
-            printf("Rotating %f around Z ... \n", (float) eZRot_Glob);
-            break;
-        case ' ':
-
+            eZRot_Glob -= 1.0;
+            INFO("Z-axis rotaion angle : " + FTS(eZRot_Glob));
             break;
 
+         /* @ Scaling & normalization */
         case 'R':
-            eNormValue = eNormValue * 10;
-            printf("eNormValue %f \n", eNormValue);
+            eNormValue_Glob = eNormValue_Glob * 10;
+            INFO("Scaling value : " + FTS(eNormValue_Glob));
             break;
 
         case 'r':
-            eNormValue = eNormValue / 10;
-            printf("eNormValue %f \n", eNormValue);
+            eNormValue_Glob = eNormValue_Glob / 10;
+            INFO("Scaling value : " + FTS(eNormValue_Glob));
             break;
 
-        case 'o':
-            eSliceTrans_Glob = eSliceTrans_Glob + 1;
-            printf("eSliceTrans_Glob : %f/256 \n", eSliceTrans_Glob);
+        case 'T':
+            eNormValue_Glob = eNormValue_Glob * 0.5;
+            INFO("Scaling value : " + FTS(eNormValue_Glob));
             break;
 
-        case 'p':
-            eSliceTrans_Glob = eSliceTrans_Glob - 1;
-            printf("eSliceTrans_Glob : %f/256 \n", eSliceTrans_Glob);
+        case 't':
+            eNormValue_Glob = eNormValue_Glob / 0.5;
+            INFO("Scaling value : " + FTS(eNormValue_Glob));
+            break;
+
+        case 'F':
+            eSliceTrans_Glob = eSliceTrans_Glob + 0.00390625;
+            INFO("Slice position : " + FTS(eSliceTrans_Glob));
+            break;
+
+        case 'f':
+            eSliceTrans_Glob = eSliceTrans_Glob - 0.00390625;
+            INFO("Slice position : " + FTS(eSliceTrans_Glob));
             break;
 
         case 's':

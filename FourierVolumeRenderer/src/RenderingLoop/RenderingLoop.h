@@ -15,6 +15,9 @@
 /* @ FFTW includes */
 #include <fftw3.h>
 
+/* @ internal includes */
+#include "shared.h"
+
 namespace RenderingLoop
 {
     /* @ */

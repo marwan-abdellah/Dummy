@@ -53,7 +53,7 @@ namespace Slice
 
     /* @ */
     void uploadImage(const int iSliceWidth, const int iSliceHeight,
-                     const unsigned char* iRecImage, GLuint* iSliceTexture_ID);
+                    const float* iRecImage, GLuint* iSliceTexture_ID);
 }
 
 #endif // SLICE_H
