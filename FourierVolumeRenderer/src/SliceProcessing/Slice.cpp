@@ -71,7 +71,7 @@ void Slice::getSlice(const float iSliceCenter,
      */
     glRotatef(-rot_X, 0.0, 0.0, 1.0);
     glRotatef(-rot_Y, 0.0, 1.0, 0.0);
-    glRotatef(-rot_Z, 1.0, 0.0, 0.0);
+    glRotatef(-rot_Z , 1.0, 0.0, 0.0);
     glTranslatef(-0.5, -0.5, -0.5);
 
     /* @ Automatic texture coord generation */
