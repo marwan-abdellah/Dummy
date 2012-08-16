@@ -11,10 +11,17 @@
 #include "RenderingLoop/RenderingLoop.h"
 #include "eFourierVolRen.h"
 
-char* eVolPath = "/home/abdellah/Software/DataSets/CTData/CTData";
+char* eVolPath = "/home/abdellah/Software/DataSets/BOSTONTEAPOT/BOSTONTEAPOT";
+
+using namespace std;
+
+#include "dcmtk/config/osconfig.h"
+#include "dcmtk/dcmdata/dctk.h"
+
 
 int main(int argc, char** argv)
 { 	
+
     /*@ Run the rendering engine */
     eFourierVolRen::run(argc, argv, eVolPath);
 
@@ -22,3 +29,30 @@ int main(int argc, char** argv)
 }
 
 
+/*
+    // Dicom format
+    DcmFileFormat fileformat;
+
+    // Load file
+    OFCondition status = fileformat.loadFile("TestCase.dcm");
+
+    // Check if the file is loaded correctly
+    if (status.good())
+    {
+        // patient name
+        OFString patientsName;
+
+        if (fileformat.getDataset()->findAndGetOFString(DCM_PatientsName, patientsName).good())
+        {
+            cout << "Patient's Name: " << patientsName << endl;
+        }
+        else
+        {
+            cerr << "Error: cannot access Patient's Name!" << endl;
+        }
+    }
+    else
+    {
+        cerr << "Error: cannot read DICOM file (" << status.text() << ")" << endl;
+    }
+*/

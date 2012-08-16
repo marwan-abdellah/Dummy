@@ -20,7 +20,7 @@ sliceDim eSliceDim_Glob;
 
 /* @ NOTE: You can ONLY rotate the cube around +/- X, Y, Z by 90 degrees */
 float eXRot_Glob            = 0;
-float eYRot_Glob            = -90;
+float eYRot_Glob            = 0;
 float eZRot_Glob            = 0;
 
 float eZoomLevel_Glob       = 2;
@@ -78,28 +78,6 @@ void eFourierVolRen::initContexts(int argc, char** argv)
 
 volume* eFourierVolRen::decomposeVolume(volume* iVolume, int iBrickIndex)
 {
-    /***********************
-      FACE ONE (UPPER FACE)
-       ___________________
-      |         |         |
-      |    1    |    3    |
-      |_________|_________|
-      |         |         |
-      |    2    |    4    |
-      |_________|_________|
-
-
-      FACE TWO (LOWER FACE)
-       ___________________
-      |         |         |
-      |    5    |    7    |
-      |_________|_________|
-      |         |         |
-      |    6    |    8    |
-      |_________|_________|
-
-    ************************/
-
     LOG();
 
     INFO("BREAKING STAGE - VOLUME DECOMPOSITION");
@@ -261,9 +239,6 @@ Image* eFourierVolRen::rendering(const int iSliceWidth, const int iSliceHeight)
 
     /* @ Prepare the FBO & attaching the slice texture to it */
     OpenGL::prepareFBO(&eFBO_ID, &eSliceTexture_ID);
-
-    /* @ Preparing rendering arrays */
-    RenderingLoop::prepareRenderingArray(iSliceWidth, iSliceHeight);
 
     eSliceDim_Glob.size_X = iSliceWidth;
     eSliceDim_Glob.size_Y = iSliceHeight;
@@ -613,6 +588,9 @@ void eFourierVolRen::run(int argc, char** argv, char* iVolPath)
     /* @ Loading volume */
     volume* eVol = eFourierVolRen::loadingVol(iVolPath);
 
+    /* @ Unifying the volume dimensions to adapt the pipeline limitations */
+    Volume::unifyVolumeDim(eVol);
+
     /* @ Initializing contextx */
     eFourierVolRen::initContexts(argc, argv);
 
@@ -620,6 +598,9 @@ void eFourierVolRen::run(int argc, char** argv, char* iVolPath)
 
     /* Creating the final image */
     eImageList = eFourierVolRen::createFinalImage(eVol->sizeX, eVol->sizeY);
+
+    /* @ Preparing rendering arrays */
+    RenderingLoop::prepareRenderingArray(eVol->sizeX, eVol->sizeY);
 
     if (ENABLE_BREAK)
     {

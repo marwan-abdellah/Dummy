@@ -28,6 +28,9 @@ namespace Volume
     /* @ */
     volume* createFloatVolume(volume* iVolume_char);
 
+    /* @ */
+    void unifyVolumeDim(volume* iVolume);
+
 }
 
 #endif // VOLUME_H

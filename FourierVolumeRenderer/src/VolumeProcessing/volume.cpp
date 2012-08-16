@@ -10,8 +10,8 @@ char*** Volume::allocCubeVolume_char(const int size_X,
 
     INFO("Allocating BYTE CUBE volume : "
          + STRG( "[" ) + ITS( size_X ) + STRG( "]" ) + " x "
-         + STRG( "[" ) + ITS( size_X ) + STRG( "]" ) + " x "
-         + STRG( "[" ) + ITS( size_X ) + STRG( "]" ));
+         + STRG( "[" ) + ITS( size_Y ) + STRG( "]" ) + " x "
+         + STRG( "[" ) + ITS( size_Z ) + STRG( "]" ));
 
     char*** cubeVolume;
     cubeVolume = (char***) malloc(size_X * sizeof(char**));
@@ -75,6 +75,106 @@ void Volume::packCubeVolume(char*** cubeVolume, volume* iVolume)
 
     INFO("Packing FLAT volume in CUBE array DONE");
 }
+
+void Volume::unifyVolumeDim(volume* iVolume)
+{
+    int eMaxDim = 0;
+    if (iVolume->sizeX >= iVolume->sizeY && iVolume->sizeZ >= iVolume->sizeZ)
+        eMaxDim = iVolume->sizeX;
+    else if (iVolume->sizeY >= iVolume->sizeX && iVolume->sizeY >= iVolume->sizeZ)
+        eMaxDim = iVolume->sizeY;
+    else
+        eMaxDim = iVolume->sizeZ;
+
+    INFO("MAX DIMENSION : " +  ITS(eMaxDim));
+
+    /* @ Adjusting the power of two dimension condition */
+    int eUnifiedDim = 0;
+    if (eMaxDim <= 16) eUnifiedDim = 16;
+    else if (eMaxDim <= 32) eUnifiedDim = 32;
+    else if (eMaxDim <= 64) eUnifiedDim = 64;
+    else if (eMaxDim <= 128) eUnifiedDim = 128;
+    else if (eMaxDim <= 256) eUnifiedDim = 256;
+    else if (eMaxDim <= 512) eUnifiedDim = 512;
+    else if (eMaxDim <= 1024) eUnifiedDim = 1024;
+    else if (eMaxDim <= 2048) eUnifiedDim = 2048;
+    else if (eMaxDim <= 4096) eUnifiedDim = 4096;
+    else if (eMaxDim <= 8192) eUnifiedDim = 8192;
+
+    INFO("FINAL UNIFIED VOLUME DIMENSION : " +  ITS(eUnifiedDim));
+
+//    char*** originalCube =
+//            MEM_ALLOC_3D_CHAR(iVolume->sizeX, iVolume->sizeY, iVolume->sizeZ);
+
+//    char*** unifiedCube =
+//            MEM_ALLOC_3D_CHAR(eUnifiedDim, eUnifiedDim, eUnifiedDim);
+
+//    for (int i = 0; i < eUnifiedDim; i++)
+//        for (int j = 0; j < eUnifiedDim; j++)
+//            for (int k = 0; k < eUnifiedDim; k++)
+//                unifiedCube[i][j][k] = 0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // PAck the flat volume in a cube
+  // Volume::packCubeVolume(originalCube, iVolume);
+
+    /* Calculating the zero-padded area */
+    int eX_Pad = (eUnifiedDim - iVolume->sizeX) / 2;
+    int eY_Pad = (eUnifiedDim - iVolume->sizeY) / 2;
+    int eZ_Pad = (eUnifiedDim - iVolume->sizeZ) / 2;
+
+    INFO("Orginal volume dimensions : "
+         + STRG( "[" ) + ITS( iVolume->sizeX ) + STRG( "]" ) + " x "
+         + STRG( "[" ) + ITS( iVolume->sizeY ) + STRG( "]" ) + " x "
+         + STRG( "[" ) + ITS( iVolume->sizeZ ) + STRG( "]" ));
+
+    INFO("PADDING : "
+         + STRG( "[" ) + ITS( eX_Pad ) + STRG( "]" ) + " x "
+         + STRG( "[" ) + ITS( eY_Pad ) + STRG( "]" ) + " x "
+         + STRG( "[" ) + ITS( eZ_Pad ) + STRG( "]" ));
+
+    /* @ Creating a new flat array for the UNIFIED volume */
+    char* eUnfiromFlatVolume = (char*) malloc
+            (sizeof(char) * eUnifiedDim * eUnifiedDim * eUnifiedDim);
+
+    // Setting the unified volume
+    for (int i = 0; i < iVolume->sizeX; i++)
+        for (int j = 0; j < iVolume->sizeY; j++)
+            for(int k = 0; k < iVolume->sizeZ; k++)
+            {
+                int oldIndex = (k * iVolume->sizeX * iVolume->sizeY) +
+                        (j * iVolume->sizeX) + i;
+                int newIndex = ((k + eZ_Pad) * eUnifiedDim * eUnifiedDim) +
+                        ((j + eY_Pad) * eUnifiedDim) + (i + eX_Pad);
+
+                eUnfiromFlatVolume [newIndex] = iVolume->ptrVol_char[oldIndex];
+            }
+
+    /* @ Freeing the original input array */
+    free(iVolume->ptrVol_char);
+
+    /* @ Poiting to the new UNIFIED flat array */
+    iVolume->ptrVol_char = eUnfiromFlatVolume;
+
+    /* @ Adjusting the new volume parameters */
+    iVolume->sizeX = eUnifiedDim;
+    iVolume->sizeY = eUnifiedDim;
+    iVolume->sizeZ = eUnifiedDim;
+    iVolume->sizeUni = eUnifiedDim;
+}
+
+
 
 void Volume::extractSubVolume(char*** originalCubeVol,
                               char*** finalCubeVol,
@@ -172,6 +272,8 @@ volume* Volume::extractFinalVolume(volume* iOriginaVol,
 
     /* @ Packing the final cube volume in the flat array */
     Volume::packFlatVolume(iFinalSubVolume, finalCubeVol);
+
+    FREE_MEM_3D_CHAR(finalCubeVol, iFinalSubVolume->sizeX, iFinalSubVolume->sizeY, iFinalSubVolume->sizeZ);
 
     INFO("Final volume extraction DONE");
 

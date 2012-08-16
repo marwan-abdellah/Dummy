@@ -87,6 +87,9 @@ INCLUDE(FindOpenMP_Local)
 # ImageMagick
 INCLUDE(FindImageMagick_Local)
 
+# DICOM
+INCLUDE(FindDICOM)
+
 SET(BASIC_SOURCES Array/Real/Array.cpp
             Array/Complex/cuComplex.cpp
             Array/Complex/fftwComplex.cpp

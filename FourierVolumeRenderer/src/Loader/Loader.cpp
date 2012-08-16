@@ -39,8 +39,8 @@ volDim* Loader::loadHeader(const char *path)
 
     INFO("Volume Dimensions : "
         + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ) + " x "
-        + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ) + " x "
-        + STRG( "[" ) + ITS( iVolDim->size_X ) + STRG( "]" ));
+        + STRG( "[" ) + ITS( iVolDim->size_Y ) + STRG( "]" ) + " x "
+        + STRG( "[" ) + ITS( iVolDim->size_Z ) + STRG( "]" ));
 
     /* @ Closing the innput stream */
     ifile.close();
@@ -87,8 +87,7 @@ volume* Loader::loadVolume(const char* path)
     }
     else
     {
-        INFO("NON UNIFIED VOLUME HAS BEEN LOADDED - EXITING");
-        EXIT(0);
+        INFO("NON UNIFIED VOLUME HAS BEEN LOADDED - UNIFICATION REQUIRED");
     }
 
     /* @ Volume flat size */
@@ -124,7 +123,7 @@ volume* Loader::loadVolume(const char* path)
     if (!imageSize)
     {
         INFO("Error READING raw volume file : " + CCATS(volFile));
-        exit(0);
+        EXIT(0);
     }
 
     INFO("Reading volume raw file DONE");
