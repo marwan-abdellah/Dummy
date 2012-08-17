@@ -11,7 +11,7 @@
 #include "RenderingLoop/RenderingLoop.h"
 #include "eFourierVolRen.h"
 
-char* eVolPath = "/home/abdellah/Software/DataSets/BOSTONTEAPOT/BOSTONTEAPOT";
+char* eVolPath = "/home/abdellah/Software/DataSets/CT_WHOLE/CT_WHOLE";
 
 using namespace std;
 
@@ -21,7 +21,6 @@ using namespace std;
 
 int main(int argc, char** argv)
 { 	
-
     /*@ Run the rendering engine */
     eFourierVolRen::run(argc, argv, eVolPath);
 

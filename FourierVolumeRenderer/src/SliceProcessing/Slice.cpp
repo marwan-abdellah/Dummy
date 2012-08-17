@@ -140,6 +140,8 @@ void Slice::getSlice(const float iSliceCenter,
 
     // Disable 2D texturig
     glDisable(GL_TEXTURE_2D);
+
+    // glDeleteLists(eDisplayList, 0);
 }
 
 void Slice::readBackSlice(const int iSliceWidth, const int iSliceHeight,

@@ -103,32 +103,6 @@ void Volume::unifyVolumeDim(volume* iVolume)
 
     INFO("FINAL UNIFIED VOLUME DIMENSION : " +  ITS(eUnifiedDim));
 
-//    char*** originalCube =
-//            MEM_ALLOC_3D_CHAR(iVolume->sizeX, iVolume->sizeY, iVolume->sizeZ);
-
-//    char*** unifiedCube =
-//            MEM_ALLOC_3D_CHAR(eUnifiedDim, eUnifiedDim, eUnifiedDim);
-
-//    for (int i = 0; i < eUnifiedDim; i++)
-//        for (int j = 0; j < eUnifiedDim; j++)
-//            for (int k = 0; k < eUnifiedDim; k++)
-//                unifiedCube[i][j][k] = 0;
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // PAck the flat volume in a cube
-  // Volume::packCubeVolume(originalCube, iVolume);
-
     /* Calculating the zero-padded area */
     int eX_Pad = (eUnifiedDim - iVolume->sizeX) / 2;
     int eY_Pad = (eUnifiedDim - iVolume->sizeY) / 2;
@@ -267,13 +241,35 @@ volume* Volume::extractFinalVolume(volume* iOriginaVol,
     /* @ Extractig the SUB-VOLUME */
     Volume::extractSubVolume(originalCubeVol, finalCubeVol, iSubVolDim);
 
+    for (int y = 0; y < iFinalSubVolume->sizeY; y++)
+    {
+        for (int x = 0; x < iFinalSubVolume->sizeY; x++)
+            free(originalCubeVol[y][x]);
+
+        free(originalCubeVol[y]);
+    }
+    free(originalCubeVol);
+    originalCubeVol = NULL;
+
     /* @ Dellocating the original cube volume */
-    FREE_MEM_3D_CHAR(originalCubeVol, iOriginaVol->sizeX, iOriginaVol->sizeY, iOriginaVol->sizeZ);
+   // FREE_MEM_3D_CHAR(originalCubeVol, iOriginaVol->sizeX, iOriginaVol->sizeY, iOriginaVol->sizeZ);
 
     /* @ Packing the final cube volume in the flat array */
     Volume::packFlatVolume(iFinalSubVolume, finalCubeVol);
 
-    FREE_MEM_3D_CHAR(finalCubeVol, iFinalSubVolume->sizeX, iFinalSubVolume->sizeY, iFinalSubVolume->sizeZ);
+
+    for (int y = 0; y < iFinalSubVolume->sizeY; y++)
+    {
+        for (int x = 0; x < iFinalSubVolume->sizeY; x++)
+            free(finalCubeVol[y][x]);
+
+        free(finalCubeVol[y]);
+    }
+
+    free(finalCubeVol);
+    finalCubeVol = NULL;
+
+    //FREE_MEM_3D_CHAR(finalCubeVol, iFinalSubVolume->sizeX, iFinalSubVolume->sizeY, iFinalSubVolume->sizeZ);
 
     INFO("Final volume extraction DONE");
 
@@ -301,7 +297,7 @@ volume* Volume::createFloatVolume(volume* iVolume)
     INFO("Freeing the BYTE volume");
 
     /* @ freeing the BYTE volume */
-    free(iVolume->ptrVol_char);
+    free((iVolume->ptrVol_char));
 
     INFO("Creating FLAT FLOAT32 volume DONE");
 

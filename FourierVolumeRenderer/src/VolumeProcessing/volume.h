@@ -31,6 +31,11 @@ namespace Volume
     /* @ */
     void unifyVolumeDim(volume* iVolume);
 
+    /* @ */
+    void extractSubFlatVolume(volume* originalFlatVol,
+                                  volume* finalFlatVol,
+                                  const subVolDim* iSubVolDim);
+
 }
 
 #endif // VOLUME_H

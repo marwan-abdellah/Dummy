@@ -14,7 +14,7 @@ GLuint OpenGL::setDisplayList(float iCenter, float iSideLength)
 
     int numSlices           = 1;
     int numElements         = 4 * numSlices;
-    GLfloat *vertexList	= new GLfloat [3 * numElements];
+    GLfloat *vertexList	= (GLfloat*) malloc (3 * numElements * sizeof(GLfloat));
 
     /* @ Fill the DisplayList with vertecies */
     vertexList[0] = -iSideLength / 2;
@@ -42,7 +42,7 @@ GLuint OpenGL::setDisplayList(float iCenter, float iSideLength)
     glDrawArrays(GL_QUADS, 0, numElements);
     glEndList();
 
-    delete [] vertexList;
+    free(vertexList);
 
     INFO("Creating DisplayList DONE ");
 
