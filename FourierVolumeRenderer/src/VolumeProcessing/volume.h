@@ -35,6 +35,10 @@ namespace Volume
     void extractSubFlatVolume(volume* originalFlatVol,
                                   volume* finalFlatVol,
                                   const subVolDim* iSubVolDim);
+    /* @ */
+    int getUnifiedDimension(int iMaxDim);
+
+    int prepareVolumeArrays(volume* iOriginaVol, int iFinalDim);
 
 }
 

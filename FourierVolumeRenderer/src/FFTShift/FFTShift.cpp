@@ -8,6 +8,31 @@
 #include "Utilities/MACROS.h"
 #include "Utilities/Utils.h"
 
+float ***iArr, ***oArr;
+
+void FFTShift::prepareArrays(int N)
+{
+    iArr = (float***) malloc(N * sizeof(float**));
+    for (int y = 0; y < N; y++)
+    {
+        iArr[y] = (float**) malloc (N * sizeof(float*));
+        for (int x = 0; x < N; x++)
+        {
+            iArr[y][x] = (float*) malloc( N * sizeof(float));
+        }
+    }
+
+    oArr = (float***) malloc(N * sizeof(float**));
+    for (int y = 0; y < N; y++)
+    {
+        oArr[y] = (float**) malloc (N * sizeof(float*));
+        for (int x = 0; x < N; x++)
+        {
+            oArr[y][x] = (float*) malloc( N * sizeof(float));
+        }
+    }
+}
+
 float** FFTShift::FFT_Shift_2D(float** iArr, float** oArr, int N)
 {
     LOG();
@@ -40,28 +65,6 @@ float* FFTShift::Repack_2D(float** Input_2D, float* Input_1D, int N)
 
 float*** FFTShift::FFT_Shift_3D(float* Input, int N)
 {
-    float ***iArr, ***oArr;;
-
-    iArr = (float***) malloc(N * sizeof(float**));
-    for (int y = 0; y < N; y++)
-    {
-        iArr[y] = (float**) malloc (N * sizeof(float*));
-        for (int x = 0; x < N; x++)
-        {
-            iArr[y][x] = (float*) malloc( N * sizeof(float));
-        }
-    }
-
-    oArr = (float***) malloc(N * sizeof(float**));
-    for (int y = 0; y < N; y++)
-    {
-        oArr[y] = (float**) malloc (N * sizeof(float*));
-        for (int x = 0; x < N; x++)
-        {
-            oArr[y][x] = (float*) malloc( N * sizeof(float));
-        }
-    }
-
     int ctr = 0;
     for (int k = 0; k < N; k++)
         for (int i = 0; i < N; i++)
@@ -89,14 +92,6 @@ float*** FFTShift::FFT_Shift_3D(float* Input, int N)
                 oArr[i][j][(N/2) + k] = iArr[(N/2) + i][(N/2) + j][k];
                 oArr[(N/2) + i][(N/2) + j][k] = iArr[i][j][(N/2) + k];
             }
-
-    for (int y = 0; y < N; y++)
-    {
-        for (int x = 0; x < N; x++)
-            free(iArr[y][x]);
-
-        free(iArr[y]);
-    }
 
     return oArr;
 }

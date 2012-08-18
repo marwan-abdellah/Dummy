@@ -11,6 +11,8 @@ namespace FFTShift
 
     float* Repack_2D(float** Input_2D, float* Input_1D, int N);
     float* Repack_3D(float*** Input_3D, float* Input_1D, int N);
+
+    void prepareArrays(int N);
 }
 
 #endif // FFTSHIFT_H

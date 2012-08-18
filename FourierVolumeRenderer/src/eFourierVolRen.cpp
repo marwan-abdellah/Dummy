@@ -21,12 +21,12 @@ sliceDim eSliceDim_Glob;
 /* @ NOTE: You can ONLY rotate the cube around +/- X, Y, Z by 90 degrees */
 float eXRot_Glob            = 0;
 float eYRot_Glob            = 0;
-float eZRot_Glob            = 0;
+float eZRot_Glob            = 90;
 
 float eZoomLevel_Glob       = 2;
 float eSliceTrans_Glob      = 0;
 float eSliceUniSize_Glob    = 0;
-float eNormValue_Glob       = 150;
+float eNormValue_Glob       = 256;
 
 /* @ Enabling volume decomposition */
 bool ENABLE_BREAK = 1;
@@ -219,20 +219,24 @@ sliceDim* eFourierVolRen::preProcess(volume* iVolume)
             (iVolume->ptrVol_float, eVolumeData_complex, iVolume->sizeUni);
 
     /* Freeing the float array as we do have the specteal one */
-    free((void*)iVolume->ptrVol_float);
+    free(iVolume->ptrVol_float);
     iVolume->ptrVol_float = NULL;
+
+    //free(iVolume->ptrVol_char);
+    free(iVolume);
+
 
     /* @ Packing the spectrum volume data into texture
      * array to be sent to OpenGL */
     float* eSpectrumTexture = Spectrum::packingSpectrumTexture(eVolumeData_complex, eVolDim);
 
-    free((void*) eVolumeData_complex);
+    fftwf_free(eVolumeData_complex);
     eVolumeData_complex = NULL;
 
     /* @ Uploading the spectrum to the GPU texture */
     Spectrum::uploadSpectrumTexture(&eVolumeTexture_ID, eSpectrumTexture, eVolDim);
 
-    free((void*)eSpectrumTexture);
+    free(eSpectrumTexture);
     eSpectrumTexture = NULL;
 
     return eSliceDim;
@@ -611,10 +615,15 @@ void eFourierVolRen::run(int argc, char** argv, char* iVolPath)
     /* @ Preparing rendering arrays */
     RenderingLoop::prepareRenderingArray(eVol->sizeX, eVol->sizeY);
 
+    /* @ Prepare volume arrays */
+    Volume::prepareVolumeArrays(eVol, eVol->sizeX / 2);
+
+    FFTShift::prepareArrays(eVol->sizeX / 2);
+
     if (ENABLE_BREAK)
     {
         /* Decomposing the volume into 8 bricks */
-        for (int eBrickIndex = 0; eBrickIndex < 6; eBrickIndex++)
+        for (int eBrickIndex = 0; eBrickIndex < 8; eBrickIndex++)
         {
             /* @ Decompose volume */
             volume* eVolBrick = decomposeVolume(eVol, eBrickIndex);

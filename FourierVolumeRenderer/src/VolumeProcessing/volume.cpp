@@ -2,6 +2,42 @@
 #include "Utilities/MACROS.h"
 #include "Utilities/Utils.h"
 
+
+
+// char*** originalCubeVol;
+// char*** finalCubeVol;
+
+int Volume::prepareVolumeArrays(volume* iOriginaVol, int iFinalDim)
+{
+   //  originalCubeVol = Volume::allocCubeVolume_char
+      //   (iOriginaVol->sizeX, iOriginaVol->sizeY, iOriginaVol->sizeZ);
+
+    /* @ Allocating the final cube volume "SUB-VOLUME" */
+    // finalCubeVol = Volume::allocCubeVolume_char
+       // (256, 256, 256);
+}
+
+
+int Volume::getUnifiedDimension(int iMaxDim)
+{
+    LOG();
+
+    int eUnifiedDim = 0;
+
+    if (iMaxDim <= 16) eUnifiedDim = 16;
+    else if (iMaxDim <= 32) eUnifiedDim = 32;
+    else if (iMaxDim <= 64) eUnifiedDim = 64;
+    else if (iMaxDim <= 128) eUnifiedDim = 128;
+    else if (iMaxDim <= 256) eUnifiedDim = 256;
+    else if (iMaxDim <= 512) eUnifiedDim = 512;
+    else if (iMaxDim <= 1024) eUnifiedDim = 1024;
+    else if (iMaxDim <= 2048) eUnifiedDim = 2048;
+    else if (iMaxDim <= 4096) eUnifiedDim = 4096;
+    else if (iMaxDim <= 8192) eUnifiedDim = 8192;
+
+    return eUnifiedDim;
+}
+
 char*** Volume::allocCubeVolume_char(const int size_X,
                                      const int size_Y,
                                      const int size_Z)
@@ -89,17 +125,7 @@ void Volume::unifyVolumeDim(volume* iVolume)
     INFO("MAX DIMENSION : " +  ITS(eMaxDim));
 
     /* @ Adjusting the power of two dimension condition */
-    int eUnifiedDim = 0;
-    if (eMaxDim <= 16) eUnifiedDim = 16;
-    else if (eMaxDim <= 32) eUnifiedDim = 32;
-    else if (eMaxDim <= 64) eUnifiedDim = 64;
-    else if (eMaxDim <= 128) eUnifiedDim = 128;
-    else if (eMaxDim <= 256) eUnifiedDim = 256;
-    else if (eMaxDim <= 512) eUnifiedDim = 512;
-    else if (eMaxDim <= 1024) eUnifiedDim = 1024;
-    else if (eMaxDim <= 2048) eUnifiedDim = 2048;
-    else if (eMaxDim <= 4096) eUnifiedDim = 4096;
-    else if (eMaxDim <= 8192) eUnifiedDim = 8192;
+    const int eUnifiedDim = getUnifiedDimension(eMaxDim);
 
     INFO("FINAL UNIFIED VOLUME DIMENSION : " +  ITS(eUnifiedDim));
 
@@ -127,10 +153,10 @@ void Volume::unifyVolumeDim(volume* iVolume)
         for (int j = 0; j < iVolume->sizeY; j++)
             for(int k = 0; k < iVolume->sizeZ; k++)
             {
-                int oldIndex = (k * iVolume->sizeX * iVolume->sizeY) +
-                        (j * iVolume->sizeX) + i;
-                int newIndex = ((k + eZ_Pad) * eUnifiedDim * eUnifiedDim) +
-                        ((j + eY_Pad) * eUnifiedDim) + (i + eX_Pad);
+                int oldIndex =  (k * iVolume->sizeX * iVolume->sizeY) +
+                                (j * iVolume->sizeX) + i;
+                int newIndex =  ((k + eZ_Pad) * eUnifiedDim * eUnifiedDim) +
+                                ((j + eY_Pad) * eUnifiedDim) + (i + eX_Pad);
 
                 eUnfiromFlatVolume [newIndex] = iVolume->ptrVol_char[oldIndex];
             }
@@ -147,8 +173,6 @@ void Volume::unifyVolumeDim(volume* iVolume)
     iVolume->sizeZ = eUnifiedDim;
     iVolume->sizeUni = eUnifiedDim;
 }
-
-
 
 void Volume::extractSubVolume(char*** originalCubeVol,
                               char*** finalCubeVol,
@@ -181,6 +205,39 @@ void Volume::extractSubVolume(char*** originalCubeVol,
     INFO("Extracting SUB-VOLUME DONE");
 }
 
+void extractSubVolume_Flat(char* originalCubeVol,
+                              char* finalCubeVol,
+                              const subVolDim* iSubVolDim)
+{
+    /* @ Calculating the sub volume dimensions */
+    const int finalSize_X = iSubVolDim->max_X - iSubVolDim->min_X;
+    const int finalSize_Y = iSubVolDim->max_Y - iSubVolDim->min_Y;
+    const int finalSize_Z = iSubVolDim->max_Z - iSubVolDim->min_Z;
+
+    INFO("Extracting SUB-VOLUME with dimensions : "
+         + STRG( "[" ) + ITS( finalSize_X ) + STRG( "]" ) + " x "
+         + STRG( "[" ) + ITS( finalSize_Y ) + STRG( "]" ) + " x "
+         + STRG( "[" ) + ITS( finalSize_Y ) + STRG( "]" ));
+
+    for (int i = 0; i < finalSize_X; i++)
+    {
+        for (int j = 0; j < finalSize_Y; j++)
+        {
+            for (int k = 0; k < finalSize_Z; k++)
+            {
+                {
+int oldIndex = ((k + iSubVolDim->min_Z) * 512 * 512) + ((j +iSubVolDim->min_Y ) * 512) + (i + iSubVolDim->min_X);
+int newIndex = ((k) * finalSize_X * finalSize_Y) + ((j) * finalSize_X) + (i);
+
+                    finalCubeVol [newIndex] = originalCubeVol[oldIndex];
+                }
+            }
+        }
+    }
+
+    INFO("Extracting SUB-VOLUME DONE");
+}
+
 volume* Volume::extractFinalVolume(volume* iOriginaVol,
                                    const subVolDim* iSubVolDim)
 {
@@ -192,8 +249,11 @@ volume* Volume::extractFinalVolume(volume* iOriginaVol,
           + STRG( "[" ) + ITS( iOriginaVol->sizeZ ) + STRG( "]" ));
 
     /* @ Allocating cube array for the original volume */
-    char*** originalCubeVol = Volume::allocCubeVolume_char
-            (iOriginaVol->sizeX, iOriginaVol->sizeY, iOriginaVol->sizeZ);
+   char*** originalCubeVol = Volume::allocCubeVolume_char
+           (iOriginaVol->sizeX, iOriginaVol->sizeY, iOriginaVol->sizeZ);
+
+
+
 
     INFO("Packing the FLAT array in the CUBE ");
 
@@ -222,34 +282,30 @@ volume* Volume::extractFinalVolume(volume* iOriginaVol,
         EXIT(0);
     }
 
+    char*** finalCubeVol = Volume::allocCubeVolume_char
+       (iFinalSubVolume->sizeX, iFinalSubVolume->sizeY, iFinalSubVolume->sizeZ);
+
     iFinalSubVolume->ptrVol_char =
             (char*) malloc (sizeof(char) * iFinalSubVolume->sizeX
                             * iFinalSubVolume->sizeY
                             * iFinalSubVolume->sizeZ);
 
     INFO("Allocating CUBE array for the final SUB-VOLUME: "
-              + STRG( "[" ) + ITS(  iFinalSubVolume->sizeX ) + STRG( "]" ) + " x "
-              + STRG( "[" ) + ITS(  iFinalSubVolume->sizeY ) + STRG( "]" ) + " x "
-              + STRG( "[" ) + ITS(  iFinalSubVolume->sizeZ ) + STRG( "]" ));
+              + STRG( "[" ) + ITS( iFinalSubVolume->sizeX ) + STRG( "]" ) + " x "
+              + STRG( "[" ) + ITS( iFinalSubVolume->sizeY ) + STRG( "]" ) + " x "
+              + STRG( "[" ) + ITS( iFinalSubVolume->sizeZ ) + STRG( "]" ));
 
-    /* @ Allocating the final cube volume "SUB-VOLUME" */
-    char*** finalCubeVol = Volume::allocCubeVolume_char
-            (iFinalSubVolume->sizeX, iFinalSubVolume->sizeY, iFinalSubVolume->sizeZ);
+
 
     INFO("Extractng the SUB-VOLUME");
 
     /* @ Extractig the SUB-VOLUME */
     Volume::extractSubVolume(originalCubeVol, finalCubeVol, iSubVolDim);
 
-    for (int y = 0; y < iFinalSubVolume->sizeY; y++)
-    {
-        for (int x = 0; x < iFinalSubVolume->sizeY; x++)
-            free(originalCubeVol[y][x]);
+    //extractSubVolume_Flat(iOriginaVol->ptrVol_char, iFinalSubVolume->ptrVol_char, iSubVolDim);
 
-        free(originalCubeVol[y]);
-    }
-    free(originalCubeVol);
-    originalCubeVol = NULL;
+
+
 
     /* @ Dellocating the original cube volume */
    // FREE_MEM_3D_CHAR(originalCubeVol, iOriginaVol->sizeX, iOriginaVol->sizeY, iOriginaVol->sizeZ);
@@ -258,9 +314,19 @@ volume* Volume::extractFinalVolume(volume* iOriginaVol,
     Volume::packFlatVolume(iFinalSubVolume, finalCubeVol);
 
 
+    for (int y = 0; y < iOriginaVol->sizeY; y++)
+    {
+        for (int x = 0; x < iOriginaVol->sizeX; x++)
+            free(originalCubeVol[y][x]);
+
+        free(originalCubeVol[y]);
+    }
+    free(originalCubeVol);
+    originalCubeVol = NULL;
+
     for (int y = 0; y < iFinalSubVolume->sizeY; y++)
     {
-        for (int x = 0; x < iFinalSubVolume->sizeY; x++)
+        for (int x = 0; x < iFinalSubVolume->sizeX; x++)
             free(finalCubeVol[y][x]);
 
         free(finalCubeVol[y]);
@@ -268,6 +334,8 @@ volume* Volume::extractFinalVolume(volume* iOriginaVol,
 
     free(finalCubeVol);
     finalCubeVol = NULL;
+
+
 
     //FREE_MEM_3D_CHAR(finalCubeVol, iFinalSubVolume->sizeX, iFinalSubVolume->sizeY, iFinalSubVolume->sizeZ);
 

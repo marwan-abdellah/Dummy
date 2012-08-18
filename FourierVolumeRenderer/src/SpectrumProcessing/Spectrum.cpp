@@ -38,6 +38,8 @@ fftwf_complex* Spectrum::createSpectrum(volume* iSpectralVolume)
     /* @ executing the FFT plan */
     fftwf_execute(eFFTPlan);
 
+    fftwf_destroy_plan(eFFTPlan);
+
     INFO("Creating COMPLEX SPECTRUM DONE");
 
     return eSpectralVolume_complex;

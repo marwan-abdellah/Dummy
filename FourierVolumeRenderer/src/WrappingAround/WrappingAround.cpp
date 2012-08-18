@@ -3,7 +3,6 @@
 #include "Utilities/MACROS.h"
 #include "Utilities/Utils.h"
 
-
 void WrappingAround::WrapAroundVolume(float* eFlatVolume,
                                       const int N)
 {
@@ -14,16 +13,10 @@ void WrappingAround::WrapAroundVolume(float* eFlatVolume,
 
     float*** eCubeVolume;
 
-    eCubeVolume = FFTShift::FFT_Shift_3D(eFlatVolume, N);
-    eFlatVolume = FFTShift::Repack_3D(eCubeVolume, eFlatVolume, N);
+   eCubeVolume = FFTShift::FFT_Shift_3D(eFlatVolume, N);
+   eFlatVolume = FFTShift::Repack_3D(eCubeVolume, eFlatVolume, N);
 
-    for (int y = 0; y < N; y++)
-    {
-        for (int x = 0; x < N; x++)
-            free(eCubeVolume[y][x]);
-
-        free(eCubeVolume[y]);
-    }
+    //eFlatVolume = FFTShift::flatFFT_Shift_3D(eFlatVolume, N);
 
     INFO("Wrapping-around SPATIAL volume DONE");
 }
@@ -60,15 +53,6 @@ void WrappingAround::WrapAroundSpectrum(float* eFlatVolume,
 
     for (int i = 0; i < N*N*N; i++)
         eFlatVolume_complex[i][1] = eFlatVolume[i];
-
-    for (int y = 0; y < N; y++)
-    {
-        for (int x = 0; x < N; x++)
-            free(eCubeVolume[y][x]);
-
-        free(eCubeVolume[y]);
-    }
-         free(eCubeVolume);
 
     INFO("Wrapping-around SPECTRAL volume DONE");
 }
